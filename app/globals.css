@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/* (Removed legacy @custom-variant and @theme inline for Tailwind v4 compatibility) */
+
+/* Teal Aurora Light Theme */
+:root {
+  --background: oklch(0.99 0.01 180);
+  --foreground: oklch(0.22 0.03 210);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.60 0.13 190);
+  --primary-foreground: oklch(0.98 0.01 210);
+  --secondary: oklch(0.95 0.02 200);
+  --secondary-foreground: oklch(0.34 0.04 210);
+  --muted: oklch(0.95 0.02 200);
+  --muted-foreground: oklch(0.50 0.04 210);
+  --accent: oklch(0.68 0.12 250);
+  --accent-foreground: oklch(0.99 0.01 240);
+  --destructive: oklch(0.58 0.21 25);
+  --destructive-foreground: oklch(0.99 0.01 240);
+  --border: oklch(0.90 0.02 200);
+  --input: var(--border);
+  --ring: oklch(0.58 0.12 190);
+  --radius: 0.5rem;
+  --success: oklch(0.70 0.14 155);
+  --success-foreground: oklch(0.22 0.03 210);
+  --warning: oklch(0.82 0.14 75);
+  --warning-foreground: oklch(0.34 0.07 55);
+  --info: oklch(0.74 0.10 240);
+  --info-foreground: oklch(0.22 0.03 210);
+  /* Removed gradient and pattern overlays - flat theme */
+  --gradient-base: none;
+  --pattern-overlay: none;
+  --accent-about: oklch(0.60 0.13 190);
+  --accent-experience: oklch(0.56 0.11 200);
+  --accent-skills: oklch(0.58 0.12 180);
+  --accent-projects: oklch(0.60 0.13 170);
+  --accent-blog: oklch(0.66 0.12 250);
+  --accent-contact: oklch(0.62 0.13 200);
+  --accent-home: oklch(0.60 0.13 190);
+}
+
+/* Teal Aurora Dark Theme */
+.dark {
+  --background: oklch(0.16 0.03 200);
+  --foreground: oklch(0.94 0.02 230);
+  --card: oklch(0.19 0.03 205);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.70 0.12 190);
+  --primary-foreground: oklch(0.16 0.03 200);
+  --secondary: oklch(0.24 0.02 200);
+  --secondary-foreground: oklch(0.82 0.02 220);
+  --muted: oklch(0.24 0.02 200);
+  --muted-foreground: oklch(0.68 0.04 210);
+  --accent: oklch(0.72 0.12 250);
+  --accent-foreground: oklch(0.16 0.02 200);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.94 0.02 230);
+  --border: oklch(0.28 0.03 200);
+  --input: var(--border);
+  --ring: var(--primary);
+  --success: oklch(0.64 0.12 155);
+  --success-foreground: oklch(0.16 0.03 200);
+  --warning: oklch(0.72 0.14 75);
+  --warning-foreground: oklch(0.16 0.03 200);
+  --info: oklch(0.70 0.12 250);
+  --info-foreground: oklch(0.16 0.02 200);
+  --gradient-base: none;
+  --pattern-overlay: none;
+  --accent-about: oklch(0.70 0.12 190);
+  --accent-experience: oklch(0.66 0.11 200);
+  --accent-skills: oklch(0.68 0.11 180);
+  --accent-projects: oklch(0.70 0.12 170);
+  --accent-blog: oklch(0.72 0.12 250);
+  --accent-contact: oklch(0.70 0.12 200);
+}
+
+/* Base adjustments */
+*, *::before, *::after { box-sizing: border-box; border-color: var(--border); }
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.25s ease;
+}
+
+/* Section accent top divider styling */
+.section-accent { position: relative; }
+#about.section-accent { --section-accent-color: var(--accent-about); }
+#experience.section-accent { --section-accent-color: var(--accent-experience); }
+#skills.section-accent { --section-accent-color: var(--accent-skills); }
+#projects.section-accent { --section-accent-color: var(--accent-projects); }
+#blog.section-accent { --section-accent-color: var(--accent-blog); }
+#contact.section-accent { --section-accent-color: var(--accent-contact); }
+#home.section-accent { --section-accent-color: var(--accent-home); }
+
+.section-accent::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--section-accent-color) 30%, var(--section-accent-color) 70%, transparent 100%);
+  opacity: 0.55;
+}
+.dark .section-accent::before { opacity: 0.4; }
+
+html { scroll-behavior: smooth; }
+h1,h2,h3,h4,h5,h6 { font-family: var(--font-sans), system-ui, sans-serif; letter-spacing:-0.02em; }
+body, code, pre, kbd, samp { font-family: var(--font-sans), system-ui, sans-serif; }
+.glass { background-color: color-mix(in oklab,var(--background) 55%,transparent); backdrop-filter: blur(4px); border: 1px solid var(--border); }
+.glass-elevated { background-color: color-mix(in oklab,var(--background) 70%,transparent); backdrop-filter: blur(4px); border: 1px solid var(--border); box-shadow: 0 1px 2px -1px rgb(0 0 0 / 0.15); }
+.focus-gradient:focus-visible { outline: 0; box-shadow: 0 0 0 3px color-mix(in oklab,var(--accent) 65%,transparent),0 0 0 6px color-mix(in oklab,var(--background) 90%,transparent); }
+.nav-link { position: relative; }
+.nav-link::after { content:""; position:absolute; left:16%; right:16%; bottom:2px; height:2px; background: linear-gradient(90deg,var(--nav-accent,var(--primary)),var(--primary)); transform:scaleX(0); transform-origin:left; transition:transform .4s cubic-bezier(.65,.05,.36,1); border-radius:2px; }
+.nav-link.is-active::after, .nav-link:hover::after, .nav-link:focus-visible::after { transform:scaleX(1); }
+.reveal-section { opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+.reveal-section.is-visible { opacity:1; transform:translateY(0); }
