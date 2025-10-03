@@ -64,7 +64,7 @@ const experiences: ExperienceItem[] = [
 
 export function Experience() {
   return (
-  <section id="experience" className="reveal-section is-visible section-accent px-6 md:px-10 lg:px-14 py-24 scroll-mt-32">
+  <section id="experience" className="reveal-section is-visible section-accent accent-blue px-6 md:px-10 lg:px-14 py-24 scroll-mt-32">
       <div className="max-w-6xl mx-auto">
   <h2 className="text-4xl md:text-5xl font-bold mb-14 tracking-tight">Experience</h2>
   <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr">

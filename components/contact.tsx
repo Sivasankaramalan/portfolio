@@ -4,7 +4,7 @@ import { Mail, Linkedin, Github, FileText } from "lucide-react"
 
 export function Contact() {
   return (
-    <section id="contact" className="section-accent px-6 py-20 bg-card scroll-mt-32">
+  <section id="contact" className="section-accent accent-green px-6 py-20 bg-card scroll-mt-32">
       <div className="max-w-4xl mx-auto">
         <div className="text-center space-y-6">
           <h2 className="text-3xl md:text-4xl font-bold">Let's Work Together</h2>
@@ -14,9 +14,9 @@ export function Contact() {
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-4">
             <Button size="lg" className="gap-2" asChild>
-              <a href="mailto:sivasankaramalan@example.com">
+              <a href="mailto:sivasankaramalan@gmail.com">
                 <Mail className="h-4 w-4" />
-                sivasankaramalan@example.com
+                sivasankaramalan@gmail.com
               </a>
             </Button>
           </div>

@@ -51,35 +51,42 @@ const projects = [
 
 export function Projects() {
   return (
-    <section id="projects" className="section-accent px-6 py-20 scroll-mt-32">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12">Featured Initiatives</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          {projects.map((project) => (
-            <Card key={project.title} className="p-6 hover:shadow-lg transition-shadow flex flex-col">
-              <div className="flex-1 space-y-4">
-                <div>
-                  <h3 className="text-xl font-semibold leading-snug">{project.title}</h3>
-                  {project.org && <p className="text-xs uppercase tracking-wide text-primary font-semibold mt-1">{project.org}</p>}
+    <section id="projects" className="section-accent px-6 md:px-10 lg:px-14 py-24 scroll-mt-32">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold mb-14 tracking-tight">Featured Initiatives</h2>
+  <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 auto-rows-fr max-w-5xl mx-auto">
+          {projects.map(project => (
+            <Card
+              key={project.title}
+              className="p-7 md:p-8 flex flex-col gap-5 hover:shadow-xl transition-shadow border bg-card/70 backdrop-blur supports-[backdrop-filter]:bg-card/60 rounded-2xl"
+            >
+              <div className="space-y-3 flex-1">
+                <div className="space-y-1">
+                  <h3 className="text-lg md:text-xl font-semibold leading-snug line-clamp-3">{project.title}</h3>
+                  {project.org && (
+                    <p className="text-[11px] uppercase tracking-wide text-primary font-semibold">{project.org}</p>
+                  )}
                 </div>
-                <p className="text-muted-foreground leading-relaxed">{project.description}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+                  {project.description}
+                </p>
                 {project.highlights && (
-                  <ul className="space-y-1 text-sm text-muted-foreground">
+                  <ul className="space-y-1.5 text-xs text-muted-foreground">
                     {project.highlights.map(h => (
                       <li key={h} className="flex gap-2">
-                        <TrendingUp className="h-4 w-4 text-primary shrink-0 mt-[2px]" />
+                        <TrendingUp className="h-4 w-4 text-primary shrink-0 mt-[1px]" />
                         <span>{h}</span>
                       </li>
                     ))}
                   </ul>
                 )}
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {project.technologies.map((tech) => (
-                    <Badge key={tech} variant="secondary" className="text-[10px] py-0.5 px-2 font-medium">
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5 pt-2 mt-auto">
+                {project.technologies.map(tech => (
+                  <Badge key={tech} variant="secondary" className="text-[10px] py-0.5 px-2 font-medium">
+                    {tech}
+                  </Badge>
+                ))}
               </div>
             </Card>
           ))}

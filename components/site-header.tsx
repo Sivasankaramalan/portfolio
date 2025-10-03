@@ -19,7 +19,7 @@ const NAV_LINKS = [
 export function SiteHeader() {
   const [active, setActive] = useState<string>("#home")
   const [scrolled, setScrolled] = useState(false)
-  const [accentColor, setAccentColor] = useState<string>('var(--accent-home)')
+  // Unified accent; no per-section dynamic color now
   const pathname = usePathname()
 
   useEffect(() => {
@@ -32,33 +32,15 @@ export function SiteHeader() {
   }, [])
 
   useEffect(() => {
-  const sectionIds = NAV_LINKS.map(l => l.fragment)
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const id = `#${entry.target.id}`
-            setActive(id)
-            const accentMap: Record<string,string> = {
-              '#home': 'var(--accent-home)',
-              '#about': 'var(--accent-about)',
-              '#experience': 'var(--accent-experience)',
-              '#skills': 'var(--accent-skills)',
-              '#projects': 'var(--accent-projects)',
-              '#blog': 'var(--accent-blog)',
-              '#contact': 'var(--accent-contact)'
-            }
-            setAccentColor(accentMap[id] || 'var(--primary)')
-          }
-        })
-      },
-      { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.1, 0.25, 0.5] }
-    )
-
-    sectionIds.forEach(id => {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
-    })
+    const sectionIds = NAV_LINKS.map(l => l.fragment)
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActive('#' + entry.target.id)
+        }
+      })
+    }, { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.1, 0.25, 0.5] })
+    sectionIds.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el) })
     return () => observer.disconnect()
   }, [])
 
@@ -69,11 +51,8 @@ export function SiteHeader() {
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground rounded px-3 py-1">
         Skip to content
       </a>
-      <nav aria-label="Primary" className="flex items-center gap-6">
-        <ul
-          className="flex gap-2 rounded-full glass-elevated px-4 py-2"
-          style={{ ['--nav-accent' as any]: accentColor }}
-        >
+      <nav aria-label="Primary" className="flex items-center justify-center">
+        <ul className="flex gap-2 rounded-full glass-elevated px-4 py-2" style={{ ['--nav-accent' as any]: 'var(--accent)' }}>
           {NAV_LINKS.map(link => {
             const fragmentHash = `#${link.fragment}`
             const href = pathname === '/' ? fragmentHash : `/${fragmentHash}`
@@ -95,10 +74,10 @@ export function SiteHeader() {
               </li>
             )
           })}
+          <li className="flex items-center ml-2 pl-2 border-l border-border/50">
+            <ThemeToggle />
+          </li>
         </ul>
-        <div className="hidden md:flex items-center gap-3">
-          <ThemeToggle />
-        </div>
       </nav>
     </header>
   )

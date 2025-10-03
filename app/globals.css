@@ -4,25 +4,27 @@
 
 /* Teal Aurora Light Theme */
 :root {
+  /* Light mode base */
   --background: oklch(0.99 0.01 180);
   --foreground: oklch(0.22 0.03 210);
   --card: oklch(1 0 0);
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.60 0.13 190);
+  /* Unified teal primary accent */
+  --primary: oklch(0.63 0.13 190);
   --primary-foreground: oklch(0.98 0.01 210);
   --secondary: oklch(0.95 0.02 200);
   --secondary-foreground: oklch(0.34 0.04 210);
   --muted: oklch(0.95 0.02 200);
   --muted-foreground: oklch(0.50 0.04 210);
-  --accent: oklch(0.68 0.12 250);
-  --accent-foreground: oklch(0.99 0.01 240);
+  --accent: var(--primary);
+  --accent-foreground: var(--primary-foreground);
   --destructive: oklch(0.58 0.21 25);
   --destructive-foreground: oklch(0.99 0.01 240);
   --border: oklch(0.90 0.02 200);
   --input: var(--border);
-  --ring: oklch(0.58 0.12 190);
+  --ring: var(--primary);
   --radius: 0.5rem;
   --success: oklch(0.70 0.14 155);
   --success-foreground: oklch(0.22 0.03 210);
@@ -30,16 +32,22 @@
   --warning-foreground: oklch(0.34 0.07 55);
   --info: oklch(0.74 0.10 240);
   --info-foreground: oklch(0.22 0.03 210);
-  /* Removed gradient and pattern overlays - flat theme */
-  --gradient-base: none;
-  --pattern-overlay: none;
-  --accent-about: oklch(0.60 0.13 190);
-  --accent-experience: oklch(0.56 0.11 200);
-  --accent-skills: oklch(0.58 0.12 180);
-  --accent-projects: oklch(0.60 0.13 170);
-  --accent-blog: oklch(0.66 0.12 250);
-  --accent-contact: oklch(0.62 0.13 200);
-  --accent-home: oklch(0.60 0.13 190);
+  /* New gradient identity (teal aurora) */
+  --gradient-base: linear-gradient(135deg, oklch(0.92 0.03 190) 0%, oklch(0.95 0.02 200) 30%, oklch(0.98 0.01 180) 60%, oklch(1 0 0) 100%);
+  --gradient-accent: radial-gradient(circle at 30% 35%, oklch(0.80 0.11 185 / 0.55), transparent 55%), radial-gradient(circle at 75% 70%, oklch(0.75 0.10 200 / 0.35), transparent 60%);
+  --pattern-overlay: linear-gradient(0deg, oklch(0 0 0 / 0.02), oklch(0 0 0 / 0.02));
+  /* Global gradient intensity control */
+  --gradient-strength: 0.40;
+  /* Additional accent hue palette (oklch hues) */
+  --accent-teal: oklch(0.63 0.13 190);
+  --accent-blue: oklch(0.62 0.15 250);
+  --accent-indigo: oklch(0.55 0.16 280);
+  --accent-violet: oklch(0.58 0.17 305);
+  --accent-pink: oklch(0.70 0.20 350);
+  --accent-orange: oklch(0.78 0.18 60);
+  --accent-amber: oklch(0.82 0.16 75);
+  --accent-lime: oklch(0.80 0.15 135);
+  --accent-green: oklch(0.70 0.15 155);
 }
 
 /* Teal Aurora Dark Theme */
@@ -50,14 +58,14 @@
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.70 0.12 190);
+  --primary: oklch(0.72 0.12 190);
   --primary-foreground: oklch(0.16 0.03 200);
   --secondary: oklch(0.24 0.02 200);
   --secondary-foreground: oklch(0.82 0.02 220);
   --muted: oklch(0.24 0.02 200);
   --muted-foreground: oklch(0.68 0.04 210);
-  --accent: oklch(0.72 0.12 250);
-  --accent-foreground: oklch(0.16 0.02 200);
+  --accent: var(--primary);
+  --accent-foreground: var(--primary-foreground);
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(0.94 0.02 230);
   --border: oklch(0.28 0.03 200);
@@ -69,14 +77,19 @@
   --warning-foreground: oklch(0.16 0.03 200);
   --info: oklch(0.70 0.12 250);
   --info-foreground: oklch(0.16 0.02 200);
-  --gradient-base: none;
-  --pattern-overlay: none;
-  --accent-about: oklch(0.70 0.12 190);
-  --accent-experience: oklch(0.66 0.11 200);
-  --accent-skills: oklch(0.68 0.11 180);
-  --accent-projects: oklch(0.70 0.12 170);
-  --accent-blog: oklch(0.72 0.12 250);
-  --accent-contact: oklch(0.70 0.12 200);
+  --gradient-base: radial-gradient(circle at 25% 20%, oklch(0.28 0.04 200), transparent 65%), radial-gradient(circle at 80% 75%, oklch(0.32 0.05 210), transparent 70%), linear-gradient(140deg, oklch(0.19 0.03 205), oklch(0.22 0.04 200));
+  --gradient-accent: radial-gradient(circle at 30% 35%, oklch(0.55 0.10 185 / 0.5), transparent 55%), radial-gradient(circle at 75% 70%, oklch(0.50 0.09 200 / 0.4), transparent 60%);
+  --pattern-overlay: linear-gradient(0deg, oklch(0 0 0 / 0.15), oklch(0 0 0 / 0.15));
+  --gradient-strength: 0.35;
+  --accent-teal: oklch(0.72 0.12 190);
+  --accent-blue: oklch(0.70 0.13 250);
+  --accent-indigo: oklch(0.62 0.14 280);
+  --accent-violet: oklch(0.60 0.16 305);
+  --accent-pink: oklch(0.68 0.19 350);
+  --accent-orange: oklch(0.70 0.17 60);
+  --accent-amber: oklch(0.74 0.15 75);
+  --accent-lime: oklch(0.74 0.14 135);
+  --accent-green: oklch(0.64 0.13 155);
 }
 
 /* Base adjustments */
@@ -88,15 +101,37 @@ body {
   transition: background-color 0.4s ease, color 0.25s ease;
 }
 
+/* Mild site-wide gradient (non-intrusive) */
+.site-gradient { position: relative; z-index:0; }
+.site-gradient::before { content:""; position:fixed; inset:0; background: var(--gradient-base); pointer-events:none; z-index:-2; }
+.site-gradient::after { content:""; position:fixed; inset:0; background: var(--gradient-accent); mix-blend-mode:overlay; opacity: var(--gradient-strength); pointer-events:none; z-index:-1; }
+
+/* Colorful variant (applies multi-hue overlay) */
+.site-gradient-colorful::before { content:""; position:fixed; inset:0; background:linear-gradient(120deg, var(--accent-teal), var(--accent-blue), var(--accent-indigo), var(--accent-violet), var(--accent-pink)); opacity:0.18; filter:saturate(125%); mix-blend-mode:overlay; z-index:-2; pointer-events:none; }
+.dark .site-gradient-colorful::before { opacity:0.22; }
+.site-gradient-colorful::after { content:""; position:fixed; inset:0; background:radial-gradient(circle at 20% 25%, var(--accent-amber) 0%, transparent 55%), radial-gradient(circle at 80% 65%, var(--accent-lime) 0%, transparent 60%); opacity:0.10; mix-blend-mode:color-dodge; pointer-events:none; z-index:-1; }
+.dark .site-gradient-colorful::after { opacity:0.13; }
+
+/* Accent hue utilities (sets --accent contextually) */
+[class*="accent-"] { --accent-foreground: oklch(0.15 0.02 250); }
+.accent-teal { --accent: var(--accent-teal); }
+.accent-blue { --accent: var(--accent-blue); }
+.accent-indigo { --accent: var(--accent-indigo); }
+.accent-violet { --accent: var(--accent-violet); }
+.accent-pink { --accent: var(--accent-pink); }
+.accent-orange { --accent: var(--accent-orange); }
+.accent-amber { --accent: var(--accent-amber); }
+.accent-lime { --accent: var(--accent-lime); }
+.accent-green { --accent: var(--accent-green); }
+.dark [class*="accent-"] { --accent-foreground: oklch(0.96 0.02 250); }
+
+/* Accent ring helper */
+.with-accent-ring { box-shadow:0 0 0 2px color-mix(in oklab,var(--accent) 60%, transparent), 0 0 0 6px color-mix(in oklab,var(--background) 90%, transparent); }
+
 /* Section accent top divider styling */
 .section-accent { position: relative; }
-#about.section-accent { --section-accent-color: var(--accent-about); }
-#experience.section-accent { --section-accent-color: var(--accent-experience); }
-#skills.section-accent { --section-accent-color: var(--accent-skills); }
-#projects.section-accent { --section-accent-color: var(--accent-projects); }
-#blog.section-accent { --section-accent-color: var(--accent-blog); }
-#contact.section-accent { --section-accent-color: var(--accent-contact); }
-#home.section-accent { --section-accent-color: var(--accent-home); }
+/* Unified accent color applied globally */
+.section-accent { --section-accent-color: var(--accent); }
 
 .section-accent::before {
   content: "";
@@ -117,5 +152,119 @@ body, code, pre, kbd, samp { font-family: var(--font-sans), system-ui, sans-seri
 .nav-link { position: relative; }
 .nav-link::after { content:""; position:absolute; left:16%; right:16%; bottom:2px; height:2px; background: linear-gradient(90deg,var(--nav-accent,var(--primary)),var(--primary)); transform:scaleX(0); transform-origin:left; transition:transform .4s cubic-bezier(.65,.05,.36,1); border-radius:2px; }
 .nav-link.is-active::after, .nav-link:hover::after, .nav-link:focus-visible::after { transform:scaleX(1); }
+.nav-link.is-active { box-shadow: 0 0 0 2px color-mix(in oklab,var(--accent) 60%, transparent), 0 0 0 5px color-mix(in oklab,var(--background) 85%, transparent); }
+
+/* Hero gradient identity */
+.hero-gradient {
+  position: relative;
+  background: var(--gradient-base);
+}
+.hero-gradient::before {
+  content:"";
+  position:absolute; inset:0;
+  background: var(--gradient-accent);
+  mix-blend-mode: overlay;
+  pointer-events:none;
+  opacity:.55; /* Slightly reduced now that global gradient exists */
+}
+
 .reveal-section { opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
 .reveal-section.is-visible { opacity:1; transform:translateY(0); }
+
+/* =============================
+   Keynote-inspired Utility Layer (original implementation)
+   NOTE: These classes are custom, not copied from Tailwind UI source.
+   They leverage existing design tokens (teal aurora palette & gradients).
+================================ */
+
+/* Layout scale tokens */
+:root {
+  --section-y: 6rem; /* 96px */
+  --section-y-tight: 3.5rem; /* 56px */
+  --content-max: 80rem; /* 1280px */
+  --content-readable: 60ch; /* text line length */
+  --panel-radius: 1.25rem;
+  --ring-outline: 0 0 0 3px color-mix(in oklab,var(--accent) 60%, transparent),0 0 0 6px color-mix(in oklab,var(--background) 90%, transparent);
+}
+.dark {
+  --section-y: 6.5rem;
+  --section-y-tight: 3.75rem;
+}
+
+/* Containers */
+.container-pro { width:100%; margin-inline:auto; padding-inline:1.5rem; max-width:var(--content-max); }
+@media (min-width: 640px){ .container-pro{ padding-inline:2rem; } }
+@media (min-width: 1024px){ .container-pro{ padding-inline:3rem; } }
+
+/* Section wrappers */
+.section { position:relative; padding-block:var(--section-y); }
+.section-tight { position:relative; padding-block:var(--section-y-tight); }
+.section-muted { background:color-mix(in oklab,var(--background) 82%, var(--accent) 2%); }
+.section-faint-gradient { background:linear-gradient(180deg,color-mix(in oklab,var(--background) 96%, var(--accent) 4%) 0%, var(--background) 60%); }
+
+/* Eyebrow label (small uppercase pre-heading) */
+.eyebrow { display:inline-block; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; font-weight:600; color:color-mix(in oklab,var(--foreground) 55%, var(--accent) 30%); background:color-mix(in oklab,var(--accent) 15%, transparent); padding:0.35rem 0.55rem; border-radius:999px; line-height:1; }
+
+/* Headline emphasis helpers */
+.headline-gradient { background:linear-gradient(90deg,var(--accent), color-mix(in oklab,var(--accent) 65%, var(--foreground) 35%)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.subhead-muted { color: var(--muted-foreground); max-width:var(--content-readable); }
+
+/* Panel & card primitives */
+.panel { position:relative; border:1px solid color-mix(in oklab,var(--border) 75%, var(--accent) 15%); background:color-mix(in oklab,var(--background) 85%, var(--accent) 5%); border-radius:var(--panel-radius); padding:2rem; box-shadow:0 1px 2px 0 rgba(0,0,0,.15), 0 4px 12px -2px rgba(0,0,0,.12); }
+.panel-inset { background:color-mix(in oklab,var(--background) 78%, var(--accent) 7%); }
+.panel-gradient-border { background:linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(120deg,var(--accent), color-mix(in oklab,var(--accent) 60%, var(--foreground) 25%), var(--accent)) border-box; border:1px solid transparent; }
+.soft-card { position:relative; padding:1.5rem 1.25rem; border-radius:1rem; background:color-mix(in oklab,var(--background) 92%, var(--accent) 4%); border:1px solid color-mix(in oklab,var(--border) 70%, var(--accent) 10%); transition:background .4s ease, border-color .4s ease, transform .35s ease; }
+.soft-card:hover { background:color-mix(in oklab,var(--background) 88%, var(--accent) 7%); border-color:color-mix(in oklab,var(--border) 55%, var(--accent) 25%); }
+.soft-card:focus-visible { outline:0; box-shadow:var(--ring-outline); }
+.soft-card-grid { display:grid; gap:1.25rem; }
+@media (min-width:640px){ .soft-card-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (min-width:1024px){ .soft-card-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+
+/* Feature list icon circle */
+.feature-icon { width:2.75rem; height:2.75rem; display:grid; place-items:center; border-radius:0.85rem; background:linear-gradient(135deg,color-mix(in oklab,var(--accent) 55%, transparent), color-mix(in oklab,var(--accent) 15%, transparent)); color:var(--accent-foreground); box-shadow:0 1px 2px rgba(0,0,0,.25) inset, 0 0 0 1px color-mix(in oklab,var(--accent) 35%, transparent); }
+
+/* Stats band */
+.stats-band { display:grid; gap:2rem; padding:2.5rem 1.5rem; border-radius:var(--panel-radius); background:linear-gradient(90deg,color-mix(in oklab,var(--background) 84%, var(--accent) 6%), color-mix(in oklab,var(--background) 90%, var(--accent) 4%)); border:1px solid color-mix(in oklab,var(--border) 60%, var(--accent) 20%); }
+@media (min-width:640px){ .stats-band { grid-template-columns:repeat(auto-fit,minmax(10rem,1fr)); padding:3rem 2.5rem; } }
+.stat { text-align:left; }
+.stat-value { font-size:2.25rem; font-weight:700; line-height:1.05; letter-spacing:-0.02em; background:linear-gradient(90deg,var(--accent), color-mix(in oklab,var(--accent) 55%, var(--foreground) 35%)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.stat-label { margin-top:.5rem; font-size:.8rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:color-mix(in oklab,var(--muted-foreground) 80%, var(--accent) 35%); }
+
+/* Testimonial card */
+.testimonial { position:relative; background:color-mix(in oklab,var(--background) 88%, var(--accent) 6%); border:1px solid color-mix(in oklab,var(--border) 55%, var(--accent) 25%); padding:1.75rem 1.5rem 1.5rem; border-radius:1.25rem; box-shadow:0 2px 6px -2px rgba(0,0,0,.25), 0 1px 2px rgba(0,0,0,.25); }
+.testimonial::before { content:"“"; position:absolute; top:.5rem; left:.9rem; font-size:3.5rem; line-height:1; color:color-mix(in oklab,var(--accent) 65%, var(--foreground) 15%); opacity:.18; pointer-events:none; }
+.testimonial-author { display:flex; gap:.75rem; align-items:center; margin-top:1.25rem; font-size:.9rem; }
+.testimonial-author img { width:42px; height:42px; border-radius:50%; object-fit:cover; border:1px solid color-mix(in oklab,var(--accent) 40%, transparent); }
+
+/* Logo cloud */
+.logo-cloud { display:grid; gap:2rem; align-items:center; justify-items:center; }
+@media (min-width:640px){ .logo-cloud { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (min-width:1024px){ .logo-cloud { grid-template-columns:repeat(6,minmax(0,1fr)); } }
+.logo-cloud img { max-height:40px; width:auto; filter:grayscale(100%) contrast(1.1); opacity:.65; transition:opacity .35s ease, filter .35s ease; }
+.logo-cloud img:hover { opacity:1; filter:grayscale(0%) contrast(1); }
+
+/* CTA Panel */
+.cta-panel { position:relative; overflow:hidden; border-radius:var(--panel-radius); padding:3.25rem clamp(1.5rem,3vw,3.5rem); background:linear-gradient(135deg,color-mix(in oklab,var(--accent) 55%, var(--background) 45%), color-mix(in oklab,var(--accent) 70%, var(--background) 30%)); color:var(--accent-foreground); }
+.cta-panel::after { content:""; position:absolute; inset:0; background:radial-gradient(circle at 70% 30%, color-mix(in oklab,var(--accent-foreground) 22%, transparent), transparent 65%); mix-blend-mode:overlay; opacity:.55; pointer-events:none; }
+.cta-panel h2, .cta-panel h3 { color: var(--primary-foreground); }
+.cta-panel .cta-actions { display:flex; flex-wrap:wrap; gap:1rem; margin-top:2rem; }
+
+/* Focus helper */
+.focus-ring { outline:0; box-shadow:var(--ring-outline); }
+
+/* Fade edge utility (overflow mask) */
+.fade-edge { --fade-size: 40px; position:relative; mask:linear-gradient(to bottom, transparent 0, #000 var(--fade-size), #000 calc(100% - var(--fade-size)), transparent 100%); }
+
+/* Media queries for fine-tuning large headings if used with utilities */
+@media (min-width:1024px){
+  .text-display { font-size:clamp(3rem,5vw,4.5rem); line-height:1.05; letter-spacing:-0.03em; }
+  .text-eyebrow-lg { font-size:.8rem; }
+}
+
+/* Dark mode subtle adjustments for new utilities */
+.dark .soft-card { background:color-mix(in oklab,var(--background) 75%, var(--accent) 9%); }
+.dark .soft-card:hover { background:color-mix(in oklab,var(--background) 70%, var(--accent) 14%); }
+.dark .testimonial { background:color-mix(in oklab,var(--background) 65%, var(--accent) 15%); }
+.dark .logo-cloud img { opacity:.55; }
+.dark .logo-cloud img:hover { opacity:.95; }
+

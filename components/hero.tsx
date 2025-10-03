@@ -52,14 +52,14 @@ export function Hero() {
   }, [showCaret])
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center px-6 pt-44 pb-24 scroll-mt-32">
-      <div className="max-w-4xl w-full">
+    <section id="home" className="section-accent accent-blue px-6 pt-40 pb-24 scroll-mt-32">
+      <div className="max-w-5xl mx-auto">
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground rounded px-3 py-1">
           Skip to content
         </a>
         <div id="main" className="scroll-mt-24">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-10">
-            <div className="shrink-0 w-48 md:w-56 overflow-hidden rounded-2xl">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-12">
+            <div className="shrink-0 w-48 md:w-60 overflow-hidden rounded-2xl shadow-sm bg-card/70 backdrop-blur supports-[backdrop-filter]:bg-card/50 border border-border/60">
               <Image
                 src="/Image/Sivasankaramalan.png"
                 alt="Portrait of Sivasankaramalan"
@@ -69,18 +69,18 @@ export function Hero() {
                 className="max-w-full h-auto object-contain bg-transparent"
               />
             </div>
-            <div className="space-y-6 text-center md:text-left max-w-2xl">
-              <h1 className="text-5xl md:text-7xl font-bold text-balance">
-                Hola! 👋, I’m <span className="text-primary">Sivasankaramalan</span> <span role="img" aria-label="technologist"></span>
+            <div className="space-y-7 text-center md:text-left max-w-2xl">
+              <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-balance headline-gradient">
+                Hola! 👋 I’m <span className="text-primary">Sivasankaramalan</span>
               </h1>
-              <h2 className="text-3xl md:text-4xl font-semibold text-muted-foreground font-medium tracking-tight">
+              <h2 className="text-2xl md:text-3xl font-semibold text-muted-foreground tracking-tight">
                 <span>{subhead}</span>
-                {showCaret && <span className="ml-1 inline-block w-2 h-7 md:h-8 bg-primary align-middle animate-pulse rounded-sm" aria-hidden />}
+                {showCaret && <span className="ml-1 inline-block w-2 h-6 md:h-7 bg-primary align-middle animate-pulse rounded-sm" aria-hidden />}
               </h2>
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                Over the past decade, I’ve led QA initiatives at scale from shift-left testing practices to AI-driven automation frameworks. My mission is simple: help teams build software that’s reliable, scalable, and loved by users.
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed subhead-muted">
+                Over the past decade, I’ve led QA initiatives at scale—from shift-left practices to AI-driven automation frameworks—helping teams ship reliable, scalable, user-loved software.
               </p>
-              <div className="flex flex-wrap gap-4 pt-2 justify-center md:justify-start">
+              <div className="flex flex-wrap gap-4 pt-3 justify-center md:justify-start">
                 <Button size="lg" className="gap-2" asChild>
                   <a href="#contact">
                     <Mail className="h-4 w-4" />
@@ -88,7 +88,7 @@ export function Hero() {
                   </a>
                 </Button>
                 <Button size="lg" variant="outline" className="gap-2 bg-transparent" asChild>
-                  <a href="/api/resume/view" target="_blank" rel="noopener noreferrer">
+                  <a href="/resume">
                     <FileText className="h-4 w-4" />
                     View Resume
                   </a>
