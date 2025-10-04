@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/sheet"
 import { Menu, X } from "lucide-react"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { useInPageNav } from "@/hooks/use-in-page-nav"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
@@ -57,7 +56,6 @@ export function SiteHeader() {
     return () => observer.disconnect()
   }, [headerHeight])
 
-  const isMobile = useIsMobile()
 
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -232,10 +230,10 @@ export function SiteHeader() {
                         href={fragmentHash}
                         data-nav-fragment={link.fragment}
                         className={cn(
-                          "px-3 py-1 text-sm rounded-full transition-colors hover:text-primary nav-link focus-gradient outline-none",
+                          "px-3 py-1 text-sm rounded-full transition-colors nav-link focus-gradient outline-none",
                           isActive
-                            ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-offset-background ring-[color:var(--nav-accent)] is-active"
-                            : "text-muted-foreground hover:bg-muted"
+                            ? "text-primary is-active"
+                            : "text-muted-foreground hover:text-primary"
                         )}
                         aria-current={isActive ? 'page' : undefined}
                       >
@@ -245,10 +243,10 @@ export function SiteHeader() {
                       <Link
                         href={href}
                         className={cn(
-                          "px-3 py-1 text-sm rounded-full transition-colors hover:text-primary nav-link focus-gradient outline-none",
+                          "px-3 py-1 text-sm rounded-full transition-colors nav-link focus-gradient outline-none",
                           isActive
-                            ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-offset-background ring-[color:var(--nav-accent)] is-active"
-                            : "text-muted-foreground hover:bg-muted"
+                            ? "text-primary is-active"
+                            : "text-muted-foreground hover:text-primary"
                         )}
                         scroll={true}
                       >

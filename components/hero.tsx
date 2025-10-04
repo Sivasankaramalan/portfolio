@@ -70,18 +70,18 @@ export function Hero() {
               />
             </div>
             <div className="space-y-7 text-center md:text-left max-w-2xl">
-              <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-balance headline-gradient">
-                Hola! 👋 I’m <span className="text-primary">Sivasankaramalan</span>
+              <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-balance">
+                Hola! 👋 I’m <span className="hero-name-gradient">Sivasankaramalan</span>
               </h1>
               <h2 className="text-2xl md:text-3xl font-semibold text-muted-foreground tracking-tight">
                 <span>{subhead}</span>
                 {showCaret && <span className="ml-1 inline-block w-2 h-6 md:h-7 bg-primary align-middle animate-pulse rounded-sm" aria-hidden />}
               </h2>
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed subhead-muted">
-                Over the past decade, I’ve led QA initiatives at scale—from shift-left practices to AI-driven automation frameworks—helping teams ship reliable, scalable, user-loved software.
-              </p>
+              <p className="text-lg md:text-xl leading-relaxed subhead-muted text-justify">
+                Over the past decade, I’ve been at the forefront of Quality Engineering championing Shift-Left practices, architecting AI driven automation frameworks, and shaping reliable, scalable, and exceptional digital experiences.
+                </p>
               <div className="flex flex-wrap gap-4 pt-3 justify-center md:justify-start">
-                <Button size="lg" className="gap-2" asChild>
+                <Button size="lg" variant="outline" className="gap-2" asChild>
                   <a href="#contact">
                     <Mail className="h-4 w-4" />
                     Get in Touch

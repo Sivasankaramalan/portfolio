@@ -45,10 +45,10 @@ export function ThemeToggle() {
             aria-label={label}
             onClick={() => setTheme(value)}
             className={cn(
-              "px-2 py-1 text-sm rounded-full transition-colors hover:text-primary focus-gradient outline-none",
+              "px-2 py-1 text-sm rounded-full transition-colors hover:text-primary outline-none",
               isActive
-                ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-offset-background ring-primary"
-                : "text-muted-foreground hover:bg-muted"
+                ? "bg-primary text-primary-foreground ring-1 ring-offset-1 ring-offset-background ring-primary/70 shadow-sm"
+                : "text-muted-foreground hover:bg-muted focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-1 focus-visible:ring-offset-background"
             )}
           >
             <Icon className="h-4 w-4" />

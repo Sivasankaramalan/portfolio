@@ -6,12 +6,17 @@ export function About() {
     <section id="about" className="section-accent accent-blue px-6 py-20 scroll-mt-32">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">About Me</h2>
-        <div className="space-y-6 text-lg leading-relaxed text-muted-foreground mb-12 max-w-3xl">
+        <div
+          className="space-y-6 text-lg leading-relaxed text-muted-foreground mb-12 text-justify"
+        >
           <p>
-            I'm a Quality Engineering professional with a decade of experience ensuring mobile applications meet the highest standards of quality, performance, and reliability. My focus: scalable automation, sustainable processes, measurable impact.
+            I’m a Quality Engineering leader with over a decade of experience helping organizations deliver mobile and web applications that excel in quality, performance, and reliability. My work is rooted in building scalable automation frameworks, driving sustainable processes, and ensuring measurable business impact.
           </p>
           <p>
-            I partner with cross-functional teams to shift quality left, build frameworks from the ground up, mentor engineers, and enable rapid, confident delivery. I believe in pragmatic automation and data-informed improvement loops.
+            I thrive at the intersection of engineering and collaboration partnering with cross-functional teams to shift quality left, architect frameworks from the ground up, and mentor engineers into quality champions. My philosophy centers on pragmatic automation, data-informed improvement loops, and fostering a culture where quality is everyone’s responsibility.
+          </p>
+          <p>
+            At my core, I’m passionate about enabling teams to deliver faster, smarter, and more confidently  ensuring products are not just built, but built to delight at scale
           </p>
         </div>
 
