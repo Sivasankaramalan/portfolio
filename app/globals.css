@@ -54,6 +54,11 @@
   --clr-horizon-a20: oklab(57.3% -0.024 -0.053);
   --clr-horizon-a30: oklab(85.7% -0.014 -0.023);
   --clr-horizon-a40: oklab(100% 0 0);
+  /* Berry basket palette (hex fallbacks overridden via @supports) */
+  --clr-berry-a0: #E04F67; /* L63 oklab(63% 0.175 0.044) */
+  --clr-berry-a10: #C72C4A; /* L54.9 oklab(54.9% 0.182 0.052) */
+  --clr-berry-a20: #7B1E6A; /* L41.6 oklab(41.6% 0.14 -0.061) */
+  --clr-berry-a30: #4A1442; /* L30 oklab(30% 0.091 -0.044) */
 }
 
 /* Teal Aurora Dark Theme */
@@ -102,6 +107,26 @@
   --clr-horizon-a20: oklab(57.3% -0.024 -0.053);
   --clr-horizon-a30: oklab(85.7% -0.014 -0.023);
   --clr-horizon-a40: oklab(100% 0 0);
+  /* Berry basket palette (dark uses same stops) */
+  --clr-berry-a0: #E04F67;
+  --clr-berry-a10: #C72C4A;
+  --clr-berry-a20: #7B1E6A;
+  --clr-berry-a30: #4A1442;
+}
+/* Override berry palette with OKLab where supported */
+@supports (color: oklab(50% 0 0)) {
+  :root {
+    --clr-berry-a0: oklab(63% 0.175 0.044);
+    --clr-berry-a10: oklab(54.9% 0.182 0.052);
+    --clr-berry-a20: oklab(41.6% 0.14 -0.061);
+    --clr-berry-a30: oklab(30% 0.091 -0.044);
+  }
+  .dark {
+    --clr-berry-a0: oklab(63% 0.175 0.044);
+    --clr-berry-a10: oklab(54.9% 0.182 0.052);
+    --clr-berry-a20: oklab(41.6% 0.14 -0.061);
+    --clr-berry-a30: oklab(30% 0.091 -0.044);
+  }
 }
 
 /* Base adjustments */
@@ -164,23 +189,23 @@ body, code, pre, kbd, samp { font-family: var(--font-sans), system-ui, sans-seri
 /* Glassy pill nav style (no top underline) */
 .nav-link { position:relative; isolation:isolate; }
 .nav-link::before {
-  /* Horizon palette based pill gradients */
+  /* Berry basket gradients */
   --pill-gradient-base: linear-gradient(135deg,
-    var(--clr-horizon-a0) 0%,
-    var(--clr-horizon-a10) 40%,
-    var(--clr-horizon-a20) 70%,
-    var(--clr-horizon-a30) 100%);
+    var(--clr-berry-a30) 0%,
+    var(--clr-berry-a20) 45%,
+    var(--clr-berry-a10) 75%,
+    var(--clr-berry-a0) 100%);
   --pill-gradient-active: linear-gradient(140deg,
-    var(--clr-horizon-a10) 0%,
-    var(--clr-horizon-a20) 30%,
-    var(--clr-horizon-a30) 65%,
-    var(--clr-horizon-a40) 100%);
+    var(--clr-berry-a20) 0%,
+    var(--clr-berry-a10) 35%,
+    var(--clr-berry-a0) 70%,
+    var(--clr-berry-a0) 100%);
   content:""; position:absolute; inset:0; border-radius:999px; z-index:-1;
   background:var(--pill-gradient-base);
   backdrop-filter:blur(10px) saturate(150%);
   -webkit-backdrop-filter:blur(10px) saturate(150%);
-  border:1px solid color-mix(in oklab,var(--accent) 42%, var(--border) 58%);
-  box-shadow:0 1px 2px -1px rgba(0,0,0,.35), 0 0 0 1px color-mix(in oklab,var(--border) 60%, transparent);
+  border:1px solid color-mix(in oklab,var(--clr-berry-a10) 65%, var(--clr-berry-a0) 35%);
+  box-shadow:0 1px 2px -1px rgba(0,0,0,.35), 0 0 0 1px color-mix(in oklab,var(--clr-berry-a20) 45%, transparent);
   opacity:0; transform:scale(.92);
   transition:opacity .5s cubic-bezier(.4,.1,.2,1), transform .55s cubic-bezier(.4,.1,.2,1), background .65s, border-color .55s, box-shadow .6s;
 }
@@ -188,28 +213,28 @@ body, code, pre, kbd, samp { font-family: var(--font-sans), system-ui, sans-seri
 .nav-link.is-active::before {
   opacity:1; transform:scale(1);
   background:var(--pill-gradient-active);
-  border-color:color-mix(in oklab,var(--accent) 70%, var(--border) 30%);
-  box-shadow:0 2px 4px -1px rgba(0,0,0,.55), 0 4px 14px -4px color-mix(in oklab,var(--accent) 55%, transparent), 0 0 0 1px color-mix(in oklab,var(--accent) 55%, var(--background) 45%);
+  border-color:color-mix(in oklab,var(--clr-berry-a10) 75%, var(--clr-berry-a0) 25%);
+  box-shadow:0 2px 4px -1px rgba(0,0,0,.55), 0 4px 16px -4px color-mix(in oklab,var(--clr-berry-a10) 55%, transparent), 0 0 0 1px color-mix(in oklab,var(--clr-berry-a0) 65%, var(--background) 35%);
 }
 .dark .nav-link::before {
   --pill-gradient-base: linear-gradient(145deg,
-    var(--clr-horizon-a0) 0%,
-    var(--clr-horizon-a10) 35%,
-    var(--clr-horizon-a20) 70%,
-    var(--clr-horizon-a30) 100%);
+    var(--clr-berry-a30) 0%,
+    var(--clr-berry-a20) 40%,
+    var(--clr-berry-a10) 75%,
+    var(--clr-berry-a0) 100%);
   --pill-gradient-active: linear-gradient(150deg,
-    var(--clr-horizon-a10) 0%,
-    var(--clr-horizon-a20) 30%,
-    var(--clr-horizon-a30) 65%,
-    var(--clr-horizon-a40) 100%);
+    var(--clr-berry-a20) 0%,
+    var(--clr-berry-a10) 35%,
+    var(--clr-berry-a0) 70%,
+    var(--clr-berry-a0) 100%);
   background:var(--pill-gradient-base);
-  border-color:color-mix(in oklab,var(--accent) 48%, var(--border) 52%);
-  box-shadow:0 1px 2px -1px rgba(0,0,0,.65), 0 0 0 1px color-mix(in oklab,var(--accent) 38%, transparent);
+  border-color:color-mix(in oklab,var(--clr-berry-a20) 55%, var(--clr-berry-a0) 45%);
+  box-shadow:0 1px 2px -1px rgba(0,0,0,.65), 0 0 0 1px color-mix(in oklab,var(--clr-berry-a20) 55%, transparent);
 }
 .dark .nav-link.is-active::before {
-  background:linear-gradient(145deg,color-mix(in oklab,var(--accent) 65%, var(--background) 40%), color-mix(in oklab,var(--accent) 42%, var(--background) 55%));
-  border-color:color-mix(in oklab,var(--accent) 75%, var(--border) 25%);
-  box-shadow:0 2px 6px -2px rgba(0,0,0,.75), 0 5px 18px -6px color-mix(in oklab,var(--accent) 65%, transparent), 0 0 0 1px color-mix(in oklab,var(--accent) 65%, var(--background) 35%);
+  background:var(--pill-gradient-active);
+  border-color:color-mix(in oklab,var(--clr-berry-a10) 80%, var(--clr-berry-a0) 20%);
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.75), 0 6px 20px -6px color-mix(in oklab,var(--clr-berry-a10) 65%, transparent), 0 0 0 1px color-mix(in oklab,var(--clr-berry-a0) 70%, var(--background) 30%);
 }
 /* Inner highlight for depth (active & focus states) */
 .nav-link.is-active::after, .nav-link:focus-visible::after {

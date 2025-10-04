@@ -110,6 +110,7 @@ export function SiteHeader() {
         Skip to content
       </a>
 
+
       {/* Mobile sheet controller & persistent header left cluster */}
       <div className="md:hidden mr-3 flex items-center gap-2">
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
