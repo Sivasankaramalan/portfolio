@@ -1,10 +1,15 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/sheet"
+import { Menu, X } from "lucide-react"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { useInPageNav } from "@/hooks/use-in-page-nav"
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
 const NAV_LINKS = [
   { fragment: "home", label: "Home" },
@@ -22,6 +27,9 @@ export function SiteHeader() {
   // Unified accent; no per-section dynamic color now
   const pathname = usePathname()
 
+  const headerRef = useRef<HTMLElement | null>(null)
+  const [headerHeight, setHeaderHeight] = useState<number>(56)
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 8)
@@ -31,54 +39,256 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  // IntersectionObserver + persist last visited section (rootMargin adapts to header)
   useEffect(() => {
+    const stored = localStorage.getItem('last-section')
+    if (stored) setActive(stored)
     const sectionIds = NAV_LINKS.map(l => l.fragment)
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          setActive('#' + entry.target.id)
+          const hash = '#' + entry.target.id
+          setActive(hash)
+          localStorage.setItem('last-section', hash)
         }
       })
-    }, { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.1, 0.25, 0.5] })
+    }, { rootMargin: `-${Math.max(10, headerHeight + 20)}px 0px -55% 0px`, threshold: [0.15, 0.5] })
     sectionIds.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el) })
     return () => observer.disconnect()
+  }, [headerHeight])
+
+  const isMobile = useIsMobile()
+
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (!headerRef.current) return
+    const measure = () => {
+      const h = headerRef.current?.getBoundingClientRect().height || 56
+      setHeaderHeight(Math.round(h))
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(headerRef.current)
+    window.addEventListener('resize', measure)
+    return () => { ro.disconnect(); window.removeEventListener('resize', measure) }
   }, [])
 
+  // Lock body scroll when menu open (mobile)
+  useEffect(() => {
+    if (menuOpen) {
+      const original = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => { document.body.style.overflow = original }
+    }
+  }, [menuOpen])
+
+  // NOTE: Relying on native anchor navigation + CSS scroll-mt-* on sections.
+  // If offset issues persist, reintroduce minimal scroll adjustment.
+
+  // Use extracted navigation hook for delegated in-page nav with focus management
+  useInPageNav({
+    enabled: pathname === '/',
+    headerHeight,
+    onActivate: (hash) => setActive(hash),
+    closeMenu: menuOpen ? () => setMenuOpen(false) : undefined,
+    focus: true,
+  })
+
   return (
-  <header className={cn("fixed top-0 left-0 right-0 z-50 flex justify-center px-4 py-2 transition-all", scrolled ? "glass border-b" : "bg-transparent")}
+    <header
+      ref={headerRef}
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 flex items-center px-4 transition-colors",
+        "h-14 min-h-14", // stabilize height
+        scrolled ? "glass border-b" : "bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/55"
+      )}
       role="banner"
     >
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground rounded px-3 py-1">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground rounded px-3 py-1"
+      >
         Skip to content
       </a>
-      <nav aria-label="Primary" className="flex items-center justify-center">
-        <ul className="flex gap-2 rounded-full glass-elevated px-4 py-2" style={{ ['--nav-accent' as any]: 'var(--accent)' }}>
-          {NAV_LINKS.map(link => {
-            const fragmentHash = `#${link.fragment}`
-            const href = pathname === '/' ? fragmentHash : `/${fragmentHash}`
-            const isActive = active === fragmentHash
-            return (
-              <li key={link.fragment}>
-                <Link
-                  href={href}
-                  className={cn(
-                    "px-3 py-1 text-sm rounded-full transition-colors hover:text-primary nav-link focus-gradient outline-none",
-                    isActive
-                      ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-offset-background ring-[color:var(--nav-accent)] is-active"
-                      : "text-muted-foreground hover:bg-muted"
-                  )}
-                  scroll={true}
+
+      {/* Mobile sheet controller & persistent header left cluster */}
+      <div className="md:hidden mr-3 flex items-center gap-2">
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+          <div className="relative w-12 h-12">
+            {!menuOpen && (
+              <SheetTrigger asChild>
+                <button
+                  aria-label="Open menu"
+                  className="absolute inset-0 inline-flex items-center justify-center rounded-xl p-3.5 bg-primary text-primary-foreground shadow-sm hover:brightness-110 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-all animate-in fade-in zoom-in"
                 >
-                  {link.label}
-                </Link>
-              </li>
-            )
-          })}
-          <li className="flex items-center ml-2 pl-2 border-l border-border/50">
-            <ThemeToggle />
-          </li>
-        </ul>
-      </nav>
+                  <Menu className="h-6 w-6 transition-transform duration-300" />
+                </button>
+              </SheetTrigger>
+            )}
+            {menuOpen && (
+              <SheetClose asChild>
+                <button
+                  aria-label="Close menu"
+                  className="absolute inset-0 inline-flex items-center justify-center rounded-xl p-3.5 bg-primary text-primary-foreground shadow-sm hover:brightness-110 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 transition-all animate-in fade-in rotate-in"
+                >
+                  <X className="h-6 w-6 transition-transform duration-300" />
+                </button>
+              </SheetClose>
+            )}
+          </div>
+          <SheetContent
+            side="left"
+            showClose={false}
+            offsetTop={headerHeight}
+            className="p-0 flex inset-0 w-full max-w-none bg-primary text-primary-foreground data-[state=open]:animate-in data-[state=closed]:animate-out"
+          >
+            <div className="flex flex-col h-full w-full pt-4">
+              <nav aria-label="Mobile" className="flex-1 overflow-y-auto px-5 pb-12">
+                <ul className="space-y-2 pointer-events-auto">
+                  {NAV_LINKS.map(link => {
+                    const fragmentHash = `#${link.fragment}`
+                    const href = pathname === '/' ? fragmentHash : `/${fragmentHash}`
+                    const isActive = active === fragmentHash
+                    return (
+                      <li
+                        key={link.fragment}
+                        style={{ animationDelay: `${NAV_LINKS.findIndex(l=>l.fragment===link.fragment) * 50}ms` }}
+                        className="opacity-0 animate-fadeSlide"
+                      >
+                        <SheetClose asChild>
+                          {pathname === '/' ? (
+                            <a
+                              href={fragmentHash}
+                              data-nav-fragment={link.fragment}
+                              className={cn(
+                                "flex w-full items-center justify-between rounded-md px-4 py-3 text-base font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/50 tracking-tight",
+                                isActive
+                                  ? "bg-primary-foreground text-primary"
+                                  : "bg-primary/25 hover:bg-primary/35 text-primary-foreground"
+                              )}
+                              aria-current={isActive ? 'page' : undefined}
+                            >
+                              <span>{link.label}</span>
+                            </a>
+                          ) : (
+                            <Link
+                              href={href}
+                              className={cn(
+                                "flex w-full items-center justify-between rounded-md px-4 py-3 text-base font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/50 tracking-tight",
+                                isActive
+                                  ? "bg-primary-foreground text-primary"
+                                  : "bg-primary/25 hover:bg-primary/35 text-primary-foreground"
+                              )}
+                              scroll={true}
+                            >
+                              <span>{link.label}</span>
+                            </Link>
+                          )}
+                        </SheetClose>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </nav>
+              <div className="px-5 py-4 text-[11px] tracking-wide uppercase opacity-70">© {new Date().getFullYear()}</div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Mobile: top-right theme toggle */}
+      <div className="md:hidden ml-auto flex items-center pr-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div aria-label="Theme selector" role="group" className="inline-flex">
+              <span className="sr-only">Theme</span>
+              <ThemeToggle />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Switch theme</TooltipContent>
+        </Tooltip>
+      </div>
+
+      {/* Desktop: separate nav and theme toggle groups */}
+      <div className="hidden md:flex items-center mx-auto pr-2 gap-3">
+        <div
+          className={cn(
+            "group flex items-stretch glass-elevated rounded-full pl-3 pr-2 py-1.5 gap-2 relative",
+            "before:absolute before:inset-0 before:rounded-full before:pointer-events-none",
+            "before:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_2px_4px_-1px_rgba(255,255,255,0.08),inset_0_-2px_4px_-1px_rgba(0,0,0,0.25)]"
+          )}
+        >
+          <nav aria-label="Primary" className="flex">
+            <ul className="flex gap-1" style={{ ['--nav-accent' as any]: 'var(--accent)' }}>
+              {NAV_LINKS.map(link => {
+                const fragmentHash = `#${link.fragment}`
+                const href = pathname === '/' ? fragmentHash : `/${fragmentHash}`
+                const isActive = active === fragmentHash
+                return (
+                  <li key={link.fragment} style={{ animationDelay: `${NAV_LINKS.findIndex(l=>l.fragment===link.fragment) * 55}ms` }} className="opacity-0 animate-fadeSlide">
+                    {pathname === '/' ? (
+                      <a
+                        href={fragmentHash}
+                        data-nav-fragment={link.fragment}
+                        className={cn(
+                          "px-3 py-1 text-sm rounded-full transition-colors hover:text-primary nav-link focus-gradient outline-none",
+                          isActive
+                            ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-offset-background ring-[color:var(--nav-accent)] is-active"
+                            : "text-muted-foreground hover:bg-muted"
+                        )}
+                        aria-current={isActive ? 'page' : undefined}
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={href}
+                        className={cn(
+                          "px-3 py-1 text-sm rounded-full transition-colors hover:text-primary nav-link focus-gradient outline-none",
+                          isActive
+                            ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-offset-background ring-[color:var(--nav-accent)] is-active"
+                            : "text-muted-foreground hover:bg-muted"
+                        )}
+                        scroll={true}
+                      >
+                        {link.label}
+                      </Link>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          </nav>
+        </div>
+        <div
+          role="presentation"
+          aria-hidden="true"
+          className={cn(
+            "h-6 w-px bg-gradient-to-b from-transparent via-border/60 to-transparent transition-opacity duration-300",
+            scrolled ? "opacity-60" : "opacity-25"
+          )}
+        />
+        <div
+          className={cn(
+            "glass-elevated rounded-full px-1.5 py-1.5 flex items-center relative",
+            "before:absolute before:inset-0 before:rounded-full before:pointer-events-none",
+            "before:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_2px_4px_-1px_rgba(255,255,255,0.08),inset_0_-2px_4px_-1px_rgba(0,0,0,0.25)]"
+          )}
+          role="group" aria-label="Theme selector"
+        >
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="relative inline-flex">
+                <span className="sr-only">Theme</span>
+                <ThemeToggle />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Switch theme</TooltipContent>
+          </Tooltip>
+        </div>
+      </div>
+
     </header>
   )
 }

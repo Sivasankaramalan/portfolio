@@ -268,3 +268,7 @@ body, code, pre, kbd, samp { font-family: var(--font-sans), system-ui, sans-seri
 .dark .logo-cloud img { opacity:.55; }
 .dark .logo-cloud img:hover { opacity:.95; }
 
+/* Header nav item fade/slide animation */
+@keyframes fadeSlideIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+.animate-fadeSlide { animation: fadeSlideIn 0.48s cubic-bezier(.4,.1,.2,1) forwards; }
+
