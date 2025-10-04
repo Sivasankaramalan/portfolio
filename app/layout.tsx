@@ -9,9 +9,36 @@ import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "QE Engineer Portfolio - Mobile Automation Specialist",
-  description: "10 years of experience in quality engineering and mobile automation",
-  generator: "v0.app",
+  title: {
+    default: "Sivasankaramalan",
+    template: "%s · Sivasankaramalan"
+  },
+  description: "Quality Engineering Leader – Mobile & Web Automation, Shift-Left, Reliability Engineering",
+  generator: "portfolio",
+  keywords: [
+    "Sivasankaramalan",
+    "Quality Engineering",
+    "SDET",
+    "Mobile Automation",
+    "Shift Left",
+    "Reliability",
+    "Testing Leadership"
+  ],
+  authors: [{ name: "Sivasankaramalan" }],
+  creator: "Sivasankaramalan",
+  metadataBase: new URL("https://example.com"),
+  openGraph: {
+    title: "Sivasankaramalan",
+    description: "Quality Engineering Leader – Mobile & Web Automation, Shift-Left, Reliability Engineering",
+    url: "https://example.com",
+    siteName: "Sivasankaramalan",
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sivasankaramalan",
+    description: "Quality Engineering Leader – Mobile & Web Automation, Shift-Left, Reliability Engineering"
+  }
 }
 
 // Single unified font (formerly heading font) now used for all text

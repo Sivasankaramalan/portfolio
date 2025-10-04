@@ -48,6 +48,17 @@
   --accent-amber: oklch(0.82 0.16 75);
   --accent-lime: oklch(0.80 0.15 135);
   --accent-green: oklch(0.70 0.15 155);
+  /* Horizon palette for nav pills */
+  --clr-horizon-a0: oklab(22.1% -0.019 -0.033);
+  --clr-horizon-a10: oklab(42.5% -0.015 -0.051);
+  --clr-horizon-a20: oklab(57.3% -0.024 -0.053);
+  --clr-horizon-a30: oklab(85.7% -0.014 -0.023);
+  --clr-horizon-a40: oklab(100% 0 0);
+  /* Berry basket palette (hex fallbacks overridden via @supports) */
+  --clr-berry-a0: #E04F67; /* L63 oklab(63% 0.175 0.044) */
+  --clr-berry-a10: #C72C4A; /* L54.9 oklab(54.9% 0.182 0.052) */
+  --clr-berry-a20: #7B1E6A; /* L41.6 oklab(41.6% 0.14 -0.061) */
+  --clr-berry-a30: #4A1442; /* L30 oklab(30% 0.091 -0.044) */
 }
 
 /* Teal Aurora Dark Theme */
@@ -90,6 +101,32 @@
   --accent-amber: oklch(0.74 0.15 75);
   --accent-lime: oklch(0.74 0.14 135);
   --accent-green: oklch(0.64 0.13 155);
+  /* Horizon palette (same stops; could be shifted for dark if desired) */
+  --clr-horizon-a0: oklab(22.1% -0.019 -0.033);
+  --clr-horizon-a10: oklab(42.5% -0.015 -0.051);
+  --clr-horizon-a20: oklab(57.3% -0.024 -0.053);
+  --clr-horizon-a30: oklab(85.7% -0.014 -0.023);
+  --clr-horizon-a40: oklab(100% 0 0);
+  /* Berry basket palette (dark uses same stops) */
+  --clr-berry-a0: #E04F67;
+  --clr-berry-a10: #C72C4A;
+  --clr-berry-a20: #7B1E6A;
+  --clr-berry-a30: #4A1442;
+}
+/* Override berry palette with OKLab where supported */
+@supports (color: oklab(50% 0 0)) {
+  :root {
+    --clr-berry-a0: oklab(63% 0.175 0.044);
+    --clr-berry-a10: oklab(54.9% 0.182 0.052);
+    --clr-berry-a20: oklab(41.6% 0.14 -0.061);
+    --clr-berry-a30: oklab(30% 0.091 -0.044);
+  }
+  .dark {
+    --clr-berry-a0: oklab(63% 0.175 0.044);
+    --clr-berry-a10: oklab(54.9% 0.182 0.052);
+    --clr-berry-a20: oklab(41.6% 0.14 -0.061);
+    --clr-berry-a30: oklab(30% 0.091 -0.044);
+  }
 }
 
 /* Base adjustments */
@@ -149,10 +186,65 @@ body, code, pre, kbd, samp { font-family: var(--font-sans), system-ui, sans-seri
 .glass { background-color: color-mix(in oklab,var(--background) 55%,transparent); backdrop-filter: blur(4px); border: 1px solid var(--border); }
 .glass-elevated { background-color: color-mix(in oklab,var(--background) 70%,transparent); backdrop-filter: blur(4px); border: 1px solid var(--border); box-shadow: 0 1px 2px -1px rgb(0 0 0 / 0.15); }
 .focus-gradient:focus-visible { outline: 0; box-shadow: 0 0 0 3px color-mix(in oklab,var(--accent) 65%,transparent),0 0 0 6px color-mix(in oklab,var(--background) 90%,transparent); }
-.nav-link { position: relative; }
-.nav-link::after { content:""; position:absolute; left:16%; right:16%; bottom:2px; height:2px; background: linear-gradient(90deg,var(--nav-accent,var(--primary)),var(--primary)); transform:scaleX(0); transform-origin:left; transition:transform .4s cubic-bezier(.65,.05,.36,1); border-radius:2px; }
-.nav-link.is-active::after, .nav-link:hover::after, .nav-link:focus-visible::after { transform:scaleX(1); }
-.nav-link.is-active { box-shadow: 0 0 0 2px color-mix(in oklab,var(--accent) 60%, transparent), 0 0 0 5px color-mix(in oklab,var(--background) 85%, transparent); }
+/* Glassy pill nav style (no top underline) */
+.nav-link { position:relative; isolation:isolate; }
+.nav-link::before {
+  /* Berry basket gradients */
+  --pill-gradient-base: linear-gradient(135deg,
+    var(--clr-berry-a30) 0%,
+    var(--clr-berry-a20) 45%,
+    var(--clr-berry-a10) 75%,
+    var(--clr-berry-a0) 100%);
+  --pill-gradient-active: linear-gradient(140deg,
+    var(--clr-berry-a20) 0%,
+    var(--clr-berry-a10) 35%,
+    var(--clr-berry-a0) 70%,
+    var(--clr-berry-a0) 100%);
+  content:""; position:absolute; inset:0; border-radius:999px; z-index:-1;
+  background:var(--pill-gradient-base);
+  backdrop-filter:blur(10px) saturate(150%);
+  -webkit-backdrop-filter:blur(10px) saturate(150%);
+  border:1px solid color-mix(in oklab,var(--clr-berry-a10) 65%, var(--clr-berry-a0) 35%);
+  box-shadow:0 1px 2px -1px rgba(0,0,0,.35), 0 0 0 1px color-mix(in oklab,var(--clr-berry-a20) 45%, transparent);
+  opacity:0; transform:scale(.92);
+  transition:opacity .5s cubic-bezier(.4,.1,.2,1), transform .55s cubic-bezier(.4,.1,.2,1), background .65s, border-color .55s, box-shadow .6s;
+}
+.nav-link:hover::before, .nav-link:focus-visible::before { opacity:.55; transform:scale(1); }
+.nav-link.is-active::before {
+  opacity:1; transform:scale(1);
+  background:var(--pill-gradient-active);
+  border-color:color-mix(in oklab,var(--clr-berry-a10) 75%, var(--clr-berry-a0) 25%);
+  box-shadow:0 2px 4px -1px rgba(0,0,0,.55), 0 4px 16px -4px color-mix(in oklab,var(--clr-berry-a10) 55%, transparent), 0 0 0 1px color-mix(in oklab,var(--clr-berry-a0) 65%, var(--background) 35%);
+}
+.dark .nav-link::before {
+  --pill-gradient-base: linear-gradient(145deg,
+    var(--clr-berry-a30) 0%,
+    var(--clr-berry-a20) 40%,
+    var(--clr-berry-a10) 75%,
+    var(--clr-berry-a0) 100%);
+  --pill-gradient-active: linear-gradient(150deg,
+    var(--clr-berry-a20) 0%,
+    var(--clr-berry-a10) 35%,
+    var(--clr-berry-a0) 70%,
+    var(--clr-berry-a0) 100%);
+  background:var(--pill-gradient-base);
+  border-color:color-mix(in oklab,var(--clr-berry-a20) 55%, var(--clr-berry-a0) 45%);
+  box-shadow:0 1px 2px -1px rgba(0,0,0,.65), 0 0 0 1px color-mix(in oklab,var(--clr-berry-a20) 55%, transparent);
+}
+.dark .nav-link.is-active::before {
+  background:var(--pill-gradient-active);
+  border-color:color-mix(in oklab,var(--clr-berry-a10) 80%, var(--clr-berry-a0) 20%);
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.75), 0 6px 20px -6px color-mix(in oklab,var(--clr-berry-a10) 65%, transparent), 0 0 0 1px color-mix(in oklab,var(--clr-berry-a0) 70%, var(--background) 30%);
+}
+/* Inner highlight for depth (active & focus states) */
+.nav-link.is-active::after, .nav-link:focus-visible::after {
+  content:""; position:absolute; inset:1px; border-radius:inherit; z-index:-1;
+  background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.25), rgba(255,255,255,0) 70%);
+  mix-blend-mode:overlay; opacity:.35; pointer-events:none;
+  transition:opacity .5s ease;
+}
+.nav-link:hover::after { opacity:.5; }
+.dark .nav-link.is-active::after, .dark .nav-link:focus-visible::after { background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.18), rgba(255,255,255,0) 70%); opacity:.28; }
 
 /* Hero gradient identity */
 .hero-gradient {
@@ -206,7 +298,25 @@ body, code, pre, kbd, samp { font-family: var(--font-sans), system-ui, sans-seri
 .eyebrow { display:inline-block; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; font-weight:600; color:color-mix(in oklab,var(--foreground) 55%, var(--accent) 30%); background:color-mix(in oklab,var(--accent) 15%, transparent); padding:0.35rem 0.55rem; border-radius:999px; line-height:1; }
 
 /* Headline emphasis helpers */
-.headline-gradient { background:linear-gradient(90deg,var(--accent), color-mix(in oklab,var(--accent) 65%, var(--foreground) 35%)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+/* (Removed old .headline-gradient class; using .hero-name-gradient instead) */
+
+/* Hero name gradient: slightly different angle on small screens */
+.hero-name-gradient {
+  --hero-name-gradient: linear-gradient(95deg, #FC466B 0%, #3F5EFB 100%);
+  background: var(--hero-name-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: inherit;
+  /* Subtle shadow for contrast on light backgrounds */
+  text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+}
+@media (min-width: 768px) {
+  .hero-name-gradient {
+    --hero-name-gradient: linear-gradient(90deg, #FC466B 0%, #3F5EFB 100%);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.18);
+  }
+}
 .subhead-muted { color: var(--muted-foreground); max-width:var(--content-readable); }
 
 /* Panel & card primitives */
