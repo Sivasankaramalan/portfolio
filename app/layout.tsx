@@ -56,7 +56,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-  <body className={`${fontUnified.variable} font-sans site-gradient site-gradient-colorful`}>
+      <body className={`${fontUnified.variable} font-sans site-gradient site-gradient-colorful`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <SiteHeader />
           <RevealMinimal />

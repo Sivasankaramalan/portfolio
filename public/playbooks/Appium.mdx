@@ -1,0 +1,2779 @@
+# Complete Mobile Automation (Appium) – Enhanced Playbook
+
+## Table of Contents
+- [1. Environment Setup](#1-environment-setup)
+- [2. Architecture & Core Concepts](#2-architecture--core-concepts)
+- [3. Installation & Configuration](#3-installation--configuration)
+- [4. Capabilities & Device Setup](#4-capabilities--device-setup)
+- [5. Session Management](#5-session-management)
+- [6. Element Location Strategies](#6-element-location-strategies)
+- [7. Gestures & Actions](#7-gestures--actions)
+- [8. Waits & Synchronization](#8-waits--synchronization)
+- [9. Context Switching](#9-context-switching)
+- [10. App Lifecycle Management](#10-app-lifecycle-management)
+- [11. File & Media Operations](#11-file--media-operations)
+- [12. Network & Connectivity](#12-network--connectivity)
+- [13. Device Features & Sensors](#13-device-features--sensors)
+- [14. Permissions & Settings](#14-permissions--settings)
+- [15, Advanced Testing Patterns](#advanced-testing-patterns)
+- [16. Parallel Execution & Cloud Testing](#16-parallel-execution--cloud-testing)
+- [17. CI/CD Integration](#17-cicd-integration)
+- [18. Debugging & Troubleshooting](#18-debugging--troubleshooting)
+- [19. Performance & Optimization](#19-performance--optimization)
+- [20. Best Practices & Guidelines](#20-best-practices--guidelines)
+
+## 1. Environment Setup
+
+### Prerequisites
+- Node.js: v14+ (for Appium 2.x)
+- Java: JDK 8+ (for Android)
+- Xcode: Latest version (for iOS)
+- Android Studio: Latest with SDK tools
+- Python: 3.7+ (optional for Python bindings)
+
+### System Requirements
+```bash
+# macOS (recommended for iOS testing)
+brew install node
+brew install --cask android-studio
+
+# Windows
+choco install nodejs
+choco install android-studio
+
+# Linux
+sudo apt install nodejs npm
+sudo snap install android-studio --classic
+```
+
+## 2. Architecture & Core Concepts
+
+### Appium Architecture Overview
+```text
+┌─────────────┐    HTTP/JSON    ┌──────────────┐    Platform     ┌────────────────┐
+│ Test Client │ ──────────────→ │ Appium Server│ ──────────────→ │ Mobile Device  │
+│ (Java/JS/   │                 │ (Node.js)    │    Specific     │ (iOS/Android)  │
+│  Python)    │                 │              │    Commands     │                │
+└─────────────┘                 └──────────────┘                 └────────────────┘
+```
+
+### Client-Server Communication
+- WebDriver Protocol: W3C standard for automation
+- JSON Wire Protocol: Legacy protocol (pre-W3C)
+- REST API: HTTP-based communication
+- Session-based: Each test session maintains state
+
+### Platform-Specific Drivers
+- Android: UiAutomator2 (default), Espresso
+- iOS: XCUITest (default), iOS Driver (legacy)
+- Windows: WinAppDriver
+- Mac: Mac2 Driver
+
+## 3. Installation & Configuration
+
+### Appium 2.x Installation
+```bash
+# Install Appium globally
+npm install -g appium
+
+# Install drivers
+appium driver install uiautomator2
+appium driver install xcuitest
+appium driver install espresso
+appium driver install windows
+
+# Install plugins
+appium plugin install images
+appium plugin install execute-driver
+appium plugin install relaxed-caps
+```
+
+### Environment Variables
+```bash
+# Android
+export ANDROID_HOME=/path/to/android/sdk
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+# iOS (macOS only)
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+
+# Java
+export JAVA_HOME=/path/to/java
+```
+
+### Verify Installation
+```bash
+appium doctor          # Check setup
+appium driver list     # List installed drivers
+appium plugin list     # List installed plugins
+```
+
+### Start Server with Options
+```bash
+# Basic server start
+appium server
+
+# Advanced configuration
+appium server \
+  --address 0.0.0.0 \
+  --port 4723 \
+  --session-override \
+  --log-level debug \
+  --use-plugins images,execute-driver
+```
+
+## 4. Capabilities & Device Setup
+
+### Android Capabilities (Enhanced)
+```json
+{
+  "platformName": "Android",
+  "appium:automationName": "UiAutomator2",
+  "appium:deviceName": "Android Emulator",
+  "appium:platformVersion": "13.0",
+  "appium:app": "/path/to/app.apk",
+  "appium:appPackage": "com.example.app",
+  "appium:appActivity": ".MainActivity",
+  "appium:udid": "emulator-5554",
+  "appium:systemPort": 8200,
+  "appium:chromedriverPort": 8000,
+  "appium:newCommandTimeout": 300,
+  "appium:noReset": false,
+  "appium:fullReset": false,
+  "appium:autoGrantPermissions": true,
+  "appium:skipUnlock": true,
+  "appium:ignoreHiddenApiPolicyError": true,
+  "appium:disableWindowAnimation": true,
+  "appium:skipServerInstallation": false,
+  "appium:gpsEnabled": true,
+  "appium:isHeadless": false,
+  "appium:language": "en",
+  "appium:locale": "US"
+}
+```
+
+### iOS Capabilities (Enhanced)
+```json
+{
+  "platformName": "iOS",
+  "appium:automationName": "XCUITest",
+  "appium:deviceName": "iPhone 14",
+  "appium:platformVersion": "16.0",
+  "appium:app": "/path/to/app.ipa",
+  "appium:bundleId": "com.example.app",
+  "appium:udid": "00008030-001C25C40C38802E",
+  "appium:xcodeOrgId": "TEAM123456",
+  "appium:xcodeSigningId": "iPhone Developer",
+  "appium:updatedWDABundleId": "com.example.WebDriverAgentRunner",
+  "appium:useNewWDA": false,
+  "appium:wdaStartupRetries": 4,
+  "appium:wdaStartupRetryInterval": 20000,
+  "appium:iosInstallPause": 8000,
+  "appium:skipLogCapture": false,
+  "appium:preventWDAAttachments": false,
+  "appium:simpleIsVisibleCheck": false,
+  "appium:useJSONSource": false,
+  "appium:language": "en",
+  "appium:locale": "en_US"
+}
+```
+
+### Cross-Platform Capabilities
+```json
+{
+  "appium:noReset": true,
+  "appium:newCommandTimeout": 300,
+  "appium:launchTimeout": 20000,
+  "appium:orientation": "PORTRAIT",
+  "appium:autoAcceptAlerts": false,
+  "appium:autoDismissAlerts": false,
+  "appium:nativeWebTap": true,
+  "appium:screenshotQuality": 2,
+  "appium:mjpegServerPort": 7100
+}
+```
+
+## 5. Session Management
+
+### Java Implementation
+```java
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+// Session creation with enhanced error handling
+public class SessionManager {
+    private AppiumDriver driver;
+    private static final int MAX_RETRY = 3;
+
+    public AppiumDriver createSession(DesiredCapabilities caps) {
+        for (int i = 0; i < MAX_RETRY; i++) {
+            try {
+                URL serverUrl = new URL("http://localhost:4723");
+                if (caps.getCapability("platformName").equals("Android")) {
+                    driver = new AndroidDriver(serverUrl, caps);
+                } else {
+                    driver = new IOSDriver(serverUrl, caps);
+                }
+                return driver;
+            } catch (Exception e) {
+                if (i == MAX_RETRY - 1) throw e;
+                Thread.sleep(5000);
+            }
+        }
+        return null;
+    }
+
+    public void quitSession() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
+```
+
+## 6. Element Location Strategies
+
+### Comprehensive Locator Guide
+```java
+// Accessibility ID (Preferred - Cross-platform)
+driver.findElement(AppiumBy.accessibilityId("loginButton"));
+
+// XPath (Powerful but slower)
+driver.findElement(AppiumBy.xpath("//android.widget.Button[@text='Login']"));
+
+// ID (Platform-specific resource ID)
+driver.findElement(AppiumBy.id("com.example:id/loginBtn"));
+
+// Class Name
+driver.findElement(AppiumBy.className("android.widget.Button"));
+
+// Name (iOS only - deprecated)
+driver.findElement(AppiumBy.name("Login"));
+
+// Tag Name
+driver.findElement(AppiumBy.tagName("button"));
+
+// CSS Selector (WebView context only)
+driver.findElement(AppiumBy.cssSelector(".login-button"));
+
+// Partial Link Text (WebView context)
+driver.findElement(AppiumBy.partialLinkText("Login"));
+
+// Link Text (WebView context)
+driver.findElement(AppiumBy.linkText("Click here to login"));
+```
+
+### Advanced Android Locators
+```java
+// UiAutomator Selector (Android-specific)
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().text(\"Login\").className(\"android.widget.Button\")"
+));
+
+// UiAutomator with index
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().className(\"android.widget.EditText\").instance(0)"
+));
+
+// UiAutomator with contains text
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().textContains(\"Welcome\")"
+));
+
+// UiAutomator with resource ID
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiSelector().resourceId(\"com.example:id/username\")"
+));
+
+// UiAutomator scrollable
+driver.findElement(AppiumBy.androidUIAutomator(
+    "new UiScrollable(new UiSelector().scrollable(true))" +
+    ".scrollIntoView(new UiSelector().text(\"Settings\"))"
+));
+
+// Android DataMatcher (Espresso)
+driver.findElement(AppiumBy.androidDataMatcher(
+    "{\"name\":\"hasEntry\",\"args\":[\"title\",\"ViewTitle\"]}"
+));
+
+// Android View Matcher (Espresso)
+driver.findElement(AppiumBy.androidViewMatcher(
+    "{\"name\":\"withText\",\"args\":\"Button text\"}"
+));
+```
+
+### Advanced iOS Locators
+```java
+// iOS Predicate String
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "name == 'Login' AND visible == 1"
+));
+
+// iOS Predicate with contains
+driver.findElement(AppiumBy.iOSNsPredicateString(
+    "label CONTAINS 'Welcome'"
+));
+
+// iOS Class Chain
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeButton[`label == 'Login'`]"
+));
+
+// iOS Class Chain with index
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeTextField[2]"
+));
+
+// iOS Class Chain with child elements
+driver.findElement(AppiumBy.iOSClassChain(
+    "**/XCUIElementTypeCell[`name == 'cell1'`]/XCUIElementTypeButton"
+));
+```
+
+### Dynamic Locators & Best Practices
+```java
+// Dynamic locator method
+public WebElement findElementDynamic(String platform, String text) {
+    if (platform.equals("Android")) {
+        return driver.findElement(AppiumBy.androidUIAutomator(
+            "new UiSelector().text(\"" + text + "\")"
+        ));
+    } else {
+        return driver.findElement(AppiumBy.iOSNsPredicateString(
+            "label == '" + text + "'"
+        ));
+    }
+}
+
+// Robust element finder with fallback
+public WebElement findElementRobust(By... locators) {
+    for (By locator : locators) {
+        try {
+            return driver.findElement(locator);
+        } catch (NoSuchElementException e) {
+            continue;
+        }
+    }
+    throw new NoSuchElementException("Element not found with any locator");
+}
+```
+
+## 7. Gestures & Actions
+
+### Basic Touch Actions
+```java
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.offset.PointOption;
+import io.appium.java_client.touch.WaitOptions;
+import java.time.Duration;
+
+// Single tap
+TouchAction action = new TouchAction(driver);
+action.tap(PointOption.point(100, 200)).perform();
+
+// Long press
+action.longPress(PointOption.point(100, 200))
+      .waitAction(WaitOptions.waitOptions(Duration.ofSeconds(2)))
+      .release()
+      .perform();
+
+// Press and move (drag)
+action.press(PointOption.point(100, 200))
+      .waitAction(WaitOptions.waitOptions(Duration.ofMillis(500)))
+      .moveTo(PointOption.point(300, 400))
+      .release()
+      .perform();
+```
+
+### W3C Actions (Recommended for Appium 2.x)
+```java
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
+
+// Single tap using W3C Actions
+PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+Sequence tap = new Sequence(finger, 1);
+tap.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), 100, 200));
+tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+driver.perform(List.of(tap));
+
+// Swipe gesture
+Sequence swipe = new Sequence(finger, 1);
+swipe.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), 100, 400));
+swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+swipe.addAction(finger.createPointerMove(Duration.ofMillis(1000), PointerInput.Origin.viewport(), 100, 100));
+swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+driver.perform(List.of(swipe));
+```
+
+### Advanced Gestures
+```java
+// Multi-touch pinch (zoom out)
+public void pinchOut(WebElement element) {
+    Rectangle rect = element.getRect();
+    int centerX = rect.x + rect.width / 2;
+    int centerY = rect.y + rect.height / 2;
+
+    PointerInput finger1 = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
+    PointerInput finger2 = new PointerInput(PointerInput.Kind.TOUCH, "finger2");
+
+    Sequence seq1 = new Sequence(finger1, 1);
+    Sequence seq2 = new Sequence(finger2, 1);
+
+    // Start from center, move outward
+    seq1.addAction(finger1.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), centerX - 10, centerY - 10));
+    seq1.addAction(finger1.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    seq1.addAction(finger1.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), centerX - 100, centerY - 100));
+    seq1.addAction(finger1.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+    seq2.addAction(finger2.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), centerX + 10, centerY + 10));
+    seq2.addAction(finger2.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    seq2.addAction(finger2.createPointerMove(Duration.ofMillis(500), PointerInput.Origin.viewport(), centerX + 100, centerY + 100));
+    seq2.addAction(finger2.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+    driver.perform(List.of(seq1, seq2));
+}
+
+// Scroll with coordinate
+public void scrollToCoordinate(int startX, int startY, int endX, int endY) {
+    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+    Sequence scroll = new Sequence(finger, 1);
+
+    scroll.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), startX, startY));
+    scroll.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    scroll.addAction(finger.createPointerMove(Duration.ofMillis(1000), PointerInput.Origin.viewport(), endX, endY));
+    scroll.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+    driver.perform(List.of(scroll));
+}
+```
+
+### Platform-Specific Gestures
+```java
+// Android-specific scroll
+public void androidScrollToElement(String text) {
+    driver.findElement(AppiumBy.androidUIAutomator(
+        "new UiScrollable(new UiSelector().scrollable(true))" +
+        ".scrollIntoView(new UiSelector().text(\"" + text + "\"))"
+    ));
+}
+
+// iOS-specific scroll
+public void iosScrollToElement(String elementName) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("direction", "down");
+    params.put("name", elementName);
+    driver.executeScript("mobile: scroll", params);
+}
+
+// iOS swipe
+public void iosSwipe(String direction) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("direction", direction);
+    driver.executeScript("mobile: swipe", params);
+}
+```
+
+## 8. Waits & Synchronization
+
+### Implicit Wait
+```java
+// Set implicit wait (applies to all findElement calls)
+driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+```
+
+### Explicit Wait (WebDriverWait)
+```java
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
+// Wait for element to be present
+WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(
+    AppiumBy.accessibilityId("loginButton")
+));
+
+// Wait for element to be clickable
+element = wait.until(ExpectedConditions.elementToBeClickable(
+    AppiumBy.id("submitBtn")
+));
+
+// Wait for element to be visible
+element = wait.until(ExpectedConditions.visibilityOfElementLocated(
+    AppiumBy.xpath("//button[@text='Submit']")
+));
+
+// Wait for text to be present
+wait.until(ExpectedConditions.textToBePresentInElement(element, "Success"));
+
+// Wait for attribute to contain value
+wait.until(ExpectedConditions.attributeContains(element, "enabled", "true"));
+```
+
+### Fluent Wait
+```java
+import org.openqa.selenium.support.ui.FluentWait;
+
+FluentWait<AppiumDriver> fluentWait = new FluentWait<>(driver)
+    .withTimeout(Duration.ofSeconds(30))
+    .pollingEvery(Duration.ofSeconds(2))
+    .ignoring(NoSuchElementException.class)
+    .ignoring(StaleElementReferenceException.class);
+
+// Custom wait condition
+WebElement element = fluentWait.until(driver -> {
+    WebElement el = driver.findElement(AppiumBy.id("dynamicElement"));
+    return el.isDisplayed() ? el : null;
+});
+```
+
+### Custom Wait Conditions
+```java
+// Wait for element to have specific text
+public static ExpectedCondition<Boolean> textToBe(WebElement element, String text) {
+    return driver -> element.getText().equals(text);
+}
+
+// Wait for element to be enabled
+public static ExpectedCondition<Boolean> elementToBeEnabled(WebElement element) {
+    return driver -> element.isEnabled();
+}
+
+// Wait for multiple elements to be present
+public static ExpectedCondition<List<WebElement>> elementsToBePresent(By locator, int count) {
+    return driver -> {
+        List<WebElement> elements = driver.findElements(locator);
+        return elements.size() >= count ? elements : null;
+    };
+}
+
+// Usage
+wait.until(textToBe(statusLabel, "Completed"));
+wait.until(elementToBeEnabled(submitButton));
+wait.until(elementsToBePresent(AppiumBy.className("item"), 5));
+```
+
+### Advanced Synchronization Patterns
+```java
+// Wait with custom polling and timeout
+public boolean waitForCondition(Supplier<Boolean> condition, int timeoutSeconds, int pollIntervalMs) {
+    long timeout = System.currentTimeMillis() + (timeoutSeconds * 1000L);
+
+    while (System.currentTimeMillis() < timeout) {
+        if (condition.get()) {
+            return true;
+        }
+        try {
+            Thread.sleep(pollIntervalMs);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+    return false;
+}
+
+// Wait for network idle (useful for API-dependent screens)
+public void waitForNetworkIdle(int idleTimeSeconds) {
+    // Implementation depends on your app's network monitoring
+    try {
+        Thread.sleep(idleTimeSeconds * 1000L);
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+    }
+}
+```
+
+## 9. Context Switching
+
+### Understanding Contexts
+```java
+// Get all available contexts
+Set<String> contexts = driver.getContextHandles();
+System.out.println("Available contexts: " + contexts);
+
+// Get current context
+String currentContext = driver.getContext();
+System.out.println("Current context: " + currentContext);
+
+// Switch to WebView context
+for (String context : contexts) {
+    if (context.contains("WEBVIEW")) {
+        driver.context(context);
+        break;
+    }
+}
+
+// Switch back to native context
+driver.context("NATIVE_APP");
+```
+
+### Hybrid App Testing
+```java
+public class HybridAppHelper {
+    private AppiumDriver driver;
+    private String nativeContext;
+    private String webViewContext;
+
+    public HybridAppHelper(AppiumDriver driver) {
+        this.driver = driver;
+        this.nativeContext = "NATIVE_APP";
+        identifyWebViewContext();
+    }
+
+    private void identifyWebViewContext() {
+        Set<String> contexts = driver.getContextHandles();
+        for (String context : contexts) {
+            if (context.contains("WEBVIEW")) {
+                this.webViewContext = context;
+                break;
+            }
+        }
+    }
+
+    public void switchToNative() {
+        driver.context(nativeContext);
+    }
+
+    public void switchToWebView() {
+        if (webViewContext != null) {
+            driver.context(webViewContext);
+        } else {
+            throw new RuntimeException("WebView context not found");
+        }
+    }
+
+    public boolean isWebViewContext() {
+        return driver.getContext().contains("WEBVIEW");
+    }
+
+    public WebElement findElementInContext(String context, By locator) {
+        String originalContext = driver.getContext();
+        try {
+            driver.context(context);
+            return driver.findElement(locator);
+        } finally {
+            driver.context(originalContext);
+        }
+    }
+}
+```
+
+### WebView Debugging & Configuration
+```java
+// Enable WebView debugging (Android)
+public void enableWebViewDebugging() {
+    if (driver instanceof AndroidDriver) {
+        Map<String, Object> args = new HashMap<>();
+        args.put("webviewDevtoolsPort", 9222);
+        driver.executeScript("mobile: enableWebviewDebugging", args);
+    }
+}
+
+// Handle WebView loading delays
+public void waitForWebViewToLoad() {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    wait.until(driver -> {
+        Set<String> contexts = driver.getContextHandles();
+        return contexts.stream().anyMatch(context -> context.contains("WEBVIEW"));
+    });
+}
+
+// Execute JavaScript in WebView
+public Object executeJavaScriptInWebView(String script) {
+    String originalContext = driver.getContext();
+    try {
+        switchToWebView();
+        return ((JavascriptExecutor) driver).executeScript(script);
+    } finally {
+        driver.context(originalContext);
+    }
+}
+```
+
+## 10. App Lifecycle Management
+
+### App Installation & Management
+```java
+// Install app
+driver.installApp("/path/to/app.apk");
+
+// Check if app is installed
+boolean isInstalled = driver.isAppInstalled("com.example.app");
+
+// Remove app
+driver.removeApp("com.example.app");
+
+// Launch app
+driver.activateApp("com.example.app");
+
+// Terminate app
+driver.terminateApp("com.example.app");
+
+// Get app state
+ApplicationState state = driver.queryAppState("com.example.app");
+System.out.println("App state: " + state);
+```
+
+### Background App Management
+```java
+// Run app in background
+driver.runAppInBackground(Duration.ofSeconds(5));
+
+// Reset app (reinstall and launch)
+driver.resetApp();
+
+// Close app (but keep installed)
+driver.closeApp();
+
+// Launch app with custom arguments (Android)
+Map<String, Object> args = new HashMap<>();
+args.put("appPackage", "com.example.app");
+args.put("appActivity", ".MainActivity");
+args.put("optionalIntentArguments", "--debug --verbose");
+driver.executeScript("mobile: startActivity", args);
+```
+
+### App Data Management
+```java
+// Clear app data (Android)
+public void clearAppData(String packageName) {
+    ((AndroidDriver) driver).executeScript("mobile: shell",
+        Map.of("command", "pm clear " + packageName));
+}
+
+// Backup app data
+public void backupAppData(String packageName, String backupPath) {
+    ((AndroidDriver) driver).executeScript("mobile: shell",
+        Map.of("command", "bu backup -all -system " + packageName + " " + backupPath));
+}
+
+// Get app info
+public Map<String, Object> getAppInfo(String packageName) {
+    return (Map<String, Object>) ((AndroidDriver) driver).executeScript(
+        "mobile: getAppInfo", Map.of("appId", packageName));
+}
+```
+
+## 11. File & Media Operations
+
+### File Transfer Operations
+```java
+// Push file to device
+byte[] fileContent = Files.readAllBytes(Paths.get("/local/path/file.txt"));
+String base64Content = Base64.getEncoder().encodeToString(fileContent);
+driver.pushFile("/sdcard/Download/file.txt", base64Content);
+
+// Pull file from device
+byte[] pulledFile = driver.pullFile("/sdcard/Download/file.txt");
+Files.write(Paths.get("/local/destination/file.txt"), pulledFile);
+
+// Push folder (Android)
+driver.pushFile("/sdcard/MyFolder", "/local/folder/path");
+```
+
+### Media Operations
+```java
+// Take screenshot
+File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+Files.copy(screenshot.toPath(), Paths.get("/path/to/save/screenshot.png"));
+
+// Start screen recording
+driver.startRecordingScreen();
+// ... perform test actions ...
+String video = driver.stopRecordingScreen();
+byte[] videoData = Base64.getDecoder().decode(video);
+Files.write(Paths.get("/path/to/save/recording.mp4"), videoData);
+
+// Screen recording with options
+Map<String, Object> options = new HashMap<>();
+options.put("timeLimit", Duration.ofMinutes(5));
+options.put("videoQuality", "medium");
+options.put("videoFps", 30);
+driver.startRecordingScreen(options);
+```
+
+### Device Storage Operations
+```java
+// Get device storage info (Android)
+public Map<String, Object> getStorageInfo() {
+    return (Map<String, Object>) ((AndroidDriver) driver).executeScript(
+        "mobile: shell", Map.of("command", "df -h"));
+}
+
+// List files in directory
+public List<String> listFiles(String directory) {
+    Map<String, Object> result = (Map<String, Object>) driver.executeScript(
+        "mobile: listFiles", Map.of("remotePath", directory));
+    return (List<String>) result.get("files");
+}
+
+// Create directory
+public void createDirectory(String path) {
+    driver.executeScript("mobile: shell",
+        Map.of("command", "mkdir -p " + path));
+}
+```
+
+## 12. Network & Connectivity
+
+### Network State Management
+```java
+// Get network connection type
+ConnectionType networkType = driver.getConnection();
+System.out.println("Network type: " + networkType);
+
+// Set network connection (Android)
+driver.setConnection(new ConnectionType(ConnectionType.WIFI_MASK));
+driver.setConnection(new ConnectionType(ConnectionType.DATA_MASK));
+driver.setConnection(new ConnectionType(ConnectionType.AIRPLANE_MODE_MASK));
+
+// Turn off all network connections
+driver.setConnection(new ConnectionType(ConnectionType.NONE_MASK));
+```
+
+### Advanced Network Operations
+```java
+// Toggle airplane mode (Android)
+public void toggleAirplaneMode(boolean enable) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("command", "settings put global airplane_mode_on " + (enable ? 1 : 0));
+    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+
+    // Broadcast the change
+    args.put("command", "am broadcast -a android.intent.action.AIRPLANE_MODE");
+    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+}
+
+// Toggle WiFi (Android)
+public void toggleWifi(boolean enable) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("command", "svc wifi " + (enable ? "enable" : "disable"));
+    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+}
+
+// Toggle mobile data (Android)
+public void toggleMobileData(boolean enable) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("command", "svc data " + (enable ? "enable" : "disable"));
+    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+}
+```
+
+### Network Monitoring
+```java
+// Monitor network requests (requires proxy setup)
+public class NetworkMonitor {
+    private final List<String> networkLogs = new ArrayList<>();
+
+    public void startNetworkLogging() {
+        // Configure proxy to capture network traffic
+        // This requires additional setup with tools like BrowserMob Proxy
+    }
+
+    public List<String> getNetworkLogs() {
+        return new ArrayList<>(networkLogs);
+    }
+
+    public void clearNetworkLogs() {
+        networkLogs.clear();
+    }
+}
+```
+
+## 13. Device Features & Sensors
+
+### Location Services
+```java
+// Set GPS location
+Location location = new Location(37.7749, -122.4194, 0); // San Francisco
+driver.setLocation(location);
+
+// Get current location
+Location currentLocation = driver.location();
+System.out.println("Lat: " + currentLocation.getLatitude() +
+                   ", Lng: " + currentLocation.getLongitude());
+
+// Toggle GPS (Android)
+public void toggleGPS(boolean enable) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("command", "settings put secure location_providers_allowed " +
+             (enable ? "+gps" : "-gps"));
+    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+}
+```
+
+### Biometric Authentication
+```java
+// Touch ID / Face ID (iOS Simulator)
+if (driver instanceof IOSDriver) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("match", true); // true for successful authentication
+    driver.executeScript("mobile: touchId", args);
+
+    // Face ID
+    args.put("match", true);
+    driver.executeScript("mobile: faceId", args);
+}
+
+// Fingerprint authentication (Android)
+if (driver instanceof AndroidDriver) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("fingerprintId", 1); // finger ID (1-10)
+    driver.executeScript("mobile: fingerprint", args);
+}
+```
+
+### Device Sensors
+```java
+// Device orientation
+ScreenOrientation currentOrientation = driver.getOrientation();
+driver.rotate(ScreenOrientation.LANDSCAPE);
+driver.rotate(ScreenOrientation.PORTRAIT);
+
+// Device shake (iOS)
+public void shakeDevice() {
+    if (driver instanceof IOSDriver) {
+        driver.executeScript("mobile: shake", new HashMap<>());
+    }
+}
+
+// Accelerometer simulation
+public void simulateAccelerometer(double x, double y, double z) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("x", x);
+    args.put("y", y);
+    args.put("z", z);
+    driver.executeScript("mobile: accelerometer", args);
+}
+```
+
+### Device Hardware Controls
+```java
+// Volume controls (Android)
+public void pressVolumeUp() {
+    ((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.VOLUME_UP));
+}
+
+public void pressVolumeDown() {
+    ((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.VOLUME_DOWN));
+}
+
+// Power button
+public void pressPowerButton() {
+    ((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.POWER));
+}
+
+// Home button
+public void pressHomeButton() {
+    ((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.HOME));
+}
+
+// Back button (Android)
+public void pressBackButton() {
+    ((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.BACK));
+}
+
+// Recent apps (Android)
+public void pressRecentApps() {
+    ((AndroidDriver) driver).pressKey(new KeyEvent(AndroidKey.APP_SWITCH));
+}
+```
+
+## 14. Permissions & Settings
+
+### Permission Management (Android)
+```java
+// Grant runtime permissions
+public void grantPermission(String packageName, String permission) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("command", "pm grant " + packageName + " " + permission);
+    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+}
+
+// Common permissions
+public void grantCommonPermissions(String packageName) {
+    String[] permissions = {
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_CONTACTS",
+        "android.permission.READ_SMS",
+        "android.permission.CALL_PHONE"
+    };
+
+    for (String permission : permissions) {
+        grantPermission(packageName, permission);
+    }
+}
+
+// Revoke permission
+public void revokePermission(String packageName, String permission) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("command", "pm revoke " + packageName + " " + permission);
+    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+}
+
+// Check permission status
+public boolean isPermissionGranted(String packageName, String permission) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("command", "dumpsys package " + packageName + " | grep " + permission);
+    Map<String, Object> result = (Map<String, Object>)
+        ((AndroidDriver) driver).executeScript("mobile: shell", args);
+    return result.get("stdout").toString().contains("granted=true");
+}
+```
+
+### iOS Permission Handling
+```java
+// Handle iOS permission dialogs
+public void handleiOSPermissionDialog(String action) {
+    try {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        // Look for common permission dialog buttons
+        String[] buttonTexts = {"Allow", "OK", "Don't Allow", "Cancel"};
+
+        for (String buttonText : buttonTexts) {
+            if (buttonText.equals(action)) {
+                WebElement button = wait.until(ExpectedConditions.elementToBeClickable(
+                    AppiumBy.accessibilityId(buttonText)));
+                button.click();
+                break;
+            }
+        }
+    } catch (TimeoutException e) {
+        System.out.println("No permission dialog found");
+    }
+}
+
+// Auto-handle iOS alerts
+public void setupAutoAlertHandling() {
+    Map<String, Object> caps = new HashMap<>();
+    caps.put("autoAcceptAlerts", true); // Auto-accept all alerts
+    // or
+    caps.put("autoDismissAlerts", true); // Auto-dismiss all alerts
+}
+```
+
+### Device Settings Management
+```java
+// Open Settings app (Android)
+public void openSettingsApp() {
+    Map<String, Object> args = new HashMap<>();
+    args.put("appPackage", "com.android.settings");
+    args.put("appActivity", ".Settings");
+    ((AndroidDriver) driver).executeScript("mobile: startActivity", args);
+}
+
+// Change device settings (Android)
+public void changeSystemSetting(String setting, String value) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("command", "settings put system " + setting + " " + value);
+    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+}
+
+// Change secure settings (Android)
+public void changeSecureSetting(String setting, String value) {
+    Map<String, Object> args = new HashMap<>();
+    args.put("command", "settings put secure " + setting + " " + value);
+    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+}
+
+// Common settings
+public void setBrightness(int brightness) { // 0-255
+    changeSystemSetting("screen_brightness", String.valueOf(brightness));
+}
+
+public void setAnimationScale(float scale) { // 0.0 to disable animations
+    changeSystemSetting("window_animation_scale", String.valueOf(scale));
+    changeSystemSetting("transition_animation_scale", String.valueOf(scale));
+    changeSystemSetting("animator_duration_scale", String.valueOf(scale));
+}
+```
+
+## 15. Advanced Testing Patterns
+
+### Page Object Model (Enhanced)
+```java
+// Base page class with common functionality
+public abstract class BasePage {
+    protected AppiumDriver driver;
+    protected WebDriverWait wait;
+
+    public BasePage(AppiumDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        PageFactory.initElements(new AppiumFieldDecorator(driver), this);
+    }
+
+    protected WebElement waitForElement(By locator) {
+        return wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+    }
+
+    protected void waitForElementToBeClickable(WebElement element) {
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+    }
+
+    protected void scrollToElement(WebElement element) {
+        if (driver instanceof AndroidDriver) {
+            // Use UiScrollable for Android
+            driver.findElement(AppiumBy.androidUIAutomator(
+                "new UiScrollable(new UiSelector().scrollable(true))" +
+                ".scrollIntoView(" + getUiSelector(element) + ")"
+            ));
+        } else {
+            // Use mobile: scroll for iOS
+            Map<String, Object> params = new HashMap<>();
+            params.put("element", ((RemoteWebElement) element).getId());
+            params.put("toVisible", true);
+            driver.executeScript("mobile: scroll", params);
+        }
+    }
+
+    private String getUiSelector(WebElement element) {
+        // Extract UiSelector from element properties
+        return "new UiSelector().text(\"" + element.getText() + "\")";
+    }
+
+    public abstract boolean isLoaded();
+}
+
+// Specific page implementation
+public class LoginPage extends BasePage {
+    @FindBy(accessibility = "username")
+    private WebElement usernameField;
+
+    @FindBy(accessibility = "password")
+    private WebElement passwordField;
+
+    @FindBy(accessibility = "loginButton")
+    private WebElement loginButton;
+
+    @FindBy(id = "errorMessage")
+    private WebElement errorMessage;
+
+    public LoginPage(AppiumDriver driver) {
+        super(driver);
+    }
+
+    public void login(String username, String password) {
+        waitForElementToBeClickable(usernameField);
+        usernameField.clear();
+        usernameField.sendKeys(username);
+
+        passwordField.clear();
+        passwordField.sendKeys(password);
+
+        loginButton.click();
+    }
+
+    public String getErrorMessage() {
+        try {
+            return waitForElement(By.id("errorMessage")).getText();
+        } catch (TimeoutException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean isLoaded() {
+        try {
+            return usernameField.isDisplayed() &&
+                   passwordField.isDisplayed() &&
+                   loginButton.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+}
+```
+
+### Test Data Management
+```java
+// Data-driven test approach
+public class TestDataManager {
+    private static final String DATA_FILE_PATH = "src/test/resources/testdata.json";
+
+    public static List<TestData> getTestData(String testCase) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(new File(DATA_FILE_PATH));
+            JsonNode testCaseNode = rootNode.get(testCase);
+
+            return mapper.convertValue(testCaseNode,
+                new TypeReference<List<TestData>>() {});
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load test data", e);
+        }
+    }
+
+    public static class TestData {
+        private String username;
+        private String password;
+        private String expectedResult;
+
+        // Getters and setters
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+
+        public String getExpectedResult() { return expectedResult; }
+        public void setExpectedResult(String expectedResult) {
+            this.expectedResult = expectedResult;
+        }
+    }
+}
+
+// Usage in test
+@Test(dataProvider = "loginData")
+public void testLogin(TestDataManager.TestData testData) {
+    LoginPage loginPage = new LoginPage(driver);
+    loginPage.login(testData.getUsername(), testData.getPassword());
+
+    if ("success".equals(testData.getExpectedResult())) {
+        // Assert successful login
+        assert new HomePage(driver).isLoaded();
+    } else {
+        // Assert error message
+        assert loginPage.getErrorMessage().contains("Invalid");
+    }
+}
+
+@DataProvider(name = "loginData")
+public Object[] loginDataProvider() {
+    return TestDataManager.getTestData("loginTests").toArray();
+}
+```
+
+### Custom Actions & Utilities
+```java
+public class MobileActionHelper {
+    private final AppiumDriver driver;
+
+    public MobileActionHelper(AppiumDriver driver) {
+        this.driver = driver;
+    }
+
+    // Smart scroll that works on both platforms
+    public void scrollToElementByText(String text) {
+        if (driver instanceof AndroidDriver) {
+            driver.findElement(AppiumBy.androidUIAutomator(
+                "new UiScrollable(new UiSelector().scrollable(true))" +
+                ".scrollIntoView(new UiSelector().textContains(\"" + text + "\"))"
+            ));
+        } else {
+            Map<String, Object> params = new HashMap<>();
+            params.put("direction", "down");
+            params.put("name", text);
+            driver.executeScript("mobile: scroll", params);
+        }
+    }
+
+    // Universal element finder with retry mechanism
+    public WebElement findElementWithRetry(By locator, int maxRetries) {
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                return driver.findElement(locator);
+            } catch (NoSuchElementException e) {
+                if (i == maxRetries - 1) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted while retrying", ie);
+                }
+            }
+        }
+        throw new NoSuchElementException("Element not found after " + maxRetries + " retries");
+    }
+
+    // Safe click with retry
+    public void safeClick(WebElement element, int maxRetries) {
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                element.click();
+                return;
+            } catch (ElementClickInterceptedException | StaleElementReferenceException e) {
+                if (i == maxRetries - 1) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted while retrying click", ie);
+                }
+            }
+        }
+    }
+
+    // Type text with better reliability
+    public void typeText(WebElement element, String text, boolean clearFirst) {
+        if (clearFirst) {
+            element.clear();
+        }
+
+        // Type character by character for better reliability
+        for (char c : text.toCharArray()) {
+            element.sendKeys(String.valueOf(c));
+            try {
+                Thread.sleep(50); // Small delay between characters
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+    // Wait for loading to complete
+    public void waitForLoadingToComplete(String loadingElementLocator) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+            wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.xpath(loadingElementLocator)));
+
+            // Now wait for it to disappear
+            wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                By.xpath(loadingElementLocator)));
+        } catch (TimeoutException e) {
+            // Loading element might not appear, which is fine
+        }
+    }
+}
+```
+
+## 16. Parallel Execution & Cloud Testing
+
+### TestNG Parallel Configuration
+```xml
+<!-- testng.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="ParallelMobileTests" parallel="tests" thread-count="4">
+    <test name="Android_Tests">
+        <parameter name="platform" value="Android"/>
+        <parameter name="deviceName" value="Pixel_7"/>
+        <parameter name="platformVersion" value="13.0"/>
+        <classes>
+            <class name="com.example.tests.LoginTest"/>
+            <class name="com.example.tests.CheckoutTest"/>
+        </classes>
+    </test>
+
+    <test name="iOS_Tests">
+        <parameter name="platform" value="iOS"/>
+        <parameter name="deviceName" value="iPhone 14"/>
+        <parameter name="platformVersion" value="16.0"/>
+        <classes>
+            <class name="com.example.tests.LoginTest"/>
+            <class name="com.example.tests.CheckoutTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+### Thread-Safe Driver Management
+```java
+public class DriverManager {
+    private static final ThreadLocal<AppiumDriver> driver = new ThreadLocal<>();
+    private static final ThreadLocal<String> platform = new ThreadLocal<>();
+
+    public static void setDriver(AppiumDriver appiumDriver, String platformName) {
+        driver.set(appiumDriver);
+        platform.set(platformName);
+    }
+
+    public static AppiumDriver getDriver() {
+        return driver.get();
+    }
+
+    public static String getPlatform() {
+        return platform.get();
+    }
+
+    public static void quitDriver() {
+        AppiumDriver currentDriver = driver.get();
+        if (currentDriver != null) {
+            currentDriver.quit();
+            driver.remove();
+            platform.remove();
+        }
+    }
+}
+
+@BeforeMethod
+public void setUp(String platform, String deviceName, String platformVersion) {
+    DesiredCapabilities caps = new DesiredCapabilities();
+    caps.setCapability("platformName", platform);
+    caps.setCapability("deviceName", deviceName);
+    caps.setCapability("platformVersion", platformVersion);
+
+    // Add unique ports for parallel execution
+    int port = getAvailablePort();
+    caps.setCapability("systemPort", port);
+
+    URL serverUrl = new URL("http://localhost:4723");
+    AppiumDriver driver;
+
+    if ("Android".equals(platform)) {
+        driver = new AndroidDriver(serverUrl, caps);
+    } else {
+        driver = new IOSDriver(serverUrl, caps);
+    }
+
+    DriverManager.setDriver(driver, platform);
+}
+
+@AfterMethod
+public void tearDown() {
+    DriverManager.quitDriver();
+}
+
+private int getAvailablePort() {
+    // Logic to find available ports for parallel execution
+    return ThreadLocalRandom.current().nextInt(8000, 9000);
+}
+```
+
+### Cloud Testing Integration
+
+#### BrowserStack Integration
+```java
+public class BrowserStackDriver {
+    private static final String USERNAME = System.getenv("BROWSERSTACK_USERNAME");
+    private static final String ACCESS_KEY = System.getenv("BROWSERSTACK_ACCESS_KEY");
+    private static final String URL = "https://" + USERNAME + ":" + ACCESS_KEY +
+                                    "@hub-cloud.browserstack.com/wd/hub";
+
+    public static AppiumDriver createBrowserStackDriver(String platform,
+                                                       String device,
+                                                       String appUrl) {
+        DesiredCapabilities caps = new DesiredCapabilities();
+
+        // BrowserStack specific capabilities
+        caps.setCapability("browserstack.user", USERNAME);
+        caps.setCapability("browserstack.key", ACCESS_KEY);
+        caps.setCapability("project", "Mobile Automation Project");
+        caps.setCapability("build", "Build " + System.getenv("BUILD_NUMBER"));
+        caps.setCapability("name", "Test " + Thread.currentThread().getId());
+
+        // Device capabilities
+        caps.setCapability("platformName", platform);
+        caps.setCapability("device", device);
+        caps.setCapability("app", appUrl);
+
+        // Additional BrowserStack features
+        caps.setCapability("browserstack.debug", true);
+        caps.setCapability("browserstack.networkLogs", true);
+        caps.setCapability("browserstack.appiumLogs", true);
+
+        try {
+            if ("Android".equals(platform)) {
+                return new AndroidDriver(new URL(URL), caps);
+            } else {
+                return new IOSDriver(new URL(URL), caps);
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid BrowserStack URL", e);
+        }
+    }
+
+    public static void markTestStatus(String sessionId, String status, String reason) {
+        // Mark test as passed/failed on BrowserStack
+        try {
+            String command = "curl -u \"" + USERNAME + ":" + ACCESS_KEY +
+                           "\" -X PUT \"https://api.browserstack.com/automate/sessions/" +
+                           sessionId + ".json\" -H \"Content-Type: application/json\" " +
+                           "-d '{\"status\":\"" + status + "\", \"reason\":\"" + reason + "\"}'";
+            Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            System.err.println("Failed to update test status on BrowserStack");
+        }
+    }
+}
+```
+
+#### Sauce Labs Integration
+```java
+public class SauceLabsDriver {
+    private static final String USERNAME = System.getenv("SAUCE_USERNAME");
+    private static final String ACCESS_KEY = System.getenv("SAUCE_ACCESS_KEY");
+    private static final String URL = "https://" + USERNAME + ":" + ACCESS_KEY +
+                                    "@ondemand.saucelabs.com:443/wd/hub";
+
+    public static AppiumDriver createSauceLabsDriver(String platform,
+                                                    String deviceName,
+                                                    String platformVersion,
+                                                    String appPath) {
+        MutableCapabilities caps = new MutableCapabilities();
+
+        // Sauce Labs specific capabilities
+        caps.setCapability("username", USERNAME);
+        caps.setCapability("accessKey", ACCESS_KEY);
+        caps.setCapability("name", "Mobile Test - " + platform);
+        caps.setCapability("build", "Build " + System.getenv("BUILD_NUMBER"));
+
+        // Device capabilities
+        caps.setCapability("platformName", platform);
+        caps.setCapability("deviceName", deviceName);
+        caps.setCapability("platformVersion", platformVersion);
+        caps.setCapability("app", appPath);
+
+        // Sauce Labs features
+        Map<String, Object> sauceOptions = new HashMap<>();
+        sauceOptions.put("recordVideo", true);
+        sauceOptions.put("recordScreenshots", true);
+        sauceOptions.put("appiumVersion", "2.0.0");
+        caps.setCapability("sauce:options", sauceOptions);
+
+        try {
+            return new AppiumDriver(new URL(URL), caps);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid Sauce Labs URL", e);
+        }
+    }
+}
+```
+
+### Device Farm Setup
+```java
+// Local device farm configuration
+public class DeviceFarmManager {
+    private static final Map<String, DeviceInfo> availableDevices = new HashMap<>();
+
+    static {
+        // Android devices
+        availableDevices.put("pixel7", new DeviceInfo("Android", "Pixel_7_API_33", "13.0", 8201));
+        availableDevices.put("galaxy", new DeviceInfo("Android", "Galaxy_S22", "12.0", 8202));
+
+        // iOS devices
+        availableDevices.put("iphone14", new DeviceInfo("iOS", "iPhone 14", "16.0", 8301));
+        availableDevices.put("ipad", new DeviceInfo("iOS", "iPad Pro", "16.0", 8302));
+    }
+
+    public static synchronized DeviceInfo allocateDevice(String deviceType) {
+        for (Map.Entry<String, DeviceInfo> entry : availableDevices.entrySet()) {
+            DeviceInfo device = entry.getValue();
+            if (device.getPlatform().equals(deviceType) && device.isAvailable()) {
+                device.setAvailable(false);
+                return device;
+            }
+        }
+        throw new RuntimeException("No available " + deviceType + " devices");
+    }
+
+    public static synchronized void releaseDevice(DeviceInfo device) {
+        device.setAvailable(true);
+    }
+
+    public static class DeviceInfo {
+        private String platform;
+        private String deviceName;
+        private String platformVersion;
+        private int systemPort;
+        private boolean available = true;
+
+        // Constructor and getters/setters
+        public DeviceInfo(String platform, String deviceName, String platformVersion, int systemPort) {
+            this.platform = platform;
+            this.deviceName = deviceName;
+            this.platformVersion = platformVersion;
+            this.systemPort = systemPort;
+        }
+
+        // Getters and setters...
+        public String getPlatform() { return platform; }
+        public String getDeviceName() { return deviceName; }
+        public String getPlatformVersion() { return platformVersion; }
+        public int getSystemPort() { return systemPort; }
+        public boolean isAvailable() { return available; }
+        public void setAvailable(boolean available) { this.available = available; }
+    }
+}
+```
+
+## 17. CI/CD Integration
+
+### Jenkins Pipeline
+```sh
+pipeline {
+    agent any
+
+    environment {
+        ANDROID_HOME = '/opt/android-sdk'
+        JAVA_HOME = '/opt/java/openjdk'
+        NODE_HOME = '/opt/node'
+    }
+
+    stages {
+        stage('Setup') {
+            steps {
+                script {
+                    // Start Appium servers for parallel execution
+                    sh 'pkill -f appium || true'  // Kill existing appium processes
+
+                    // Start multiple Appium servers
+                    sh 'nohup appium server --port 4723 --session-override > appium1.log 2>&1 &'
+                    sh 'nohup appium server --port 4724 --session-override > appium2.log 2>&1 &'
+
+                    // Wait for servers to start
+                    sleep(10)
+
+                    // Start Android emulators if needed
+                    sh 'emulator -avd Pixel_7_API_33 -no-window -no-audio &'
+                    sh 'adb wait-for-device'
+                }
+            }
+        }
+
+        stage('Build App') {
+            steps {
+                script {
+                    // Build Android APK
+                    sh 'cd android-app && ./gradlew assembleDebug'
+
+                    // Build iOS app (if on macOS)
+                    sh 'cd ios-app && xcodebuild -project MyApp.xcodeproj -scheme MyApp -configuration Debug -sdk iphonesimulator build'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            parallel {
+                stage('Android Tests') {
+                    steps {
+                        script {
+                            sh 'mvn test -Dplatform=Android -DsuiteFile=android-tests.xml -DappiumPort=4723'
+                        }
+                    }
+                }
+                stage('iOS Tests') {
+                    when {
+                        expression { return env.NODE_NAME.contains('macos') }
+                    }
+                    steps {
+                        script {
+                            sh 'mvn test -Dplatform=iOS -DsuiteFile=ios-tests.xml -DappiumPort=4724'
+                        }
+                    }
+                }
+            }
+            post {
+                always {
+                    // Collect test results
+                    junit 'target/surefire-reports/*.xml'
+
+                    // Archive screenshots and videos
+                    archiveArtifacts artifacts: 'test-output/**/*', allowEmptyArchive: true
+
+                    // Publish test reports
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'test-output',
+                        reportFiles: 'index.html',
+                        reportName: 'Test Report'
+                    ])
+                }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                script {
+                    // Stop Appium servers
+                    sh 'pkill -f appium || true'
+
+                    // Stop emulators
+                    sh 'adb emu kill || true'
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            script {
+                // Send notifications on failure
+                emailext (
+                    subject: "Mobile Test Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
+                    body: "Build failed. Check console output at ${env.BUILD_URL}",
+                    to: "${env.CHANGE_AUTHOR_EMAIL}"
+                )
+            }
+        }
+    }
+}
+```
+
+### GitHub Actions Workflow
+```sh
+name: Mobile Test Automation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  android-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        api-level: [29, 30, 33]
+        target: [default, google_apis]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Appium
+      run: |
+        npm install -g appium@next
+        appium driver install uiautomator2
+        appium driver list
+
+    - name: Enable KVM group perms
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: Run Android Tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ matrix.api-level }}
+        target: ${{ matrix.target }}
+        arch: x86_64
+        profile: Nexus 6
+        script: |
+          # Start Appium server
+          appium server --port 4723 &
+
+          # Wait for server to start
+          sleep 10
+
+          # Run tests
+          mvn test -Dplatform=Android -DdeviceName="Android Emulator"
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: android-test-results-${{ matrix.api-level }}
+        path: |
+          target/surefire-reports/
+          test-output/
+
+  ios-tests:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        ios-version: ['15.5', '16.0', '16.4']
+        device: ['iPhone 13', 'iPhone 14', 'iPad Pro (12.9-inch) (6th generation)']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Appium
+      run: |
+        npm install -g appium@next
+        appium driver install xcuitest
+        appium driver list
+
+    - name: List iOS Simulators
+      run: xcrun simctl list devices available
+
+    - name: Start iOS Simulator
+      run: |
+        # Create and boot iOS simulator
+        SIMULATOR_ID=$(xcrun simctl create "Test iPhone" "iPhone 13" "iOS16.0")
+        xcrun simctl boot $SIMULATOR_ID
+
+        # Wait for simulator to boot
+        xcrun simctl bootstatus $SIMULATOR_ID -b
+
+    - name: Run iOS Tests
+      run: |
+        # Start Appium server
+        appium server --port 4723 &
+
+        # Wait for server to start
+        sleep 15
+
+        # Run tests
+        mvn test -Dplatform=iOS -DdeviceName="${{ matrix.device }}" -DplatformVersion="${{ matrix.ios-version }}"
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: ios-test-results-${{ matrix.device }}-${{ matrix.ios-version }}
+        path: |
+          target/surefire-reports/
+          test-output/
+
+  report:
+    needs: [android-tests, ios-tests]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v3
+
+    - name: Publish Test Results
+      uses: dorny/test-reporter@v1
+      with:
+        name: Mobile Test Results
+        path: '**/target/surefire-reports/*.xml'
+        reporter: java-junit
+```
+
+### Docker Configuration
+```yaml
+# Dockerfile for Android testing
+FROM appium/appium:latest
+
+# Install additional tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    unzip \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Java
+RUN apt-get update && apt-get install -y openjdk-11-jdk
+
+# Set environment variables
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV ANDROID_HOME=/opt/android
+ENV PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+# Install Android SDK
+RUN mkdir -p $ANDROID_HOME && \
+    wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip && \
+    unzip commandlinetools-linux-8512546_latest.zip -d $ANDROID_HOME && \
+    rm commandlinetools-linux-8512546_latest.zip
+
+# Accept licenses and install required packages
+RUN yes | $ANDROID_HOME/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses
+RUN $ANDROID_HOME/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_HOME "platforms;android-33" "build-tools;33.0.0" "system-images;android-33;google_apis;x86_64"
+
+# Create AVD
+RUN echo "no" | $ANDROID_HOME/cmdline-tools/bin/avdmanager create avd -n test_avd -k "system-images;android-33;google_apis;x86_64" --force
+
+# Copy test files
+COPY . /app
+WORKDIR /app
+
+# Install dependencies
+RUN npm install
+
+# Default command
+CMD ["npm", "test"]
+```
+
+```yaml
+# docker-compose.yml for parallel testing
+version: '3.8'
+services:
+  appium-server-1:
+    build: .
+    ports:
+      - "4723:4723"
+    environment:
+      - APPIUM_PORT=4723
+      - DEVICE_NAME=emulator-5554
+    command: appium server --port 4723 --address 0.0.0.0
+
+  appium-server-2:
+    build: .
+    ports:
+      - "4724:4724"
+    environment:
+      - APPIUM_PORT=4724
+      - DEVICE_NAME=emulator-5556
+    command: appium server --port 4724 --address 0.0.0.0
+
+  test-runner:
+    build: .
+    depends_on:
+      - appium-server-1
+      - appium-server-2
+    environment:
+      - APPIUM_SERVER_1=http://appium-server-1:4723
+      - APPIUM_SERVER_2=http://appium-server-2:4724
+    command: mvn test -DsuiteFile=parallel-tests.xml
+    volumes:
+      - ./test-output:/app/test-output
+```
+
+## 18. Debugging & Troubleshooting
+
+### Enhanced Logging & Debugging
+```java
+public class DebugHelper {
+    private static final Logger logger = LoggerFactory.getLogger(DebugHelper.class);
+    private final AppiumDriver driver;
+
+    public DebugHelper(AppiumDriver driver) {
+        this.driver = driver;
+    }
+
+    // Capture comprehensive debug information
+    public void captureDebugInfo(String testName) {
+        try {
+            // Take screenshot
+            String screenshotPath = captureScreenshot(testName);
+            logger.info("Screenshot saved: {}", screenshotPath);
+
+            // Get page source
+            String pageSource = driver.getPageSource();
+            savePageSource(pageSource, testName);
+
+            // Get device logs
+            if (driver instanceof AndroidDriver) {
+                captureAndroidLogs(testName);
+            } else if (driver instanceof IOSDriver) {
+                captureiOSLogs(testName);
+            }
+
+            // Get network logs if available
+            captureNetworkLogs(testName);
+
+            // Capture device info
+            captureDeviceInfo(testName);
+
+        } catch (Exception e) {
+            logger.error("Failed to capture debug info", e);
+        }
+    }
+
+    private String captureScreenshot(String testName) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String fileName = String.format("%s_%s.png", testName, timestamp);
+        String filePath = "test-output/screenshots/" + fileName;
+
+        try {
+            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            Files.copy(screenshot.toPath(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+            return filePath;
+        } catch (IOException e) {
+            logger.error("Failed to save screenshot", e);
+            return null;
+        }
+    }
+
+    private void savePageSource(String pageSource, String testName) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String fileName = String.format("%s_%s_source.xml", testName, timestamp);
+        String filePath = "test-output/page-sources/" + fileName;
+
+        try {
+            Files.write(Paths.get(filePath), pageSource.getBytes(), StandardOpenOption.CREATE);
+            logger.info("Page source saved: {}", filePath);
+        } catch (IOException e) {
+            logger.error("Failed to save page source", e);
+        }
+    }
+
+    private void captureAndroidLogs(String testName) {
+        try {
+            // Get logcat logs
+            List<LogEntry> logs = driver.manage().logs().get(LogType.LOGCAT).getAll();
+
+            StringBuilder logContent = new StringBuilder();
+            for (LogEntry log : logs) {
+                logContent.append(String.format("[%s] %s: %s\n",
+                    log.getLevel(),
+                    Instant.ofEpochMilli(log.getTimestamp()).toString(),
+                    log.getMessage()));
+            }
+
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = String.format("%s_%s_logcat.log", testName, timestamp);
+            String filePath = "test-output/logs/" + fileName;
+
+            Files.write(Paths.get(filePath), logContent.toString().getBytes(), StandardOpenOption.CREATE);
+            logger.info("Android logs saved: {}", filePath);
+
+        } catch (Exception e) {
+            logger.error("Failed to capture Android logs", e);
+        }
+    }
+
+    private void captureiOSLogs(String testName) {
+        try {
+            // Get system logs for iOS
+            List<LogEntry> logs = driver.manage().logs().get("syslog").getAll();
+
+            StringBuilder logContent = new StringBuilder();
+            for (LogEntry log : logs) {
+                logContent.append(String.format("[%s] %s: %s\n",
+                    log.getLevel(),
+                    Instant.ofEpochMilli(log.getTimestamp()).toString(),
+                    log.getMessage()));
+            }
+
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = String.format("%s_%s_syslog.log", testName, timestamp);
+            String filePath = "test-output/logs/" + fileName;
+
+            Files.write(Paths.get(filePath), logContent.toString().getBytes(), StandardOpenOption.CREATE);
+            logger.info("iOS logs saved: {}", filePath);
+
+        } catch (Exception e) {
+            logger.error("Failed to capture iOS logs", e);
+        }
+    }
+
+    private void captureNetworkLogs(String testName) {
+        try {
+            // Capture network performance data
+            List<LogEntry> perfLogs = driver.manage().logs().get(LogType.PERFORMANCE).getAll();
+
+            if (!perfLogs.isEmpty()) {
+                StringBuilder logContent = new StringBuilder();
+                for (LogEntry log : perfLogs) {
+                    logContent.append(String.format("[%s] %s\n",
+                        Instant.ofEpochMilli(log.getTimestamp()).toString(),
+                        log.getMessage()));
+                }
+
+                String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+                String fileName = String.format("%s_%s_network.log", testName, timestamp);
+                String filePath = "test-output/logs/" + fileName;
+
+                Files.write(Paths.get(filePath), logContent.toString().getBytes(), StandardOpenOption.CREATE);
+                logger.info("Network logs saved: {}", filePath);
+            }
+
+        } catch (Exception e) {
+            logger.error("Failed to capture network logs", e);
+        }
+    }
+
+    private void captureDeviceInfo(String testName) {
+        try {
+            Map<String, Object> deviceInfo = new HashMap<>();
+            deviceInfo.put("platformName", driver.getCapabilities().getCapability("platformName"));
+            deviceInfo.put("platformVersion", driver.getCapabilities().getCapability("platformVersion"));
+            deviceInfo.put("deviceName", driver.getCapabilities().getCapability("deviceName"));
+            deviceInfo.put("orientation", driver.getOrientation().toString());
+            deviceInfo.put("windowSize", driver.manage().window().getSize().toString());
+
+            if (driver instanceof AndroidDriver) {
+                // Android specific info
+                deviceInfo.put("networkConnectionType", ((AndroidDriver) driver).getConnection().toString());
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            String deviceInfoJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(deviceInfo);
+
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = String.format("%s_%s_device_info.json", testName, timestamp);
+            String filePath = "test-output/device-info/" + fileName;
+
+            Files.write(Paths.get(filePath), deviceInfoJson.getBytes(), StandardOpenOption.CREATE);
+            logger.info("Device info saved: {}", filePath);
+
+        } catch (Exception e) {
+            logger.error("Failed to capture device info", e);
+        }
+    }
+}
+
+// Usage in test
+@Test
+public void testLogin() {
+    DebugHelper debugHelper = new DebugHelper(DriverManager.getDriver());
+
+    try {
+        // Test steps
+        loginPage.login("user", "pass");
+
+    } catch (Exception e) {
+        // Capture debug info on failure
+        debugHelper.captureDebugInfo("testLogin_failure");
+        throw e;
+    }
+}
+```
+
+### Element Inspector & Analysis
+```java
+public class ElementInspector {
+    private final AppiumDriver driver;
+
+    public ElementInspector(AppiumDriver driver) {
+        this.driver = driver;
+    }
+
+    // Analyze element hierarchy
+    public void analyzeElementHierarchy(WebElement rootElement) {
+        System.out.println("=== Element Hierarchy Analysis ===");
+        analyzeElementRecursive(rootElement, 0);
+    }
+
+    private void analyzeElementRecursive(WebElement element, int depth) {
+        String indent = "  ".repeat(depth);
+
+        try {
+            // Get element properties
+            String tagName = element.getTagName();
+            String text = element.getText();
+            String className = element.getAttribute("className");
+            String resourceId = element.getAttribute("resourceId");
+            String accessibilityId = element.getAttribute("name");
+            boolean displayed = element.isDisplayed();
+            boolean enabled = element.isEnabled();
+
+            System.out.printf("%s%s [text='%s', class='%s', id='%s', accessibility='%s', visible=%s, enabled=%s]\n",
+                indent, tagName, text, className, resourceId, accessibilityId, displayed, enabled);
+
+            // Analyze child elements
+            List<WebElement> children = element.findElements(By.xpath("./*"));
+            for (WebElement child : children) {
+                analyzeElementRecursive(child, depth + 1);
+            }
+
+        } catch (Exception e) {
+            System.out.printf("%sError analyzing element: %s\n", indent, e.getMessage());
+        }
+    }
+
+    // Find all possible locators for an element
+    public List<String> findAllLocators(WebElement element) {
+        List<String> locators = new ArrayList<>();
+
+        try {
+            // Get element attributes
+            String text = element.getText();
+            String className = element.getAttribute("className");
+            String resourceId = element.getAttribute("resourceId");
+            String accessibilityId = element.getAttribute("name");
+            String contentDesc = element.getAttribute("contentDescription");
+
+            // Generate locator strategies
+            if (accessibilityId != null && !accessibilityId.isEmpty()) {
+                locators.add("AccessibilityId: " + accessibilityId);
+            }
+
+            if (resourceId != null && !resourceId.isEmpty()) {
+                locators.add("ID: " + resourceId);
+            }
+
+            if (text != null && !text.isEmpty()) {
+                locators.add("Text: " + text);
+                if (driver instanceof AndroidDriver) {
+                    locators.add("UiAutomator: new UiSelector().text(\"" + text + "\")");
+                } else {
+                    locators.add("Predicate: label == '" + text + "'");
+                }
+            }
+
+            if (className != null && !className.isEmpty()) {
+                locators.add("ClassName: " + className);
+            }
+
+            if (contentDesc != null && !contentDesc.isEmpty()) {
+                locators.add("ContentDescription: " + contentDesc);
+                if (driver instanceof AndroidDriver) {
+                    locators.add("UiAutomator: new UiSelector().description(\"" + contentDesc + "\")");
+                }
+            }
+
+            // Generate XPath
+            String xpath = generateXPath(element);
+            if (xpath != null) {
+                locators.add("XPath: " + xpath);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error finding locators: " + e.getMessage());
+        }
+
+        return locators;
+    }
+
+    private String generateXPath(WebElement element) {
+        try {
+            String tagName = element.getTagName();
+            String text = element.getText();
+            String className = element.getAttribute("className");
+            String resourceId = element.getAttribute("resourceId");
+
+            List<String> conditions = new ArrayList<>();
+
+            if (text != null && !text.isEmpty()) {
+                conditions.add("@text='" + text + "'");
+            }
+
+            if (className != null && !className.isEmpty()) {
+                conditions.add("@class='" + className + "'");
+            }
+
+            if (resourceId != null && !resourceId.isEmpty()) {
+                conditions.add("@resource-id='" + resourceId + "'");
+            }
+
+            if (conditions.isEmpty()) {
+                return "//" + tagName;
+            } else {
+                return "//" + tagName + "[" + String.join(" and ", conditions) + "]";
+            }
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Test element visibility and interaction
+    public void testElementInteractions(WebElement element) {
+        System.out.println("=== Element Interaction Test ===");
+
+        try {
+            System.out.println("Element displayed: " + element.isDisplayed());
+            System.out.println("Element enabled: " + element.isEnabled());
+            System.out.println("Element selected: " + element.isSelected());
+
+            Rectangle rect = element.getRect();
+            System.out.printf("Element bounds: x=%d, y=%d, width=%d, height=%d\n",
+                rect.x, rect.y, rect.width, rect.height);
+
+            // Test if element is clickable
+            try {
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+                wait.until(ExpectedConditions.elementToBeClickable(element));
+                System.out.println("Element is clickable: true");
+            } catch (TimeoutException e) {
+                System.out.println("Element is clickable: false");
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error testing element interactions: " + e.getMessage());
+        }
+    }
+}
+```
+
+### Common Issue Troubleshooting
+```java
+public class TroubleshootingHelper {
+
+    // Handle stale element references
+    public WebElement handleStaleElement(By locator, int maxRetries) {
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                return driver.findElement(locator);
+            } catch (StaleElementReferenceException e) {
+                if (i == maxRetries - 1) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted while handling stale element", ie);
+                }
+            }
+        }
+        return null;
+    }
+
+    // Handle timing issues
+    public boolean waitForElementStability(WebElement element, int timeoutSeconds) {
+        long timeout = System.currentTimeMillis() + (timeoutSeconds * 1000L);
+        Rectangle lastRect = null;
+
+        while (System.currentTimeMillis() < timeout) {
+            try {
+                Rectangle currentRect = element.getRect();
+                if (lastRect != null && lastRect.equals(currentRect)) {
+                    // Element position is stable
+                    return true;
+                }
+                lastRect = currentRect;
+                Thread.sleep(100);
+            } catch (Exception e) {
+                // Element might be changing, continue waiting
+            }
+        }
+        return false;
+    }
+
+    // Diagnose app state issues
+    public void diagnoseAppState(String packageName) {
+        if (driver instanceof AndroidDriver) {
+            ApplicationState state = ((AndroidDriver) driver).queryAppState(packageName);
+            System.out.println("App state: " + state);
+
+            switch (state) {
+                case NOT_INSTALLED:
+                    System.out.println("Issue: App is not installed");
+                    break;
+                case NOT_RUNNING:
+                    System.out.println("Issue: App is not running - need to activate");
+                    driver.activateApp(packageName);
+                    break;
+                case RUNNING_IN_BACKGROUND:
+                    System.out.println("Issue: App is in background - bringing to foreground");
+                    driver.activateApp(packageName);
+                    break;
+                case RUNNING_IN_FOREGROUND:
+                    System.out.println("App is running in foreground - all good");
+                    break;
+            }
+        }
+    }
+
+    // Check for overlapping elements
+    public boolean checkForOverlappingElements(WebElement element) {
+        Rectangle elementRect = element.getRect();
+        List<WebElement> allElements = driver.findElements(By.xpath("//*"));
+
+        for (WebElement otherElement : allElements) {
+            if (!otherElement.equals(element)) {
+                try {
+                    Rectangle otherRect = otherElement.getRect();
+                    if (rectanglesOverlap(elementRect, otherRect) &&
+                        otherElement.isDisplayed()) {
+
+                        String otherInfo = String.format("Overlapping element: %s [%s]",
+                            otherElement.getTagName(),
+                            otherElement.getAttribute("className"));
+                        System.out.println(otherInfo);
+                        return true;
+                    }
+                } catch (Exception e) {
+                    // Skip elements that can't be analyzed
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean rectanglesOverlap(Rectangle rect1, Rectangle rect2) {
+        return rect1.x < rect2.x + rect2.width &&
+               rect1.x + rect1.width > rect2.x &&
+               rect1.y < rect2.y + rect2.height &&
+               rect1.y + rect1.height > rect2.y;
+    }
+}
+```
+
+## 19. Performance & Optimization
+
+### Performance Testing Integration
+```java
+public class PerformanceMonitor {
+    private final AppiumDriver driver;
+    private final List<PerformanceMetric> metrics = new ArrayList<>();
+
+    public PerformanceMonitor(AppiumDriver driver) {
+        this.driver = driver;
+    }
+
+    // Monitor app launch time
+    public long measureAppLaunchTime(String packageName) {
+        long startTime = System.currentTimeMillis();
+
+        driver.activateApp(packageName);
+
+        // Wait for app to be fully loaded
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(driver -> {
+            ApplicationState state = ((AndroidDriver) driver).queryAppState(packageName);
+            return state == ApplicationState.RUNNING_IN_FOREGROUND;
+        });
+
+        long endTime = System.currentTimeMillis();
+        long launchTime = endTime - startTime;
+
+        metrics.add(new PerformanceMetric("AppLaunchTime", launchTime, "ms"));
+        return launchTime;
+    }
+
+    // Monitor screen transition time
+    public long measureScreenTransition(Runnable action, By expectedElement) {
+        long startTime = System.currentTimeMillis();
+
+        action.run();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(ExpectedConditions.presenceOfElementLocated(expectedElement));
+
+        long endTime = System.currentTimeMillis();
+        long transitionTime = endTime - startTime;
+
+        metrics.add(new PerformanceMetric("ScreenTransition", transitionTime, "ms"));
+        return transitionTime;
+    }
+
+    // Monitor memory usage (Android)
+    public MemoryUsage getMemoryUsage(String packageName) {
+        try {
+            Map<String, Object> args = new HashMap<>();
+            args.put("command", "dumpsys meminfo " + packageName);
+
+            Map<String, Object> result = (Map<String, Object>)
+                ((AndroidDriver) driver).executeScript("mobile: shell", args);
+
+            String output = (String) result.get("stdout");
+
+            // Parse memory info from dumpsys output
+            return parseMemoryInfo(output);
+
+        } catch (Exception e) {
+            System.err.println("Failed to get memory usage: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // Monitor CPU usage (Android)
+    public double getCPUUsage(String packageName) {
+        try {
+            Map<String, Object> args = new HashMap<>();
+            args.put("command", "top -n 1 | grep " + packageName);
+
+            Map<String, Object> result = (Map<String, Object>)
+                ((AndroidDriver) driver).executeScript("mobile: shell", args);
+
+            String output = (String) result.get("stdout");
+
+            // Parse CPU usage from top command output
+            return parseCPUUsage(output);
+
+        } catch (Exception e) {
+            System.err.println("Failed to get CPU usage: " + e.getMessage());
+            return 0.0;
+        }
+    }
+
+    // Monitor network usage
+    public NetworkUsage getNetworkUsage(String packageName) {
+        if (driver instanceof AndroidDriver) {
+            try {
+                Map<String, Object> args = new HashMap<>();
+                args.put("command", "cat /proc/net/xt_qtaguid/stats | grep $(id -u " + packageName + ")");
+
+                Map<String, Object> result = (Map<String, Object>)
+                    ((AndroidDriver) driver).executeScript("mobile: shell", args);
+
+                String output = (String) result.get("stdout");
+                return parseNetworkUsage(output);
+
+            } catch (Exception e) {
+                System.err.println("Failed to get network usage: " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    // Generate performance report
+    public void generatePerformanceReport(String testName) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            Map<String, Object> report = new HashMap<>();
+            report.put("testName", testName);
+            report.put("timestamp", LocalDateTime.now().toString());
+            report.put("metrics", metrics);
+
+            String reportJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(report);
+
+            String fileName = String.format("performance_report_%s_%s.json",
+                testName,
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")));
+
+            Files.write(Paths.get("test-output/performance/" + fileName),
+                       reportJson.getBytes(),
+                       StandardOpenOption.CREATE);
+
+        } catch (Exception e) {
+            System.err.println("Failed to generate performance report: " + e.getMessage());
+        }
+    }
+
+    // Helper classes and parsing methods
+    public static class PerformanceMetric {
+        private String name;
+        private long value;
+        private String unit;
+
+        public PerformanceMetric(String name, long value, String unit) {
+            this.name = name;
+            this.value = value;
+            this.unit = unit;
+        }
+
+        // Getters and setters...
+    }
+
+    public static class MemoryUsage {
+        private long totalMemory;
+        private long usedMemory;
+        private long freeMemory;
+
+        // Constructor, getters and setters...
+    }
+
+    public static class NetworkUsage {
+        private long bytesReceived;
+        private long bytesSent;
+        private long packetsReceived;
+        private long packetsSent;
+
+        // Constructor, getters and setters...
+    }
+
+    private MemoryUsage parseMemoryInfo(String output) {
+        // Implementation to parse dumpsys meminfo output
+        return new MemoryUsage();
+    }
+
+    private double parseCPUUsage(String output) {
+        // Implementation to parse CPU usage from top command
+        return 0.0;
+    }
+
+    private NetworkUsage parseNetworkUsage(String output) {
+        // Implementation to parse network statistics
+        return new NetworkUsage();
+    }
+}
+```
+
+### Test Execution Optimization
+```java
+public class OptimizationHelper {
+
+    // Optimize wait strategies
+    public static void optimizeWaits(AppiumDriver driver) {
+        // Set reasonable implicit wait
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+
+        // Disable animations for faster execution (Android)
+        if (driver instanceof AndroidDriver) {
+            Map<String, Object> args = new HashMap<>();
+            args.put("command", "settings put global window_animation_scale 0");
+            driver.executeScript("mobile: shell", args);
+
+            args.put("command", "settings put global transition_animation_scale 0");
+            driver.executeScript("mobile: shell", args);
+
+            args.put("command", "settings put global animator_duration_scale 0");
+            driver.executeScript("mobile: shell", args);
+        }
+    }
+
+    // Optimize locator strategies
+    public static By optimizeLocator(String platform, String identifier, String text) {
+        if ("Android".equals(platform)) {
+            // Prefer resource-id over text-based locators
+            if (identifier != null && !identifier.isEmpty()) {
+                return AppiumBy.id(identifier);
+            } else if (text != null && !text.isEmpty()) {
+                return AppiumBy.androidUIAutomator(
+                    "new UiSelector().text(\"" + text + "\")"
+                );
+            }
+        } else { // iOS
+            // Prefer accessibility ID over predicate strings
+            if (identifier != null && !identifier.isEmpty()) {
+                return AppiumBy.accessibilityId(identifier);
+            } else if (text != null && !text.isEmpty()) {
+                return AppiumBy.iOSNsPredicateString("label == '" + text + "'");
+            }
+        }
+        return null;
+    }
+
+    // Batch operations for better performance
+    public static void batchElementOperations(AppiumDriver driver,
+                                            List<ElementOperation> operations) {
+        // Group operations by type for better efficiency
+        Map<OperationType, List<ElementOperation>> groupedOps =
+            operations.stream().collect(Collectors.groupingBy(ElementOperation::getType));
+
+        // Execute operations in optimized order
+        for (Map.Entry<OperationType, List<ElementOperation>> entry : groupedOps.entrySet()) {
+            switch (entry.getKey()) {
+                case FIND:
+                    // Batch find operations
+                    executeBatchFinds(driver, entry.getValue());
+                    break;
+                case CLICK:
+                    // Execute clicks with minimal delays
+                    executeBatchClicks(driver, entry.getValue());
+                    break;
+                case TYPE:
+                    // Batch text input operations
+                    executeBatchTextInputs(driver, entry.getValue());
+                    break;
+            }
+        }
+    }
+
+    private static void executeBatchFinds(AppiumDriver driver, List<ElementOperation> operations) {
+        // Use a single page source call to find multiple elements
+        String pageSource = driver.getPageSource();
+        // Parse and locate elements from the cached page source
+        // This reduces the number of server calls
+    }
+
+    private static void executeBatchClicks(AppiumDriver driver, List<ElementOperation> operations) {
+        // Execute clicks with optimized timing
+        for (ElementOperation op : operations) {
+            op.execute(driver);
+            // Minimal delay between clicks if needed
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+    private static void executeBatchTextInputs(AppiumDriver driver, List<ElementOperation> operations) {
+        // Batch text inputs to reduce keyboard show/hide cycles
+        for (ElementOperation op : operations) {
+            op.execute(driver);
+        }
+        // Hide keyboard once at the end
+        if (driver instanceof AndroidDriver) {
+            ((AndroidDriver) driver).hideKeyboard();
+        }
+    }
+
+    // Helper classes
+    public enum OperationType {
+        FIND, CLICK, TYPE, SWIPE
+    }
+
+    public static class ElementOperation {
+        private OperationType type;
+        private By locator;
+        private String data;
+
+        public ElementOperation(OperationType type, By locator, String data) {
+            this.type = type;
+            this.locator = locator;
+            this.data = data;
+        }
+
+        public void execute(AppiumDriver driver) {
+            WebElement element = driver.findElement(locator);
+            switch (type) {
+                case CLICK:
+                    element.click();
+                    break;
+                case TYPE:
+                    element.clear();
+                    element.sendKeys(data);
+                    break;
+                // Add more operations as needed
+            }
+        }
+
+        public OperationType getType() { return type; }
+    }
+}
+```
+
+## 20. Best Practices & Guidelines
+
+### Code Organization & Maintainability
+```java
+// 1. Use Page Object Model with proper inheritance
+public abstract class BasePage {
+    protected AppiumDriver driver;
+    protected WebDriverWait wait;
+
+    public BasePage(AppiumDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        PageFactory.initElements(new AppiumFieldDecorator(driver), this);
+    }
+
+    // Common methods for all pages
+    protected void waitForPageLoad() {
+        // Wait for common loading indicators to disappear
+        try {
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                By.xpath("//*[@text='Loading...' or @content-desc='Loading']")));
+        } catch (TimeoutException e) {
+            // Loading indicator might not appear
+        }
+    }
+
+    protected boolean isElementPresent(By locator) {
+        try {
+            driver.findElement(locator);
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public abstract boolean isLoaded();
+}
+
+// 2. Create platform-specific implementations
+public class LoginPageAndroid extends BasePage implements LoginPage {
+    @FindBy(id = "com.example:id/username")
+    private WebElement usernameField;
+
+    @FindBy(id = "com.example:id/password")
+    private WebElement passwordField;
+
+    @FindBy(id = "com.example:id/loginBtn")
+    private WebElement loginButton;
+
+    public LoginPageAndroid(AppiumDriver driver) {
+        super(driver);
+    }
+
+    @Override
+    public void login(String username, String password)
+```

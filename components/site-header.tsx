@@ -20,6 +20,10 @@ const NAV_LINKS = [
   { fragment: "contact", label: "Contact" },
 ]
 
+const SEPARATE_NAV_LINKS = [
+  { fragment: "playbook", label: "Playbook", route: "/playbook" },
+]
+
 export function SiteHeader() {
   const [active, setActive] = useState<string>("#home")
   const [scrolled, setScrolled] = useState(false)
@@ -148,7 +152,10 @@ export function SiteHeader() {
                   {NAV_LINKS.map(link => {
                     const fragmentHash = `#${link.fragment}`
                     const href = pathname === '/' ? fragmentHash : `/${fragmentHash}`
-                    const isActive = active === fragmentHash
+                    
+                    // For fragment-based links, only consider them active if we're on the home page
+                    const isActive = pathname === '/' && active === fragmentHash
+                    
                     return (
                       <li
                         key={link.fragment}
@@ -189,6 +196,38 @@ export function SiteHeader() {
                     )
                   })}
                 </ul>
+                
+                {/* Separator */}
+                <div className="h-px bg-primary-foreground/20 my-4 mx-4" />
+                
+                {/* Separate Playbook Navigation */}
+                <ul className="space-y-2 pointer-events-auto">
+                  {SEPARATE_NAV_LINKS.map(link => {
+                    const isActive = pathname.startsWith(link.route)
+                    
+                    return (
+                      <li
+                        key={link.fragment}
+                        style={{ animationDelay: `${(NAV_LINKS.length + SEPARATE_NAV_LINKS.findIndex(l=>l.fragment===link.fragment)) * 50}ms` }}
+                        className="opacity-0 animate-fadeSlide"
+                      >
+                        <SheetClose asChild>
+                          <Link
+                            href={link.route}
+                            className={cn(
+                              "flex w-full items-center justify-between rounded-md px-4 py-3 text-base font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/50 tracking-tight",
+                              isActive
+                                ? "bg-primary-foreground text-primary"
+                                : "bg-primary/25 hover:bg-primary/35 text-primary-foreground"
+                            )}
+                          >
+                            <span>{link.label}</span>
+                          </Link>
+                        </SheetClose>
+                      </li>
+                    )
+                  })}
+                </ul>
               </nav>
               <div className="px-5 py-4 text-[11px] tracking-wide uppercase opacity-70">© {new Date().getFullYear()}</div>
             </div>
@@ -210,7 +249,7 @@ export function SiteHeader() {
       </div>
 
       {/* Desktop: separate nav and theme toggle groups */}
-      <div className="hidden md:flex items-center mx-auto pr-2 gap-3">
+      <div className="hidden md:flex items-center mx-auto pr-2 gap-1.5">
         <div
           className={cn(
             "group flex items-stretch glass-elevated rounded-full pl-3 pr-2 py-1.5 gap-2 relative",
@@ -223,7 +262,10 @@ export function SiteHeader() {
               {NAV_LINKS.map(link => {
                 const fragmentHash = `#${link.fragment}`
                 const href = pathname === '/' ? fragmentHash : `/${fragmentHash}`
-                const isActive = active === fragmentHash
+                
+                // For fragment-based links, only consider them active if we're on the home page
+                const isActive = pathname === '/' && active === fragmentHash
+                
                 return (
                   <li key={link.fragment} style={{ animationDelay: `${NAV_LINKS.findIndex(l=>l.fragment===link.fragment) * 55}ms` }} className="opacity-0 animate-fadeSlide">
                     {pathname === '/' ? (
@@ -260,14 +302,63 @@ export function SiteHeader() {
             </ul>
           </nav>
         </div>
+        {/* Separator - Icon */}
         <div
           role="presentation"
           aria-hidden="true"
           className={cn(
-            "h-6 w-px bg-gradient-to-b from-transparent via-border/60 to-transparent transition-opacity duration-300",
-            scrolled ? "opacity-60" : "opacity-25"
+            "text-muted-foreground/60 transition-opacity duration-300",
+            scrolled ? "opacity-80" : "opacity-40"
           )}
-        />
+        >
+          |
+        </div>
+        
+        {/* Separate Playbook Navigation */}
+        <div
+          className={cn(
+            "group flex items-stretch glass-elevated rounded-full pl-3 pr-2 py-1.5 gap-2 relative",
+            "before:absolute before:inset-0 before:rounded-full before:pointer-events-none",
+            "before:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_2px_4px_-1px_rgba(255,255,255,0.08),inset_0_-2px_4px_-1px_rgba(0,0,0,0.25)]"
+          )}
+        >
+          <nav aria-label="Secondary" className="flex">
+            <ul className="flex gap-1">
+              {SEPARATE_NAV_LINKS.map(link => {
+                const isActive = pathname.startsWith(link.route)
+                
+                return (
+                  <li key={link.fragment} style={{ animationDelay: `${(NAV_LINKS.length + SEPARATE_NAV_LINKS.findIndex(l=>l.fragment===link.fragment)) * 55}ms` }} className="opacity-0 animate-fadeSlide">
+                    <Link
+                      href={link.route}
+                      className={cn(
+                        "px-3 py-1 text-sm rounded-full transition-colors nav-link focus-gradient outline-none",
+                        isActive
+                          ? "text-primary is-active"
+                          : "text-muted-foreground hover:text-primary"
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </nav>
+        </div>
+        
+        {/* Separator */}
+        <div
+          role="presentation"
+          aria-hidden="true"
+          className={cn(
+            "text-muted-foreground/60 transition-opacity duration-300",
+            scrolled ? "opacity-80" : "opacity-40"
+          )}
+        >
+          |
+        </div>
+        
         <div
           className={cn(
             "glass-elevated rounded-full px-1.5 py-1.5 flex items-center relative",
