@@ -103,7 +103,7 @@ export function SiteHeader() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 flex items-center px-4 transition-colors",
         "h-14 min-h-14", // stabilize height
-        scrolled ? "glass border-b" : "bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/55"
+        "bg-gradient-to-br from-purple-950/60 via-slate-900/70 to-pink-950/60 border-b border-purple-500/20 backdrop-blur"
       )}
       role="banner"
     >

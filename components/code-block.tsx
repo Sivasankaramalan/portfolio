@@ -1,6 +1,5 @@
 "use client";
 import { useState } from 'react'
-import { useTheme } from 'next-themes'
 
 interface CodeBlockProps {
     code: string
@@ -18,7 +17,6 @@ export default function CodeBlock({
     const [copied, setCopied] = useState(false)
     const [wrap, setWrap] = useState(false)
     const [expanded, setExpanded] = useState(false)
-    const { theme } = useTheme()
 
     const onCopy = async () => {
         try {
@@ -88,16 +86,16 @@ export default function CodeBlock({
         }
 
         const colorClasses: Record<string, string> = {
-            keyword: 'text-purple-600 dark:text-purple-400 font-semibold',
-            string: 'text-green-600 dark:text-green-400',
-            comment: 'text-gray-500 dark:text-gray-400 italic',
-            number: 'text-orange-600 dark:text-orange-400',
-            method: 'text-blue-600 dark:text-blue-400',
-            command: 'text-blue-600 dark:text-blue-400 font-semibold',
-            flag: 'text-yellow-600 dark:text-yellow-400',
-            key: 'text-blue-600 dark:text-blue-400 font-semibold',
-            boolean: 'text-purple-600 dark:text-purple-400',
-            text: ''
+            keyword: 'text-pink-400 font-semibold',
+            string: 'text-green-400',
+            comment: 'text-slate-400 italic',
+            number: 'text-orange-400',
+            method: 'text-cyan-400',
+            command: 'text-cyan-400 font-semibold',
+            flag: 'text-yellow-400',
+            key: 'text-cyan-400 font-semibold',
+            boolean: 'text-pink-400',
+            text: 'text-purple-100'
         }
 
         const parts = []
@@ -147,24 +145,24 @@ export default function CodeBlock({
     const displayLines = shouldCollapse ? lines.slice(0, initialCollapsedLines) : lines
 
     return (
-        <div className="group relative border border-border/70 rounded-lg bg-muted/40 backdrop-blur shadow-sm overflow-hidden">
+        <div className="group relative border border-purple-500/20 rounded-lg bg-gradient-to-br from-purple-950/60 via-slate-900/70 to-pink-950/60 backdrop-blur shadow-sm overflow-hidden">
             <div className="absolute right-2 top-2 flex items-center gap-1 z-10">
                 {lang && lang !== 'text' && (
-                    <span className="text-[10px] font-mono uppercase tracking-wide px-2 py-1 rounded-md bg-background/80 border border-border/60 text-muted-foreground">
+                    <span className="text-[10px] font-mono uppercase tracking-wide px-2 py-1 rounded-md bg-slate-900/80 border border-purple-500/30 text-purple-200">
                         {lang}
                     </span>
                 )}
                 <button
                     onClick={() => setWrap((w: boolean) => !w)}
                     aria-label="Toggle line wrap"
-                    className="text-[11px] font-medium px-2 py-1 rounded-md border border-border/60 bg-background/80 hover:bg-background/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                    className="text-[11px] font-medium px-2 py-1 rounded-md border border-purple-500/30 bg-slate-900/80 hover:bg-slate-800/90 text-purple-200 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50"
                 >
                     {wrap ? 'No-wrap' : 'Wrap'}
                 </button>
                 <button
                     onClick={onCopy}
                     aria-label="Copy code"
-                    className="text-[11px] font-medium px-2 py-1 rounded-md border border-border/60 bg-background/80 hover:bg-background/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                    className="text-[11px] font-medium px-2 py-1 rounded-md border border-purple-500/30 bg-slate-900/80 hover:bg-slate-800/90 text-purple-200 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50"
                 >
                     {copied ? 'Copied' : 'Copy'}
                 </button>
@@ -174,9 +172,7 @@ export default function CodeBlock({
                 <pre
                     className={`text-[12.5px] sm:text-[13px] leading-relaxed font-mono p-4 pt-12 ${
                         wrap ? 'whitespace-pre-wrap break-words' : 'whitespace-pre'
-                    } scrollbar-thin overflow-auto ${
-                        theme === 'dark' ? 'bg-gray-900/50' : 'bg-gray-50/50'
-                    }`}
+                    } scrollbar-thin overflow-auto bg-gradient-to-br from-purple-950/40 via-slate-900/50 to-pink-950/40 text-purple-100`}
                     style={{ maxHeight: shouldCollapse ? '320px' : undefined }}
                 >
                     {isAsciiArt ? (
@@ -195,7 +191,7 @@ export default function CodeBlock({
                         displayLines.map((line, i) => (
                             <div key={i} className="table w-full">
                                 {showLineNumbers && (
-                                    <span className="table-cell select-none pr-4 text-muted-foreground opacity-70 text-right w-[2ch]">
+                                    <span className="table-cell select-none pr-4 text-purple-300/60 opacity-70 text-right w-[2ch]">
                                         {i + 1}
                                     </span>
                                 )}
@@ -209,11 +205,11 @@ export default function CodeBlock({
                 
                 {shouldCollapse && (
                     <>
-                        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent" />
+                        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-transparent" />
                         <div className="absolute bottom-2 left-0 right-0 flex justify-center">
                             <button
                                 onClick={() => setExpanded(true)}
-                                className="text-[11px] font-medium px-2 py-1 rounded-md border border-border/60 bg-background/90 hover:bg-background transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                                className="text-[11px] font-medium px-2 py-1 rounded-md border border-purple-500/30 bg-slate-900/90 hover:bg-slate-800 text-purple-200 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50"
                                 aria-label="Expand code block"
                             >
                                 Expand
@@ -222,7 +218,7 @@ export default function CodeBlock({
                     </>
                 )}
             </div>
-            <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-primary/5 to-accent/5" />
+            <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-pink-500/10 to-purple-500/10" />
         </div>
     )
 }

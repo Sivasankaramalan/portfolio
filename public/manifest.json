@@ -1,0 +1,54 @@
+{
+  "name": "Sivasankaramalan - Quality Engineering Leader",
+  "short_name": "Sivasankaramalan",
+  "description": "Quality Engineering Leader – Mobile & Web Automation, Shift-Left, Reliability Engineering",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["business", "productivity", "portfolio"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "id": "sivasankaramalan-portfolio",
+  "shortcuts": [
+    {
+      "name": "About",
+      "short_name": "About",
+      "description": "Learn about my background and experience",
+      "url": "/#about",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Projects",
+      "short_name": "Projects",
+      "description": "View my latest projects and work",
+      "url": "/#projects",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Playbooks",
+      "short_name": "Playbooks",
+      "description": "Automation and testing guides",
+      "url": "/playbook",
+      "icons": [{ "src": "/icon-192.svg", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
