@@ -6,7 +6,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/sheet"
-import { Menu, X } from "lucide-react"
+import { Menu, X, ArrowLeft } from "lucide-react"
 import { useInPageNav } from "@/hooks/use-in-page-nav"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
@@ -200,6 +200,23 @@ export function SiteHeader() {
                 {/* Separator */}
                 <div className="h-px bg-primary-foreground/20 my-4 mx-4" />
                 
+                {/* Back button for mobile playbook */}
+                {pathname === '/playbook/mobile' && (
+                  <ul className="space-y-2 pointer-events-auto mb-4">
+                    <li className="opacity-0 animate-fadeSlide">
+                      <SheetClose asChild>
+                        <Link
+                          href="/playbook"
+                          className="flex w-full items-center gap-3 rounded-md px-4 py-3 text-base font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/50 tracking-tight bg-primary/25 hover:bg-primary/35 text-primary-foreground"
+                        >
+                          <ArrowLeft className="w-4 h-4" />
+                          <span>Back to Playbooks</span>
+                        </Link>
+                      </SheetClose>
+                    </li>
+                  </ul>
+                )}
+                
                 {/* Separate Playbook Navigation */}
                 <ul className="space-y-2 pointer-events-auto">
                   {SEPARATE_NAV_LINKS.map(link => {
@@ -322,6 +339,17 @@ export function SiteHeader() {
             "before:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_2px_4px_-1px_rgba(255,255,255,0.08),inset_0_-2px_4px_-1px_rgba(0,0,0,0.25)]"
           )}
         >
+          {/* Back button for mobile playbook */}
+          {pathname === '/playbook/mobile' && (
+            <Link
+              href="/playbook"
+              className="px-3 py-1 text-sm rounded-full transition-colors nav-link focus-gradient outline-none text-muted-foreground hover:text-primary flex items-center gap-1.5"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </Link>
+          )}
+          
           <nav aria-label="Secondary" className="flex">
             <ul className="flex gap-1">
               {SEPARATE_NAV_LINKS.map(link => {
