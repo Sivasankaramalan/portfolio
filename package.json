@@ -6,7 +6,10 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "analyze": "cross-env ANALYZE=true next build",
+    "lighthouse": "lighthouse http://localhost:3000 --output html --output-path ./lighthouse-report.html",
+    "audit": "npm run build && npm run lighthouse"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
@@ -55,7 +58,8 @@
     "remark-gfm": "^4.0.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^2.6.0",
-    "vaul": "^1.1.2"
+    "vaul": "^1.1.2",
+    "web-vitals": "^5.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.14",
