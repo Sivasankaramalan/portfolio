@@ -14,13 +14,13 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <div className="flex gap-1">
-        <button disabled className="px-2 py-1 text-sm rounded-full transition-colors opacity-50">
+        <button disabled className="px-2 py-1 text-sm rounded-full transition-colors opacity-50 text-gray-400">
           <Sun className="h-4 w-4" />
         </button>
-        <button disabled className="px-2 py-1 text-sm rounded-full transition-colors opacity-50">
+        <button disabled className="px-2 py-1 text-sm rounded-full transition-colors opacity-50 text-gray-400">
           <Moon className="h-4 w-4" />
         </button>
-        <button disabled className="px-2 py-1 text-sm rounded-full transition-colors opacity-50">
+        <button disabled className="px-2 py-1 text-sm rounded-full transition-colors opacity-50 text-gray-400">
           <Laptop className="h-4 w-4" />
         </button>
       </div>
@@ -45,10 +45,10 @@ export function ThemeToggle() {
             aria-label={label}
             onClick={() => setTheme(value)}
             className={cn(
-              "px-2 py-1 text-sm rounded-full transition-colors hover:text-primary outline-none",
+              "px-2 py-1 text-sm rounded-full transition-colors outline-none",
               isActive
-                ? "bg-primary text-primary-foreground ring-1 ring-offset-1 ring-offset-background ring-primary/70 shadow-sm"
-                : "text-muted-foreground hover:bg-muted focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+                ? "bg-purple-500 text-white ring-1 ring-purple-400/50 shadow-sm"
+                : "text-gray-400 hover:text-white hover:bg-gray-700/80 focus-visible:ring-1 focus-visible:ring-purple-400/50"
             )}
           >
             <Icon className="h-4 w-4" />

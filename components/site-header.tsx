@@ -6,7 +6,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/sheet"
-import { Menu, X, ArrowLeft } from "lucide-react"
+import { Menu, X, ArrowLeft, Sparkles } from "lucide-react"
 import { useInPageNav } from "@/hooks/use-in-page-nav"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 
@@ -197,8 +197,12 @@ export function SiteHeader() {
                   })}
                 </ul>
                 
-                {/* Separator */}
-                <div className="h-px bg-primary-foreground/20 my-4 mx-4" />
+                {/* Separator with icon */}
+                <div className="flex items-center justify-center my-4 mx-4">
+                  <div className="flex-1 h-px bg-primary-foreground/20"></div>
+                  <Sparkles className="w-3 h-3 text-primary-foreground/40 mx-3" />
+                  <div className="flex-1 h-px bg-primary-foreground/20"></div>
+                </div>
                 
                 {/* Back button for mobile playbook */}
                 {pathname === '/playbook/mobile' && (
@@ -226,7 +230,7 @@ export function SiteHeader() {
                       <li
                         key={link.fragment}
                         style={{ animationDelay: `${(NAV_LINKS.length + SEPARATE_NAV_LINKS.findIndex(l=>l.fragment===link.fragment)) * 50}ms` }}
-                        className="opacity-0 animate-fadeSlide"
+                        className="opacity-0 animate-fadeSlide relative"
                       >
                         <SheetClose asChild>
                           <Link
@@ -238,7 +242,15 @@ export function SiteHeader() {
                                 : "bg-primary/25 hover:bg-primary/35 text-primary-foreground"
                             )}
                           >
-                            <span>{link.label}</span>
+                            <span className="flex items-center gap-2">
+                              {link.label}
+                              {/* NEW badge for Playbook in mobile */}
+                              {link.fragment === 'playbook' && (
+                                <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full new-badge shadow-lg border border-orange-400/50">
+                                  NEW
+                                </span>
+                              )}
+                            </span>
                           </Link>
                         </SheetClose>
                       </li>
@@ -254,46 +266,32 @@ export function SiteHeader() {
 
       {/* Mobile: top-right theme toggle */}
       <div className="md:hidden ml-auto flex items-center pr-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div aria-label="Theme selector" role="group" className="inline-flex">
-              <span className="sr-only">Theme</span>
-              <ThemeToggle />
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Switch theme</TooltipContent>
-        </Tooltip>
+        <div aria-label="Theme selector" role="group" className="inline-flex">
+          <span className="sr-only">Theme</span>
+          <ThemeToggle />
+        </div>
       </div>
 
-      {/* Desktop: separate nav and theme toggle groups */}
-      <div className="hidden md:flex items-center mx-auto pr-2 gap-1.5">
-        <div
-          className={cn(
-            "group flex items-stretch glass-elevated rounded-full pl-3 pr-2 py-1.5 gap-2 relative",
-            "before:absolute before:inset-0 before:rounded-full before:pointer-events-none",
-            "before:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_2px_4px_-1px_rgba(255,255,255,0.08),inset_0_-2px_4px_-1px_rgba(0,0,0,0.25)]"
-          )}
-        >
+      {/* Desktop: compact unified navigation */}
+      <div className="hidden md:flex items-center mx-auto pr-2">
+        <div className="flex items-center bg-slate-900/95 backdrop-blur-md border border-slate-700/50 shadow-md rounded-xl px-3 py-2 ring-1 ring-white/10">
+          {/* Main Navigation - Group 1 */}
           <nav aria-label="Primary" className="flex">
-            <ul className="flex gap-1" style={{ ['--nav-accent' as any]: 'var(--accent)' }}>
+            <ul className="flex items-center gap-1">
               {NAV_LINKS.map(link => {
                 const fragmentHash = `#${link.fragment}`
                 const href = pathname === '/' ? fragmentHash : `/${fragmentHash}`
-                
-                // For fragment-based links, only consider them active if we're on the home page
                 const isActive = pathname === '/' && active === fragmentHash
                 
                 return (
-                  <li key={link.fragment} style={{ animationDelay: `${NAV_LINKS.findIndex(l=>l.fragment===link.fragment) * 55}ms` }} className="opacity-0 animate-fadeSlide">
+                  <li key={link.fragment} className="opacity-0 animate-fadeSlide" style={{ animationDelay: `${NAV_LINKS.findIndex(l=>l.fragment===link.fragment) * 40}ms` }}>
                     {pathname === '/' ? (
                       <a
                         href={fragmentHash}
                         data-nav-fragment={link.fragment}
                         className={cn(
-                          "px-3 py-1 text-sm rounded-full transition-colors nav-link focus-gradient outline-none",
-                          isActive
-                            ? "text-primary is-active"
-                            : "text-muted-foreground hover:text-primary"
+                          "nav-link",
+                          isActive ? "is-active" : ""
                         )}
                         aria-current={isActive ? 'page' : undefined}
                       >
@@ -303,10 +301,8 @@ export function SiteHeader() {
                       <Link
                         href={href}
                         className={cn(
-                          "px-3 py-1 text-sm rounded-full transition-colors nav-link focus-gradient outline-none",
-                          isActive
-                            ? "text-primary is-active"
-                            : "text-muted-foreground hover:text-primary"
+                          "nav-link",
+                          isActive ? "is-active" : ""
                         )}
                         scroll={true}
                       >
@@ -318,92 +314,50 @@ export function SiteHeader() {
               })}
             </ul>
           </nav>
-        </div>
-        {/* Separator - Icon */}
-        <div
-          role="presentation"
-          aria-hidden="true"
-          className={cn(
-            "text-muted-foreground/60 transition-opacity duration-300",
-            scrolled ? "opacity-80" : "opacity-40"
-          )}
-        >
-          |
-        </div>
-        
-        {/* Separate Playbook Navigation */}
-        <div
-          className={cn(
-            "group flex items-stretch glass-elevated rounded-full pl-3 pr-2 py-1.5 gap-2 relative",
-            "before:absolute before:inset-0 before:rounded-full before:pointer-events-none",
-            "before:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_2px_4px_-1px_rgba(255,255,255,0.08),inset_0_-2px_4px_-1px_rgba(0,0,0,0.25)]"
-          )}
-        >
-          {/* Back button for mobile playbook */}
-          {pathname === '/playbook/mobile' && (
-            <Link
-              href="/playbook"
-              className="px-3 py-1 text-sm rounded-full transition-colors nav-link focus-gradient outline-none text-muted-foreground hover:text-primary flex items-center gap-1.5"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back</span>
-            </Link>
-          )}
           
+          {/* Separator between Group 1 and Group 2 with icon */}
+          <div className="flex items-center mx-4">
+            <Sparkles className="w-3 h-3 nav-separator-icon nav-separator-sparkles" />
+          </div>
+          
+          {/* Playbook Navigation - Group 2 */}
           <nav aria-label="Secondary" className="flex">
-            <ul className="flex gap-1">
+            <ul className="flex items-center gap-1">
               {SEPARATE_NAV_LINKS.map(link => {
                 const isActive = pathname.startsWith(link.route)
                 
                 return (
-                  <li key={link.fragment} style={{ animationDelay: `${(NAV_LINKS.length + SEPARATE_NAV_LINKS.findIndex(l=>l.fragment===link.fragment)) * 55}ms` }} className="opacity-0 animate-fadeSlide">
+                  <li key={link.fragment} className="opacity-0 animate-fadeSlide relative" style={{ animationDelay: `${(NAV_LINKS.length + SEPARATE_NAV_LINKS.findIndex(l=>l.fragment===link.fragment)) * 40}ms` }}>
                     <Link
                       href={link.route}
                       className={cn(
-                        "px-3 py-1 text-sm rounded-full transition-colors nav-link focus-gradient outline-none",
-                        isActive
-                          ? "text-primary is-active"
-                          : "text-muted-foreground hover:text-primary"
+                        "nav-link",
+                        isActive ? "is-active" : ""
                       )}
                     >
                       {link.label}
                     </Link>
+                    {/* Compact NEW badge */}
+                    {link.fragment === 'playbook' && (
+                      <span className="absolute -top-1 -right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm animate-pulse">
+                        NEW
+                      </span>
+                    )}
                   </li>
                 )
               })}
             </ul>
           </nav>
-        </div>
-        
-        {/* Separator */}
-        <div
-          role="presentation"
-          aria-hidden="true"
-          className={cn(
-            "text-muted-foreground/60 transition-opacity duration-300",
-            scrolled ? "opacity-80" : "opacity-40"
-          )}
-        >
-          |
-        </div>
-        
-        <div
-          className={cn(
-            "glass-elevated rounded-full px-1.5 py-1.5 flex items-center relative",
-            "before:absolute before:inset-0 before:rounded-full before:pointer-events-none",
-            "before:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06),inset_0_2px_4px_-1px_rgba(255,255,255,0.08),inset_0_-2px_4px_-1px_rgba(0,0,0,0.25)]"
-          )}
-          role="group" aria-label="Theme selector"
-        >
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="relative inline-flex">
-                <span className="sr-only">Theme</span>
-                <ThemeToggle />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Switch theme</TooltipContent>
-          </Tooltip>
+          
+          {/* Separator between Group 2 and Group 3 with icon */}
+          <div className="flex items-center mx-4">
+            <Sparkles className="w-3 h-3 nav-separator-icon nav-separator-sparkles" />
+          </div>
+          
+          {/* Theme Toggle - Group 3 */}
+          <div className="flex items-center">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
 
