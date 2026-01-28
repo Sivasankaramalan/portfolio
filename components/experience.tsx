@@ -1,6 +1,8 @@
 "use client"
+
 import { Card } from "@/components/ui/card"
 import Image from "next/image"
+import { Briefcase } from "lucide-react"
 
 interface ExperienceItem {
   title: string
@@ -10,7 +12,6 @@ interface ExperienceItem {
   description: string
 }
 
-// Technologies were previously captured but removed from UI per request.
 const experiences: ExperienceItem[] = [
   {
     title: "Lead QA Engineer",
@@ -64,42 +65,102 @@ const experiences: ExperienceItem[] = [
 
 export function Experience() {
   return (
-  <section id="experience" className="reveal-section is-visible section-accent accent-blue px-6 md:px-10 lg:px-14 py-24 scroll-mt-32">
+    <section id="experience" className="section-accent px-6 py-24 scroll-mt-32">
       <div className="max-w-6xl mx-auto">
-  <h2 className="text-4xl md:text-5xl font-bold mb-14 tracking-tight">Experience</h2>
-  <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
-          {experiences.map((exp, index) => (
-            <Card
-              key={index}
-              className="p-8 flex flex-col hover:shadow-xl transition-shadow border bg-card/70 backdrop-blur supports-[backdrop-filter]:bg-card/60 rounded-xl"
-            >
-              <div className="flex flex-col gap-5 flex-1">
-                <div className="space-y-1.5">
-                  <h3 className="text-xl md:text-2xl font-semibold leading-snug line-clamp-2">{exp.title}</h3>
-                  <div className="flex items-center gap-2.5">
-                    {exp.logo && (
-                      <Image
-                        src={exp.logo}
-                        alt={`${exp.company} logo`}
-                        width={32}
-                        height={32}
-                        className="h-7 w-7 md:h-8 md:w-8 object-contain rounded-sm shadow-sm bg-background"
-                        loading="lazy"
-                      />
-                    )}
-                    <div className="text-sm uppercase tracking-wide text-primary font-semibold">
-                      {exp.company}
-                    </div>
+        {/* Section header */}
+        <div className="max-w-3xl mb-16">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Briefcase className="w-5 h-5 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+              Experience
+            </h2>
+          </div>
+          <p className="text-lg text-muted-foreground">
+            A decade of building quality at scale—from startups to enterprises.
+          </p>
+        </div>
+
+        {/* Timeline */}
+        <div className="relative">
+          {/* Vertical timeline line - visible on larger screens */}
+          <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-primary/50 to-transparent" />
+
+          <div className="space-y-12 lg:space-y-0">
+            {experiences.map((exp, index) => {
+              const isEven = index % 2 === 0
+              
+              return (
+                <div
+                  key={index}
+                  className={`
+                    relative lg:grid lg:grid-cols-2 lg:gap-8
+                    ${index !== experiences.length - 1 ? 'lg:pb-16' : ''}
+                  `}
+                >
+                  {/* Timeline dot - desktop */}
+                  <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 top-0 w-4 h-4 rounded-full bg-primary ring-4 ring-background z-10">
+                    <div className="absolute inset-0 rounded-full bg-primary animate-pulse-glow" />
                   </div>
-                  <div className="text-xs md:text-sm text-muted-foreground font-medium">{exp.period}</div>
+
+                  {/* Card */}
+                  <div
+                    className={`
+                      ${isEven ? 'lg:col-start-1 lg:pr-12' : 'lg:col-start-2 lg:pl-12'}
+                      ${!isEven ? 'lg:text-left' : 'lg:text-right'}
+                    `}
+                  >
+                    <Card
+                      className="card-glow p-6 md:p-8 bg-card/80 backdrop-blur border border-border/50 rounded-xl hover:border-primary/30 transition-all duration-300"
+                    >
+                      {/* Mobile timeline indicator */}
+                      <div className="lg:hidden flex items-center gap-3 mb-4">
+                        <div className="w-3 h-3 rounded-full bg-primary ring-2 ring-primary/30" />
+                        <span className="text-sm font-medium text-primary">{exp.period}</span>
+                      </div>
+
+                      <div className={`flex flex-col gap-4 ${!isEven ? '' : 'lg:items-end'}`}>
+                        {/* Company logo and info */}
+                        <div className={`flex items-center gap-3 ${!isEven ? '' : 'lg:flex-row-reverse'}`}>
+                          {exp.logo && (
+                            <div className="w-12 h-12 rounded-lg bg-background/80 border border-border/50 flex items-center justify-center p-2">
+                              <Image
+                                src={exp.logo}
+                                alt={`${exp.company} logo`}
+                                width={40}
+                                height={40}
+                                className="w-full h-full object-contain"
+                                loading="lazy"
+                              />
+                            </div>
+                          )}
+                          <div className={`${!isEven ? '' : 'lg:text-right'}`}>
+                            <h3 className="text-xl font-semibold">{exp.title}</h3>
+                            <div className="text-sm font-medium text-primary">{exp.company}</div>
+                          </div>
+                        </div>
+
+                        {/* Period - desktop only */}
+                        <div className="hidden lg:block text-sm text-muted-foreground font-medium">
+                          {exp.period}
+                        </div>
+
+                        {/* Description */}
+                        <p className={`text-muted-foreground leading-relaxed ${!isEven ? '' : 'lg:text-right'}`}>
+                          {exp.description}
+                        </p>
+                      </div>
+                    </Card>
+                  </div>
+
+                  {/* Empty space for alternating layout */}
+                  {isEven && <div className="hidden lg:block" />}
+                  {!isEven && <div className="hidden lg:block lg:col-start-1 lg:row-start-1" />}
                 </div>
-                <p className="text-base text-muted-foreground leading-relaxed">
-                  {exp.description}
-                </p>
-                {/* Achievements removed per request */}
-              </div>
-            </Card>
-          ))}
+              )
+            })}
+          </div>
         </div>
       </div>
     </section>
