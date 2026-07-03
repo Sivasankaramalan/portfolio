@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f0820"/>
+      <stop offset="50%" stop-color="#1a0a38"/>
+      <stop offset="100%" stop-color="#0c1535"/>
+    </linearGradient>
+    <radialGradient id="glow4a" cx="30%" cy="40%" r="45%">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow4b" cx="75%" cy="60%" r="40%">
+      <stop offset="0%" stop-color="#db2777" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#db2777" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg4)"/>
+  <rect width="1200" height="675" fill="url(#glow4a)"/>
+  <rect width="1200" height="675" fill="url(#glow4b)"/>
+
+  <!-- Hexagon token shapes -->
+  <g opacity="0.18" fill="none" stroke="#a78bfa" stroke-width="1.5">
+    <polygon points="200,140 230,123 260,140 260,174 230,191 200,174"/>
+    <polygon points="440,80 480,57 520,80 520,126 480,149 440,126"/>
+    <polygon points="680,200 710,183 740,200 740,234 710,251 680,234"/>
+    <polygon points="920,100 960,77 1000,100 1000,146 960,169 920,146"/>
+    <polygon points="150,400 190,377 230,400 230,446 190,469 150,446"/>
+    <polygon points="500,500 540,477 580,500 580,546 540,569 500,546"/>
+    <polygon points="850,420 890,397 930,420 930,466 890,489 850,466"/>
+    <polygon points="1050,320 1090,297 1130,320 1130,366 1090,389 1050,366"/>
+    <polygon points="320,560 360,537 400,560 400,606 360,629 320,606"/>
+  </g>
+
+  <!-- Connection lines between nodes -->
+  <g opacity="0.12" stroke="#c4b5fd" stroke-width="1" stroke-dasharray="6 4">
+    <line x1="260" y1="157" x2="440" y2="103"/>
+    <line x1="520" y1="103" x2="680" y2="217"/>
+    <line x1="740" y1="217" x2="920" y2="123"/>
+    <line x1="230" y1="191" x2="190" y2="377"/>
+    <line x1="480" y1="149" x2="540" y2="477"/>
+    <line x1="960" y1="169" x2="890" y2="397"/>
+    <line x1="190" y1="469" x2="360" y2="537"/>
+    <line x1="580" y1="523" x2="850" y2="443"/>
+    <line x1="930" y1="443" x2="1090" y2="343"/>
+  </g>
+
+  <!-- Central large token -->
+  <g transform="translate(600,337)">
+    <polygon points="0,-90 78,-45 78,45 0,90 -78,45 -78,-45" fill="none" stroke="#7c3aed" stroke-width="2" opacity="0.6"/>
+    <polygon points="0,-65 56,-32 56,32 0,65 -56,32 -56,-32" fill="none" stroke="#a78bfa" stroke-width="1.5" opacity="0.4"/>
+    <circle r="28" fill="#7c3aed" opacity="0.15"/>
+    <text y="6" text-anchor="middle" font-family="monospace" font-size="22" fill="#c4b5fd" opacity="0.8">T</text>
+  </g>
+
+  <!-- Floating token labels -->
+  <g font-family="monospace" font-size="11" fill="#a78bfa" opacity="0.45">
+    <text x="185" y="136">128k</text>
+    <text x="460" y="76">tokens</text>
+    <text x="695" y="196">$0.003</text>
+    <text x="935" y="96">cache</text>
+    <text x="155" y="396">context</text>
+    <text x="505" y="496">RAG</text>
+    <text x="855" y="416">output</text>
+    <text x="1055" y="316">input</text>
+  </g>
+
+  <!-- Subtle grid -->
+  <g opacity="0.04" stroke="#7c3aed" stroke-width="0.8">
+    <line x1="0" y1="135" x2="1200" y2="135"/>
+    <line x1="0" y1="270" x2="1200" y2="270"/>
+    <line x1="0" y1="405" x2="1200" y2="405"/>
+    <line x1="0" y1="540" x2="1200" y2="540"/>
+    <line x1="200" y1="0" x2="200" y2="675"/>
+    <line x1="400" y1="0" x2="400" y2="675"/>
+    <line x1="600" y1="0" x2="600" y2="675"/>
+    <line x1="800" y1="0" x2="800" y2="675"/>
+    <line x1="1000" y1="0" x2="1000" y2="675"/>
+  </g>
+</svg>

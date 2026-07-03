@@ -11,7 +11,7 @@ const highlights = [
   {
     icon: Sparkles,
     title: "AI Native Engineer",
-    description: "Using AI as a native engineering layer—Cursor, Copilot, Claude, and custom agents to accelerate development without shortcuts."
+    description: "Using AI as a native engineering layer: Cursor, Copilot, Claude, and custom agents to accelerate development without shortcuts."
   },
   {
     icon: Layers,
@@ -27,89 +27,81 @@ const highlights = [
 
 export function About() {
   return (
-    <section id="about" className="section-accent px-6 py-24 scroll-mt-32">
+    <section id="about" className="section-accent px-6 py-10 md:min-h-[calc(100vh-72px)] md:flex md:flex-col md:justify-center scroll-mt-32">
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
-        <div className="max-w-3xl mb-16">
+        <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 tracking-tight">
             Building Products{" "}
             <span className="text-gradient">at Scale</span>
           </h2>
-          <p className="text-lg md:text-xl leading-relaxed text-muted-foreground">
-            Over the past decade, I&apos;ve been at the intersection of product engineering and quality—building systems that scale, leading teams that ship, and integrating AI to move faster without compromising reliability.
+          <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
+            Over a decade specializing in mobile engineering across iOS, Android, and cross-platform stacks, architecting automation frameworks that scale with products and teams.
+          </p>
+          <p className="text-base md:text-lg leading-relaxed text-muted-foreground mt-4">
+            AI is now central to how I work: Cursor, Claude, Copilot, and custom MCP agents built into the engineering workflow, not bolted on. At EPAM Systems I lead mobile quality strategy across global teams, keeping reliability high without slowing release velocity.
           </p>
         </div>
 
-        {/* Main content */}
-        <div className="space-y-8 text-lg leading-relaxed text-muted-foreground mb-16">
-          <p>
-            I believe in owning systems end-to-end. From architecting automation frameworks that serve millions of users to building products like <span className="font-semibold text-foreground">GoLocally</span> and <span className="font-semibold text-foreground">Local.Ally</span>, my approach combines technical depth with product thinking.
-          </p>
-          <p>
-            Quality isn&apos;t just testing—it&apos;s a continuous discipline woven into every commit, every deploy, every user interaction. I champion shift-left practices, architect AI-driven automation frameworks, and shape reliable, scalable digital experiences.
-          </p>
-          <p>
-            Currently, I&apos;m exploring how AI can transform the way we build software—not as a replacement for engineering judgment, but as a native layer that amplifies what we can achieve.
-          </p>
-        </div>
-
-        {/* Highlight cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+        {/* Highlight cards — 2 columns on mobile, 4 on desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-8 md:mb-12">
           {highlights.map((item) => {
             const Icon = item.icon
             return (
               <div
                 key={item.title}
-                className="card-glow p-6 rounded-xl bg-card/80 backdrop-blur border border-border/50 space-y-4 hover:border-primary/30 transition-all duration-300"
+                className="card-glow p-4 md:p-6 rounded-xl bg-card/80 backdrop-blur border border-border/50 flex items-start gap-3 hover:border-primary/30 transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-primary" />
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <Icon className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {item.description}
-                </p>
+                <div>
+                  <h3 className="text-sm md:text-base font-semibold leading-snug">{item.title}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed mt-1 hidden sm:block">
+                    {item.description}
+                  </p>
+                </div>
               </div>
             )
           })}
         </div>
 
         {/* Education section */}
-        <div className="space-y-8">
-          <h3 className="text-2xl md:text-3xl font-semibold tracking-tight flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-primary" />
+        <div className="space-y-4 md:space-y-6">
+          <h3 className="text-xl md:text-2xl font-semibold tracking-tight flex items-center gap-2">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <GraduationCap className="w-4 h-4 md:w-5 md:h-5 text-primary" />
             </div>
             Education
           </h3>
           
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="card-glow p-6 rounded-xl bg-card/80 backdrop-blur border border-border/50">
-              <div className="space-y-2">
-                <div className="text-lg font-semibold">
-                  Indian Institute of Technology Madras
+          <div className="grid grid-cols-2 gap-3 md:gap-6">
+            <div className="card-glow p-4 md:p-6 rounded-xl bg-card/80 backdrop-blur border border-border/50">
+              <div className="space-y-1 md:space-y-2">
+                <div className="text-sm md:text-base font-semibold leading-snug">
+                  IIT Madras
                 </div>
-                <div className="text-muted-foreground">
-                  EMBA - Product Engineering
+                <div className="text-xs md:text-sm text-muted-foreground">
+                  EMBA, Product Engineering
                 </div>
-                <div className="inline-flex items-center gap-2 text-sm font-medium text-primary">
-                  <span className="w-2 h-2 rounded-full bg-primary" />
-                  Jan 2022 – Dec 2023
+                <div className="inline-flex items-center gap-1.5 text-xs md:text-sm font-medium text-primary pt-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                  2022 – 2023
                 </div>
               </div>
             </div>
             
-            <div className="card-glow p-6 rounded-xl bg-card/80 backdrop-blur border border-border/50">
-              <div className="space-y-2">
-                <div className="text-lg font-semibold">
-                  Anna University, Chennai
+            <div className="card-glow p-4 md:p-6 rounded-xl bg-card/80 backdrop-blur border border-border/50">
+              <div className="space-y-1 md:space-y-2">
+                <div className="text-sm md:text-base font-semibold leading-snug">
+                  Anna University
                 </div>
-                <div className="text-muted-foreground">
-                  Mechanical Engineering (B.E.)
+                <div className="text-xs md:text-sm text-muted-foreground">
+                  B.E., Mechanical Engineering
                 </div>
-                <div className="inline-flex items-center gap-2 text-sm font-medium text-primary">
-                  <span className="w-2 h-2 rounded-full bg-primary" />
-                  Jun 2011 – Apr 2015
+                <div className="inline-flex items-center gap-1.5 text-xs md:text-sm font-medium text-primary pt-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                  2011 – 2015
                 </div>
               </div>
             </div>

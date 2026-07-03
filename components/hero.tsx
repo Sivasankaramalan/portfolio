@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Mail, FileText, ArrowDown, Rocket, Bot } from "lucide-react"
 import Image from "next/image"
 
-const SUBHEADLINE_FULL = "Product Engineer × AI Native × Quality at Scale"
+const SUBHEADLINE_FULL = "Product Engineer × AI Native × Mobile Tech Specialist"
 const TYPING_INTERVAL = 38
 const PAUSE_END = 1400
 
@@ -48,7 +48,7 @@ export function Hero() {
   }, [])
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
+    <section id="home" className="relative z-0 min-h-screen flex items-center overflow-hidden">
       {/* Floating gradient blobs */}
       <div className="glow-blob -top-32 -left-32 bg-[var(--primary)]" />
       <div className="glow-blob top-1/2 -right-48 bg-[var(--accent)]" style={{ animationDelay: '-7s' }} />
@@ -59,7 +59,7 @@ export function Hero() {
         style={{ background: 'var(--gradient-glow)' }}
       />
       
-      <div className="relative w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pt-32 pb-20">
+      <div className="relative w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pt-24 md:pt-32 pb-14 md:pb-20">
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground rounded px-3 py-1">
           Skip to content
         </a>
@@ -69,7 +69,7 @@ export function Hero() {
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* Text content - spans 7 columns on large screens */}
-            <div className="lg:col-span-7 order-2 lg:order-1 space-y-8">
+            <div className="lg:col-span-7 space-y-8">
               
               {/* Main headline */}
               <div className="space-y-4">
@@ -77,7 +77,7 @@ export function Hero() {
                   className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-bold tracking-tight transition-all duration-700 delay-100 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
                   <span className="block text-foreground/80">Hello, I'm</span>
-                  <span className="block text-gradient mt-2">Sivasankaramalan</span>
+                  <span className="block text-gradient mt-2 break-words">Sivasankaramalan</span>
                 </h1>
                 
                 {/* Animated subheadline */}
@@ -96,14 +96,14 @@ export function Hero() {
                 className={`text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl transition-all duration-700 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
               >
                 I build products, own systems end to end, and use 
-                <span className="text-foreground font-medium"> AI as a native engineering layer</span> to move faster without compromising quality. From shift-left testing to intelligent automation — shipping 
+                <span className="text-foreground font-medium"> AI as a native engineering layer</span> to move faster without compromising quality. From shift-left testing to intelligent automation, shipping 
                 <span className="text-foreground font-medium"> reliable</span>, 
                 <span className="text-foreground font-medium"> scalable</span> software loved by users.
               </p>
               
-              {/* CTA buttons */}
+              {/* CTA buttons — desktop only (mobile version sits below portrait) */}
               <div 
-                className={`flex flex-wrap gap-4 pt-4 transition-all duration-700 delay-[400ms] ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                className={`hidden lg:flex flex-wrap gap-4 pt-4 transition-all duration-700 delay-[400ms] ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
               >
                 <Button size="lg" className="gap-2 rounded-full px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all" asChild>
                   <a href="#contact">
@@ -121,14 +121,14 @@ export function Hero() {
             </div>
             
             {/* Portrait - spans 5 columns, overlaps grid */}
-            <div className="lg:col-span-5 order-1 lg:order-2 flex justify-center lg:justify-end">
+            <div className="lg:col-span-5 lg:order-2 flex justify-center lg:justify-end">
               <div 
                 className={`relative transition-all duration-1000 delay-200 ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
               >
-                {/* Decorative rings - multiple layers with different speeds */}
-                <div className="absolute inset-0 -m-4 rounded-3xl border border-primary/30 animate-spin-slow" style={{ animationDuration: '25s' }} />
-                <div className="absolute inset-0 -m-8 rounded-3xl border border-accent/20 animate-spin-slow" style={{ animationDuration: '35s', animationDirection: 'reverse' }} />
-                <div className="absolute inset-0 -m-12 rounded-3xl border border-primary/10 animate-spin-slow" style={{ animationDuration: '45s' }} />
+                {/* Decorative rings - hidden on mobile to reduce visual clutter and avoid edge overflow */}
+                <div className="hidden sm:block absolute inset-0 -m-4 rounded-3xl border border-primary/30 animate-spin-slow" style={{ animationDuration: '25s' }} />
+                <div className="hidden sm:block absolute inset-0 -m-8 rounded-3xl border border-accent/20 animate-spin-slow" style={{ animationDuration: '35s', animationDirection: 'reverse' }} />
+                <div className="hidden md:block absolute inset-0 -m-12 rounded-3xl border border-primary/10 animate-spin-slow" style={{ animationDuration: '45s' }} />
                 
                 {/* Accent shape behind image */}
                 <div className="absolute -bottom-6 -right-6 w-full h-full rounded-3xl bg-gradient-to-br from-primary/20 to-accent/20 blur-sm" />
@@ -146,7 +146,7 @@ export function Hero() {
                 </div>
                 
                 {/* Floating badge */}
-                <div className="absolute -bottom-2 -left-4 px-4 py-2 rounded-xl glass-elevated shadow-lg animate-float">
+                <div className="absolute -bottom-2 -left-2 sm:-left-4 px-4 py-2 rounded-xl glass-elevated shadow-lg animate-float">
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 rounded-lg bg-primary/15">
                       <Rocket className="h-5 w-5 text-primary" />
@@ -159,7 +159,7 @@ export function Hero() {
                 </div>
                 
                 {/* Second floating badge */}
-                <div className="absolute -top-2 -right-4 px-3 py-1.5 rounded-lg glass-elevated shadow-lg animate-float" style={{ animationDelay: '-3s' }}>
+                <div className="absolute -top-2 -right-2 sm:-right-4 px-3 py-1.5 rounded-lg glass-elevated shadow-lg animate-float" style={{ animationDelay: '-3s' }}>
                   <div className="flex items-center gap-1.5">
                     <Bot className="h-4 w-4 text-accent" />
                     <span className="text-xs font-medium">AI Native</span>
@@ -168,11 +168,29 @@ export function Hero() {
               </div>
             </div>
           </div>
+
+          {/* CTA buttons — mobile only, centered below portrait */}
+          <div
+            className={`lg:hidden flex flex-wrap justify-center gap-4 pt-8 transition-all duration-700 delay-[500ms] ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          >
+            <Button size="lg" className="gap-2 rounded-full px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all" asChild>
+              <a href="#contact">
+                <Mail className="h-4 w-4" />
+                Get in Touch
+              </a>
+            </Button>
+            <Button size="lg" variant="outline" className="gap-2 rounded-full px-8 bg-transparent hover:bg-primary/5 transition-all" asChild>
+              <a href="/api/resume/view" target="_blank" rel="noopener noreferrer">
+                <FileText className="h-4 w-4" />
+                View Resume
+              </a>
+            </Button>
+          </div>
         </div>
         
-        {/* Scroll indicator */}
+        {/* Scroll indicator - hidden on mobile to avoid overlapping the portrait */}
         <div 
-          className={`absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted-foreground/60 transition-all duration-700 delay-[600ms] ${mounted ? 'opacity-100' : 'opacity-0'}`}
+          className={`hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-muted-foreground/60 transition-all duration-700 delay-[600ms] ${mounted ? 'opacity-100' : 'opacity-0'}`}
         >
           <span className="text-xs uppercase tracking-widest">Scroll to explore</span>
           <ArrowDown className="h-4 w-4 animate-bounce" />

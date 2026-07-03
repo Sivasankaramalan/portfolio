@@ -109,7 +109,7 @@ export function SiteHeader() {
         )}
       />
       
-      <div className="relative flex items-center justify-center max-w-7xl mx-auto px-4 md:px-6">
+      <div className="relative flex items-center justify-center max-w-7xl mx-auto px-4 md:px-6 min-h-10 md:min-h-0">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground rounded px-3 py-1"
@@ -120,7 +120,7 @@ export function SiteHeader() {
         {/* Logo - Left positioned on mobile */}
         <Link 
           href="/" 
-          className="group relative flex items-center md:hidden absolute left-4"
+          className="group flex items-center md:hidden absolute left-4"
         >
           <div className="relative">
             {/* Glow effect */}
@@ -151,16 +151,27 @@ export function SiteHeader() {
             <SheetContent
               side="right"
               showClose={false}
-              className="w-full max-w-sm p-0 bg-gradient-to-b from-background via-background to-primary/5 border-l border-border/50"
+              className="w-full max-w-sm p-0 bg-background border-l border-border/50"
+              style={{ background: 'linear-gradient(to bottom, var(--background) 0%, var(--background) 80%, color-mix(in oklch, var(--primary) 5%, var(--background)) 100%)' }}
             >
               <div className="flex flex-col h-full pt-6">
                 {/* Mobile nav header */}
-                <div className="px-6 pb-6 border-b border-border/30">
-                  <div className="text-lg font-heading font-semibold">Navigation</div>
-                  <div className="text-sm text-muted-foreground">Explore the site</div>
+                <div className="flex items-center justify-between px-6 pb-6 border-b border-border/30">
+                  <div>
+                    <div className="text-lg font-heading font-semibold">Navigation</div>
+                    <div className="text-sm text-muted-foreground">Explore the site</div>
+                  </div>
+                  <SheetClose asChild>
+                    <button
+                      aria-label="Close navigation"
+                      className="w-9 h-9 rounded-xl bg-muted/50 border border-border/50 flex items-center justify-center hover:bg-muted transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </SheetClose>
                 </div>
                 
-                <nav aria-label="Mobile" className="flex-1 overflow-y-auto px-4 py-6">
+                <nav aria-label="Mobile" className="flex-1 overflow-y-auto flex flex-col px-4 py-6">
                   <ul className="space-y-1">
                     {NAV_LINKS.map((link, idx) => {
                       const fragmentHash = `#${link.fragment}`
@@ -181,9 +192,10 @@ export function SiteHeader() {
                                 className={cn(
                                   "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all",
                                   isActive
-                                    ? "bg-gradient-to-r from-primary/15 to-accent/10 text-primary border border-primary/20 shadow-sm"
+                                    ? "text-primary border border-primary/20 shadow-sm"
                                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                                 )}
+                                style={isActive ? { background: 'linear-gradient(to right, color-mix(in oklch, var(--primary) 18%, transparent), color-mix(in oklch, var(--accent) 12%, transparent))' } : undefined}
                                 aria-current={isActive ? 'page' : undefined}
                               >
                                 {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
@@ -195,9 +207,10 @@ export function SiteHeader() {
                                 className={cn(
                                   "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all",
                                   isActive
-                                    ? "bg-gradient-to-r from-primary/15 to-accent/10 text-primary border border-primary/20 shadow-sm"
+                                    ? "text-primary border border-primary/20 shadow-sm"
                                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                                 )}
+                                style={isActive ? { background: 'linear-gradient(to right, color-mix(in oklch, var(--primary) 18%, transparent), color-mix(in oklch, var(--accent) 12%, transparent))' } : undefined}
                                 scroll={true}
                               >
                                 {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
@@ -209,12 +222,14 @@ export function SiteHeader() {
                       )
                     })}
                   </ul>
-                  
+
+                  {/* Separator + Playbook — pinned to bottom */}
+                  <div className="mt-auto pt-4">
                   {/* Separator */}
-                  <div className="flex items-center gap-3 my-6 px-4">
-                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                  <div className="flex items-center gap-3 my-4 px-4">
+                    <div className="flex-1 h-px bg-border" />
                     <Zap className="w-3 h-3 text-primary/50" />
-                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                    <div className="flex-1 h-px bg-border" />
                   </div>
                   
                   {/* Playbook link */}
@@ -234,15 +249,19 @@ export function SiteHeader() {
                               className={cn(
                                 "flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium transition-all",
                                 isActive
-                                  ? "bg-gradient-to-r from-primary/15 to-accent/10 text-primary border border-primary/20 shadow-sm"
+                                  ? "text-primary border border-primary/20 shadow-sm"
                                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                               )}
+                              style={isActive ? { background: 'linear-gradient(to right, color-mix(in oklch, var(--primary) 18%, transparent), color-mix(in oklch, var(--accent) 12%, transparent))' } : undefined}
                             >
                               <span className="flex items-center gap-3">
                                 {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
                                 {link.label}
                               </span>
-                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-accent to-primary text-white shadow-sm">
+                              <span
+                                className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white shadow-sm"
+                                style={{ background: 'linear-gradient(to right, var(--accent), var(--primary))' }}
+                              >
                                 NEW
                               </span>
                             </Link>
@@ -251,12 +270,13 @@ export function SiteHeader() {
                       )
                     })}
                   </ul>
+                  </div>
                   
                   {/* Back button for playbook mobile */}
                   {pathname === '/playbook/mobile' && (
                     <>
-                      <div className="flex items-center gap-3 my-6 px-4">
-                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                      <div className="flex items-center gap-3 my-4 px-4">
+                        <div className="flex-1 h-px bg-border" />
                       </div>
                       <SheetClose asChild>
                         <Link

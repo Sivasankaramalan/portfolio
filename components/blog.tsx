@@ -4,12 +4,17 @@ import { Calendar, Clock, ExternalLink } from "lucide-react"
 import { articles } from "@/lib/blog"
 
 export function Blog() {
+  // Newest articles first — AI blogs (2026) naturally land in row 1
+  const sorted = [...articles].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
+
   return (
-    <section id="blog" className="section-accent px-6 py-20 scroll-mt-32">
+    <section id="blog" className="section-accent px-6 py-14 md:py-20 scroll-mt-32">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 tracking-tight">Blog & Articles</h2>
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
-          {articles.map(article => (
+          {sorted.map(article => (
             <Card
               key={article.slug}
               className="p-6 flex flex-col hover:shadow-lg transition-shadow border bg-card/70 backdrop-blur supports-[backdrop-filter]:bg-card/60 rounded-xl"

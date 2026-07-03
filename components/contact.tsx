@@ -6,7 +6,7 @@ import { Mail, Linkedin, Github, FileText, Heart, Send } from "lucide-react"
 
 export function Contact() {
   return (
-    <section id="contact" className="section-accent px-6 py-24 bg-card/50 scroll-mt-32">
+    <section id="contact" className="section-accent px-6 py-16 md:py-24 bg-card/50 scroll-mt-32">
       <div className="max-w-4xl mx-auto">
         {/* Main content */}
         <div className="text-center space-y-6 mb-12">
@@ -23,10 +23,10 @@ export function Contact() {
             fellow engineers. Feel free to reach out!
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-4">
-            <Button size="lg" className="gap-2 card-glow" asChild>
-              <a href="mailto:sivasankaramalan@gmail.com">
-                <Mail className="h-4 w-4" />
-                sivasankaramalan@gmail.com
+            <Button size="lg" className="gap-2 card-glow max-w-full" asChild>
+              <a href="mailto:sivasankaramalan@gmail.com" className="flex items-center gap-2 max-w-full">
+                <Mail className="h-4 w-4 shrink-0" />
+                <span className="break-all text-sm sm:text-base">sivasankaramalan@gmail.com</span>
               </a>
             </Button>
           </div>
@@ -91,7 +91,7 @@ export function Contact() {
         {/* Footer */}
         <div className="text-center space-y-4 pt-8 border-t border-border/30">
           <p className="text-sm text-muted-foreground">
-            Shipping code, breaking builds, fixing bugs — repeat.
+            Shipping code, breaking builds, fixing bugs. Repeat.
           </p>
           <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5">
             Made with

@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1e"/>
+      <stop offset="50%" stop-color="#130d2e"/>
+      <stop offset="100%" stop-color="#0d1520"/>
+    </linearGradient>
+    <radialGradient id="glow5a" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#6d28d9" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#6d28d9" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow5b" cx="80%" cy="25%" r="35%">
+      <stop offset="0%" stop-color="#be185d" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#be185d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg5)"/>
+  <rect width="1200" height="675" fill="url(#glow5a)"/>
+  <rect width="1200" height="675" fill="url(#glow5b)"/>
+
+  <!-- Flywheel outer ring -->
+  <circle cx="600" cy="337" r="220" fill="none" stroke="#7c3aed" stroke-width="1.5" opacity="0.2" stroke-dasharray="12 8"/>
+  <circle cx="600" cy="337" r="180" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.15" stroke-dasharray="8 6"/>
+
+  <!-- Phase arcs (7 phases) -->
+  <g stroke-width="4" fill="none" opacity="0.55">
+    <!-- Phase 1: Opportunity - top -->
+    <path d="M600,117 A220,220 0 0,1 785,200" stroke="#7c3aed"/>
+    <!-- Phase 2: Design -->
+    <path d="M790,205 A220,220 0 0,1 820,337" stroke="#8b5cf6"/>
+    <!-- Phase 3: Performance -->
+    <path d="M820,342 A220,220 0 0,1 785,474" stroke="#9d77f7"/>
+    <!-- Phase 4: Context -->
+    <path d="M780,479 A220,220 0 0,1 600,557" stroke="#a78bfa"/>
+    <!-- Phase 5: Develop -->
+    <path d="M595,557 A220,220 0 0,1 415,474" stroke="#c084fc"/>
+    <!-- Phase 6: Launch -->
+    <path d="M410,469 A220,220 0 0,1 380,337" stroke="#d946ef"/>
+    <!-- Phase 7: Monitor -->
+    <path d="M380,332 A220,220 0 0,1 595,117" stroke="#ec4899"/>
+  </g>
+
+  <!-- Phase nodes -->
+  <g fill="#7c3aed" opacity="0.9">
+    <circle cx="600" cy="117" r="10"/>
+    <circle cx="790" cy="202" r="10"/>
+    <circle cx="820" cy="337" r="10"/>
+    <circle cx="790" cy="472" r="10"/>
+    <circle cx="600" cy="557" r="10"/>
+    <circle cx="410" cy="472" r="10"/>
+    <circle cx="380" cy="337" r="10"/>
+  </g>
+  <g fill="#0a0f1e" font-family="sans-serif" font-size="11" opacity="0.9">
+    <circle cx="600" cy="117" r="10" fill="#7c3aed"/>
+    <circle cx="790" cy="202" r="10" fill="#8b5cf6"/>
+    <circle cx="820" cy="337" r="10" fill="#9d77f7"/>
+    <circle cx="790" cy="472" r="10" fill="#a78bfa"/>
+    <circle cx="600" cy="557" r="10" fill="#c084fc"/>
+    <circle cx="410" cy="472" r="10" fill="#d946ef"/>
+    <circle cx="380" cy="337" r="10" fill="#ec4899"/>
+  </g>
+
+  <!-- Phase labels -->
+  <g font-family="sans-serif" fill="#c4b5fd" opacity="0.7" text-anchor="middle">
+    <text x="600" y="88" font-size="12">Opportunity</text>
+    <text x="845" y="200" font-size="12" text-anchor="start">Design</text>
+    <text x="840" y="341" font-size="12" text-anchor="start">Performance</text>
+    <text x="840" y="478" font-size="12" text-anchor="start">Context</text>
+    <text x="600" y="590" font-size="12">Develop</text>
+    <text x="345" y="478" font-size="12" text-anchor="end">Launch</text>
+    <text x="355" y="341" font-size="12" text-anchor="end">Monitor</text>
+  </g>
+
+  <!-- Center flywheel label -->
+  <circle cx="600" cy="337" r="70" fill="#7c3aed" opacity="0.08"/>
+  <text x="600" y="325" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#a78bfa" opacity="0.9" font-weight="600">ADLC</text>
+  <text x="600" y="348" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#c4b5fd" opacity="0.6">Flywheel</text>
+
+  <!-- Directional arrows on outer ring -->
+  <g opacity="0.4" fill="#a78bfa">
+    <polygon points="700,110 690,100 712,98"/>
+    <polygon points="820,250 832,240 835,262"/>
+    <polygon points="820,430 832,440 820,450" transform="rotate(0)"/>
+    <polygon points="700,563 690,575 712,577"/>
+    <polygon points="495,558 485,575 473,560"/>
+    <polygon points="376,425 362,432 360,410"/>
+    <polygon points="383,240 369,230 367,252"/>
+  </g>
+
+  <!-- Background dots -->
+  <g opacity="0.08" fill="#7c3aed">
+    <circle cx="100" cy="100" r="3"/>
+    <circle cx="250" cy="60" r="2"/>
+    <circle cx="1100" cy="90" r="3"/>
+    <circle cx="950" cy="550" r="2"/>
+    <circle cx="150" cy="580" r="3"/>
+    <circle cx="1050" cy="580" r="2"/>
+    <circle cx="80" cy="337" r="2"/>
+    <circle cx="1120" cy="337" r="3"/>
+  </g>
+</svg>

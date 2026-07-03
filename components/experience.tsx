@@ -14,7 +14,7 @@ interface ExperienceItem {
 
 const experiences: ExperienceItem[] = [
   {
-    title: "Lead QA Engineer",
+    title: "Lead SDET | Native AI Engineering",
     company: "EPAM Systems",
     period: "Oct 2023 – Present",
     logo: "/logos/epam.png",
@@ -22,7 +22,7 @@ const experiences: ExperienceItem[] = [
       "Leading unified automation strategy across mobile, web, and API layers while scaling global quality engineering practices and reliability tooling.",
   },
   {
-    title: "Senior SDET",
+    title: "Senior SDET | App Experience",
     company: "Navi Technologies",
     period: "Apr 2022 – Oct 2023",
     logo: "/logos/navi.png",
@@ -54,7 +54,7 @@ const experiences: ExperienceItem[] = [
       "Engineered scalable mobile automation and QA processes reducing leakage and enabling predictable delivery.",
   },
   {
-    title: "Software Test Engineer",
+    title: "Software Engineer",
     company: "AB Innovative",
     period: "May 2015 – May 2017",
     logo: "/logos/ab-innovative.webp",
@@ -65,7 +65,7 @@ const experiences: ExperienceItem[] = [
 
 export function Experience() {
   return (
-    <section id="experience" className="section-accent px-6 py-24 scroll-mt-32">
+    <section id="experience" className="section-accent px-6 py-16 md:py-24 scroll-mt-32">
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
         <div className="max-w-3xl mb-16">
@@ -78,7 +78,7 @@ export function Experience() {
             </h2>
           </div>
           <p className="text-lg text-muted-foreground">
-            A decade of building quality at scale—from startups to enterprises.
+            A decade of building quality at scale, from startups to enterprises.
           </p>
         </div>
 
