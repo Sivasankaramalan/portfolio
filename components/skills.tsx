@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card"
 import {
   Sparkles,
   Wrench,
+  Network,
   Code,
   TestTube,
   GitBranch,
@@ -12,7 +13,6 @@ import {
   Users,
   Palette,
   Terminal,
-  FileJson,
   Globe,
 } from "lucide-react"
 
@@ -27,13 +27,19 @@ const skillCategories: SkillCategory[] = [
   {
     title: "AI Core",
     icon: Sparkles,
-    skills: ["Cursor", "GitHub Copilot", "Claude", "ChatGPT", "Codex", "MCP"],
+    skills: ["Cursor", "GitHub Copilot", "Claude", "Gemini", "ChatGPT", "Codex", "MCP"],
     isAI: true,
   },
   {
     title: "AI Toolchain",
     icon: Wrench,
-    skills: ["agent.md", "Goose", "Jules", "LangChain", "LlamaIndex", "Ollama", "OpenAI API", "Vercel AI SDK"],
+    skills: ["agent.md", "LangChain", "LlamaIndex", "Ollama", "OpenAI API", "Vercel AI SDK"],
+    isAI: true,
+  },
+  {
+    title: "AI Systems",
+    icon: Network,
+    skills: ["RAG", "Context Management", "Tokenomics", "Agent Memory"],
     isAI: true,
   },
   {
@@ -74,12 +80,7 @@ const skillCategories: SkillCategory[] = [
   {
     title: "Development Tools",
     icon: Terminal,
-    skills: ["VS Code", "Warp", "Zed", "LM Studio"],
-  },
-  {
-    title: "API & Documentation",
-    icon: FileJson,
-    skills: ["Swagger", "OpenAPI"],
+    skills: ["VS Code", "Warp", "Zed", "LM Studio", "Swagger", "OpenAPI"],
   },
   {
     title: "Social & Community",

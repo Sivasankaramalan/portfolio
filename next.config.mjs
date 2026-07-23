@@ -4,7 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   images: {
     unoptimized: true,
@@ -13,7 +13,29 @@ const nextConfig = {
     return [
       {
         source: '/resume.pdf',
-        destination: '/resume/Sivasankaramalan_LEAD_SDET%20.pdf', // encoded space before .pdf
+        destination: '/resume/Sivasankaramalan.pdf',
+      },
+    ]
+  },
+  async headers() {
+    return [
+      {
+        source: '/resume/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/api/resume/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
       },
     ]
   },

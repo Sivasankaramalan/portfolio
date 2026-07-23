@@ -5,51 +5,41 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Download, ExternalLink, AlertCircle, RefreshCw } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { resumeUrl, RESUME_PUBLIC_PATH, RESUME_VIEW_URL, RESUME_DOWNLOAD_URL } from "@/lib/resume"
 
 export default function ResumePage() {
   const [mounted, setMounted] = useState(false)
   const [pdfError, setPdfError] = useState(false)
   const [loading, setLoading] = useState(true)
-  // Internal debug state (kept for potential future logging). Not rendered in UI.
-  const [debugInfo, setDebugInfo] = useState("")
 
-  // Correct static public path (served from /public)
-  const staticPath = "/resume/Sivasankaramalan.pdf"
-  const apiUrl = "/api/resume/view" // keep as secondary option
+  const staticPath = resumeUrl(RESUME_PUBLIC_PATH)
+  const apiUrl = resumeUrl(RESUME_VIEW_URL)
+  const downloadUrl = resumeUrl(RESUME_DOWNLOAD_URL)
 
   useEffect(() => {
     setMounted(true)
-    
-    // First attempt: fetch HEAD of static file to confirm existence
-    const testStatic = async () => {
+
+    const testSources = async () => {
       try {
-        const res = await fetch(staticPath, { method: 'HEAD' })
-        if (res.ok) {
-          setDebugInfo(`✅ Static file OK (${res.status})`)
-          return 'static'
-        }
-      } catch (e) {
-        // ignore
+        const res = await fetch(staticPath, { method: "HEAD", cache: "no-store" })
+        if (res.ok) return "static"
+      } catch {
+        // fall through
       }
-      // Fallback: test API route
       try {
-        const apiRes = await fetch(apiUrl, { method: 'HEAD' })
-        if (apiRes.ok) {
-          setDebugInfo(`✅ API route OK (${apiRes.status})`)
-          return 'api'
-        } else {
-          setDebugInfo(`❌ API route failed (${apiRes.status})`)
-        }
-      } catch (e) {
-        setDebugInfo(`❌ Both failed (${e})`)
+        const apiRes = await fetch(apiUrl, { method: "HEAD", cache: "no-store" })
+        if (apiRes.ok) return "api"
+      } catch {
+        // fall through
       }
       return null
     }
-    testStatic().then(mode => {
+
+    testSources().then((mode) => {
       if (!mode) setPdfError(true)
       setLoading(false)
     })
-  }, [])
+  }, [apiUrl, staticPath])
 
   if (!mounted || loading) {
     return (
@@ -59,7 +49,6 @@ export default function ResumePage() {
             <RefreshCw className="h-4 w-4 animate-spin" />
             Loading resume...
           </div>
-          {/* debugInfo intentionally not rendered */}
         </div>
       </div>
     )
@@ -67,7 +56,6 @@ export default function ResumePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with navigation */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center justify-between px-4">
           <div className="flex items-center gap-4">
@@ -78,11 +66,10 @@ export default function ResumePage() {
               </Link>
             </Button>
             <h1 className="text-lg font-semibold">Resume</h1>
-            {/* debugInfo hidden from UI */}
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
-              <a href="/api/resume/download" download className="gap-2">
+              <a href={downloadUrl} download className="gap-2">
                 <Download className="h-4 w-4" />
                 Download
               </a>
@@ -97,20 +84,20 @@ export default function ResumePage() {
         </div>
       </header>
 
-      {/* PDF Viewer */}
       <main className="container mx-auto px-4 py-6">
         <div className="mx-auto max-w-5xl">
           {pdfError && (
             <Alert className="mb-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                <div className="flex items-center justify-between">
-                  <span>Unable to load PDF. Please use the download or "Open in New Tab" options above.</span>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                  <span>
+                    Unable to load PDF. Please use the download or &quot;Open in New Tab&quot; options above.
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => window.location.reload()}
-                    className="ml-4"
                   >
                     Retry
                   </Button>
@@ -118,20 +105,20 @@ export default function ResumePage() {
               </AlertDescription>
             </Alert>
           )}
-          
+
           <div className="relative rounded-lg border bg-card overflow-hidden shadow-lg">
             {!pdfError ? (
               <object
-                data={`${staticPath}#view=FitH`}
+                data={`${apiUrl}#view=FitH`}
                 type="application/pdf"
                 className="w-full h-[calc(100vh-8rem)] min-h-[600px]"
                 onError={() => setPdfError(true)}
               >
                 <iframe
-                  src={`${apiUrl}`}
+                  src={apiUrl}
                   className="w-full h-full"
                   title="Resume PDF Fallback"
-                  style={{ border: 'none' }}
+                  style={{ border: "none" }}
                   onError={() => setPdfError(true)}
                 />
               </object>
@@ -140,45 +127,46 @@ export default function ResumePage() {
                 <div className="text-center space-y-4 p-8 max-w-md">
                   <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto" />
                   <h3 className="text-lg font-semibold">PDF Viewer Unavailable</h3>
-                  <p className="text-muted-foreground">Unable to display the PDF. Use the buttons below.</p>
+                  <p className="text-muted-foreground">
+                    Unable to display the PDF. Use the buttons below.
+                  </p>
                   <div className="flex justify-center gap-3 pt-4">
                     <Button asChild>
-                      <a href={staticPath} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="h-4 w-4 mr-2" />Open Static
+                      <a href={apiUrl} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Open PDF
                       </a>
                     </Button>
                     <Button variant="outline" asChild>
-                      <a href="/api/resume/download" download>
-                        <Download className="h-4 w-4 mr-2" />Download PDF
+                      <a href={downloadUrl} download>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download PDF
                       </a>
                     </Button>
                   </div>
-                  {/* debugInfo hidden */}
                 </div>
               </div>
             )}
           </div>
-          
-          {/* Alternative options section */}
+
           <div className="mt-6 p-4 bg-muted/50 rounded-lg text-center">
             <p className="text-sm text-muted-foreground mb-3">
               Need to download or view in a separate tab?
             </p>
             <div className="flex justify-center gap-3 flex-wrap">
               <Button variant="outline" size="sm" asChild>
-                <a href="/api/resume/download" download>
+                <a href={downloadUrl} download>
                   <Download className="h-4 w-4 mr-2" />
                   Download PDF
                 </a>
               </Button>
               <Button variant="outline" size="sm" asChild>
-                <a href={staticPath} target="_blank" rel="noopener noreferrer">
+                <a href={apiUrl} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Open in New Tab
                 </a>
               </Button>
             </div>
-            {/* debugInfo status hidden */}
           </div>
         </div>
       </main>

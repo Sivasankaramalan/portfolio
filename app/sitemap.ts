@@ -1,45 +1,39 @@
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from "next"
+import { articles } from "@/lib/blog"
+import { SITE_URL } from "@/lib/site"
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://sivasankaramalan.com'
-  
-  // Static pages
-  const staticPages = [
+  const staticPages: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
+      url: SITE_URL,
       lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
+      changeFrequency: "monthly",
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/resume`,
+      url: `${SITE_URL}/resume`,
       lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
+      changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/playbook`,
+      url: `${SITE_URL}/playbook`,
       lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
+      changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/playbook/mobile`,
+      url: `${SITE_URL}/playbook/mobile`,
       lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
+      changeFrequency: "weekly",
       priority: 0.9,
     },
   ]
 
-  // Blog posts
-  const blogPosts = [
-    'building-scalable-mobile-automation-frameworks',
-    'future-of-ai-in-quality-engineering', 
-    'shift-left-testing-practical-guide'
-  ].map((slug) => ({
-    url: `${baseUrl}/blog/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
+  const blogPosts: MetadataRoute.Sitemap = articles.map((article) => ({
+    url: `${SITE_URL}/blog/${article.slug}`,
+    lastModified: new Date(article.date),
+    changeFrequency: "monthly",
     priority: 0.7,
   }))
 

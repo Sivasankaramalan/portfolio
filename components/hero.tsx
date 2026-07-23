@@ -112,7 +112,7 @@ export function Hero() {
                   </a>
                 </Button>
                 <Button size="lg" variant="outline" className="gap-2 rounded-full px-8 bg-transparent hover:bg-primary/5 transition-all" asChild>
-                  <a href="/api/resume/view" target="_blank" rel="noopener noreferrer">
+                  <a href="/api/resume/view?v=2026-07-24" target="_blank" rel="noopener noreferrer">
                     <FileText className="h-4 w-4" />
                     View Resume
                   </a>
@@ -180,7 +180,7 @@ export function Hero() {
               </a>
             </Button>
             <Button size="lg" variant="outline" className="gap-2 rounded-full px-8 bg-transparent hover:bg-primary/5 transition-all" asChild>
-              <a href="/api/resume/view" target="_blank" rel="noopener noreferrer">
+              <a href="/api/resume/view?v=2026-07-24" target="_blank" rel="noopener noreferrer">
                 <FileText className="h-4 w-4" />
                 View Resume
               </a>

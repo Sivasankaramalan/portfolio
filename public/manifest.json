@@ -1,11 +1,11 @@
 {
-  "name": "Sivasankaramalan - Quality Engineering Leader",
+  "name": "Sivasankaramalan - Product Engineer × AI Native",
   "short_name": "Sivasankaramalan",
-  "description": "Quality Engineering Leader – Mobile & Web Automation, Shift-Left, Reliability Engineering",
+  "description": "Product Engineer building at scale with AI as a native engineering layer. Quality-first, systems ownership, and shipping fast.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#6366f1",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "orientation": "portrait-primary",
   "icons": [
     {

@@ -71,7 +71,7 @@ No environment variables are required for the current feature set. If you later 
 
 ## Theming
 
-Color design tokens are defined in `styles/globals.css` using OKLCH. Dark mode is handled by `next-themes` adding the `class` attribute to `<html>`. The `ThemeToggle` uses a radiogroup pattern for accessibility.
+Color design tokens are defined in `app/globals.css` using OKLCH. Dark mode is handled by `next-themes` adding the `class` attribute to `<html>`. The `ThemeToggle` uses a radiogroup pattern for accessibility. Canonical site URL lives in `lib/site.ts`.
 
 ## Navigation & Active Section Logic
 

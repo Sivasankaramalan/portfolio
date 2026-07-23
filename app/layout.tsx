@@ -11,14 +11,15 @@ import { WebVitals } from "@/components/web-vitals"
 import { PersonStructuredData, WebSiteStructuredData, OrganizationStructuredData } from "@/components/structured-data"
 import { PWAInstallPrompt } from "@/components/pwa-install"
 import { ServiceWorkerRegistration } from "@/components/service-worker"
+import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from "@/lib/site"
 import "./globals.css"
 
 export const metadata: Metadata = {
   title: {
-    default: "Sivasankaramalan Gunasekarasivam - Product Engineer × AI Native",
-    template: "%s | Sivasankaramalan Gunasekarasivam"
+    default: `${SITE_NAME} - ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`
   },
-  description: "Product Engineer building at scale with AI as a native engineering layer. Quality-first, systems ownership, and shipping fast without compromising reliability.",
+  description: SITE_DESCRIPTION,
   generator: "Next.js",
   applicationName: "Sivasankaramalan Portfolio",
   keywords: [
@@ -44,32 +45,32 @@ export const metadata: Metadata = {
     "GoLocally",
     "Local.Ally"
   ],
-  authors: [{ name: "Sivasankaramalan Gunasekarasivam", url: "https://sivasankaramalan.dev" }],
-  creator: "Sivasankaramalan Gunasekarasivam",
-  publisher: "Sivasankaramalan Gunasekarasivam",
-  metadataBase: new URL("https://sivasankaramalan.dev"),
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://sivasankaramalan.dev",
-    siteName: "Sivasankaramalan Gunasekarasivam",
-    title: "Sivasankaramalan Gunasekarasivam - Product Engineer × AI Native",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} - ${SITE_TAGLINE}`,
     description: "Product Engineer building at scale with AI as a native engineering layer. Quality-first, systems ownership, and shipping fast.",
     images: [
       {
         url: "/Image/Sivasankaramalan.png",
         width: 1200,
         height: 630,
-        alt: "Sivasankaramalan Gunasekarasivam - Product Engineer × AI Native",
+        alt: `${SITE_NAME} - ${SITE_TAGLINE}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sivasankaramalan Gunasekarasivam - Product Engineer × AI Native",
+    title: `${SITE_NAME} - ${SITE_TAGLINE}`,
     description: "Product Engineer building at scale with AI as a native engineering layer. Quality-first, systems ownership, and shipping fast.",
     images: ["/Image/Sivasankaramalan.png"],
     creator: "@sivasankaramalan",
@@ -101,9 +102,6 @@ export const metadata: Metadata = {
         url: "/icon-192.svg",
       },
     ],
-  },
-  verification: {
-    google: "google-site-verification-token",
   },
 }
 

@@ -1,8 +1,8 @@
 "use client"
 
-import { Card } from "@/components/ui/card"
 import Image from "next/image"
-import { Briefcase } from "lucide-react"
+import { Briefcase, ChevronLeft, ChevronRight } from "lucide-react"
+import { useRef } from "react"
 
 interface ExperienceItem {
   title: string
@@ -64,102 +64,138 @@ const experiences: ExperienceItem[] = [
 ]
 
 export function Experience() {
+  const scrollerRef = useRef<HTMLDivElement>(null)
+
+  const scrollBy = (direction: -1 | 1) => {
+    const el = scrollerRef.current
+    if (!el) return
+    const amount = Math.min(360, el.clientWidth * 0.8)
+    el.scrollBy({ left: direction * amount, behavior: "smooth" })
+  }
+
   return (
-    <section id="experience" className="section-accent px-6 py-16 md:py-24 scroll-mt-32">
-      <div className="max-w-6xl mx-auto">
-        {/* Section header */}
-        <div className="max-w-3xl mb-16">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Briefcase className="w-5 h-5 text-primary" />
+    <section
+      id="experience"
+      className="section-accent px-6 py-16 md:py-24 scroll-mt-32"
+    >
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10 md:mb-12">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Briefcase className="w-5 h-5 text-primary" aria-hidden="true" />
+              </div>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+                Experience
+              </h2>
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-              Experience
-            </h2>
+            <p className="text-lg text-muted-foreground max-w-xl">
+              A decade of building quality at scale, from startups to enterprises.
+            </p>
           </div>
-          <p className="text-lg text-muted-foreground">
-            A decade of building quality at scale, from startups to enterprises.
-          </p>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => scrollBy(-1)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/70 text-foreground hover:border-primary/40 hover:bg-primary/10 transition-colors"
+              aria-label="Scroll timeline left"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollBy(1)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/70 text-foreground hover:border-primary/40 hover:bg-primary/10 transition-colors"
+              aria-label="Scroll timeline right"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Vertical timeline line - visible on larger screens */}
-          <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-primary/50 to-transparent" />
+        {/* Horizontal timeline */}
+        <div
+          ref={scrollerRef}
+          className="overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)]"
+        >
+          <div className="relative min-w-max px-1 pt-2">
+            {/* Axis line */}
+            <div
+              className="absolute left-0 right-0 top-[1.15rem] h-0.5 bg-gradient-to-r from-primary via-primary/50 to-primary/20"
+              aria-hidden="true"
+            />
 
-          <div className="space-y-12 lg:space-y-0">
-            {experiences.map((exp, index) => {
-              const isEven = index % 2 === 0
-              
-              return (
-                <div
-                  key={index}
-                  className={`
-                    relative lg:grid lg:grid-cols-2 lg:gap-8
-                    ${index !== experiences.length - 1 ? 'lg:pb-16' : ''}
-                  `}
-                >
-                  {/* Timeline dot - desktop */}
-                  <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 top-0 w-4 h-4 rounded-full bg-primary ring-4 ring-background z-10">
-                    <div className="absolute inset-0 rounded-full bg-primary animate-pulse-glow" />
-                  </div>
+            <ol className="relative flex list-none p-0 m-0 gap-0">
+              {experiences.map((exp, index) => {
+                const isCurrent = index === 0
 
-                  {/* Card */}
-                  <div
-                    className={`
-                      ${isEven ? 'lg:col-start-1 lg:pr-12' : 'lg:col-start-2 lg:pl-12'}
-                      ${!isEven ? 'lg:text-left' : 'lg:text-right'}
-                    `}
+                return (
+                  <li
+                    key={`${exp.company}-${exp.period}`}
+                    className="relative flex w-[min(82vw,20rem)] shrink-0 flex-col px-3 first:pl-0 last:pr-6"
                   >
-                    <Card
-                      className="card-glow p-6 md:p-8 bg-card/80 backdrop-blur border border-border/50 rounded-xl hover:border-primary/30 transition-all duration-300"
+                    {/* Node on the axis */}
+                    <div className="relative mb-6 flex shrink-0 justify-start pl-1">
+                      <span
+                        className={`
+                          relative z-10 h-4 w-4 rounded-full border-[3px] border-background
+                          ${isCurrent
+                            ? "bg-primary shadow-[0_0_0_4px] shadow-primary/25"
+                            : "bg-primary/55"
+                          }
+                        `}
+                        aria-hidden="true"
+                      />
+                    </div>
+
+                    <article
+                      className={`
+                        flex flex-1 flex-col rounded-2xl border p-5 transition-colors
+                        ${isCurrent
+                          ? "border-primary/35 bg-primary/[0.07]"
+                          : "border-border/50 bg-card/75 hover:border-primary/25"
+                        }
+                      `}
                     >
-                      {/* Mobile timeline indicator */}
-                      <div className="lg:hidden flex items-center gap-3 mb-4">
-                        <div className="w-3 h-3 rounded-full bg-primary ring-2 ring-primary/30" />
-                        <span className="text-sm font-medium text-primary">{exp.period}</span>
+                      <time
+                        className={`
+                          block text-xs font-semibold uppercase tracking-wide tabular-nums mb-3
+                          ${isCurrent ? "text-primary" : "text-muted-foreground"}
+                        `}
+                      >
+                        {exp.period}
+                      </time>
+
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-background/80 border border-border/50 flex items-center justify-center p-1.5 shrink-0">
+                          <Image
+                            src={exp.logo}
+                            alt={`${exp.company} logo`}
+                            width={32}
+                            height={32}
+                            className="w-full h-full object-contain"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="text-base font-semibold leading-snug tracking-tight">
+                            {exp.title}
+                          </h3>
+                          <p className="text-sm font-medium text-primary mt-0.5">
+                            {exp.company}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className={`flex flex-col gap-4 ${!isEven ? '' : 'lg:items-end'}`}>
-                        {/* Company logo and info */}
-                        <div className={`flex items-center gap-3 ${!isEven ? '' : 'lg:flex-row-reverse'}`}>
-                          {exp.logo && (
-                            <div className="w-12 h-12 rounded-lg bg-background/80 border border-border/50 flex items-center justify-center p-2">
-                              <Image
-                                src={exp.logo}
-                                alt={`${exp.company} logo`}
-                                width={40}
-                                height={40}
-                                className="w-full h-full object-contain"
-                                loading="lazy"
-                              />
-                            </div>
-                          )}
-                          <div className={`${!isEven ? '' : 'lg:text-right'}`}>
-                            <h3 className="text-xl font-semibold">{exp.title}</h3>
-                            <div className="text-sm font-medium text-primary">{exp.company}</div>
-                          </div>
-                        </div>
-
-                        {/* Period - desktop only */}
-                        <div className="hidden lg:block text-sm text-muted-foreground font-medium">
-                          {exp.period}
-                        </div>
-
-                        {/* Description */}
-                        <p className={`text-muted-foreground leading-relaxed ${!isEven ? '' : 'lg:text-right'}`}>
-                          {exp.description}
-                        </p>
-                      </div>
-                    </Card>
-                  </div>
-
-                  {/* Empty space for alternating layout */}
-                  {isEven && <div className="hidden lg:block" />}
-                  {!isEven && <div className="hidden lg:block lg:col-start-1 lg:row-start-1" />}
-                </div>
-              )
-            })}
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {exp.description}
+                      </p>
+                    </article>
+                  </li>
+                )
+              })}
+            </ol>
           </div>
         </div>
       </div>

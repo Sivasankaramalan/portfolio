@@ -13,6 +13,8 @@ const NAV_LINKS = [
   { fragment: "home", label: "Home" },
   { fragment: "about", label: "About" },
   { fragment: "experience", label: "Experience" },
+  { fragment: "education", label: "Education" },
+  { fragment: "certifications", label: "Certs" },
   { fragment: "skills", label: "Skills" },
   { fragment: "projects", label: "Projects" },
   { fragment: "blog", label: "Blog" },

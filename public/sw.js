@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sivasankaramalan-v1';
+const CACHE_NAME = 'sivasankaramalan-v2';
 const urlsToCache = [
   '/',
   '/playbook',
@@ -7,54 +7,42 @@ const urlsToCache = [
   '/manifest.json'
 ];
 
-// Install Service Worker
+// Never cache resume/API PDF responses — they change when the file is replaced
+function shouldBypassCache(request) {
+  const url = new URL(request.url);
+  return (
+    url.pathname.startsWith('/resume') ||
+    url.pathname.startsWith('/api/resume') ||
+    url.pathname.endsWith('.pdf')
+  );
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   );
+  self.skipWaiting();
 });
 
-// Fetch event - Cache First Strategy for static assets
 self.addEventListener('fetch', (event) => {
+  if (shouldBypassCache(event.request)) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
-      })
+    caches.match(event.request).then((response) => response || fetch(event.request))
   );
 });
 
-// Activate Service Worker
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys().then((cacheNames) =>
+      Promise.all(
+        cacheNames
+          .filter((cacheName) => cacheName !== CACHE_NAME)
+          .map((cacheName) => caches.delete(cacheName))
+      )
+    ).then(() => self.clients.claim())
   );
 });
-
-// Background Sync for analytics
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'analytics-sync') {
-    event.waitUntil(syncAnalytics());
-  }
-});
-
-function syncAnalytics() {
-  // Sync any queued analytics events when connection is restored
-  return self.registration.showNotification('Analytics synced', {
-    body: 'Cached analytics data has been synchronized.',
-    icon: '/icon-192.png',
-    tag: 'analytics-sync'
-  });
-}

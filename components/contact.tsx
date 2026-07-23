@@ -71,7 +71,7 @@ export function Contact() {
             </Card>
           </a>
           <a 
-            href="/api/resume/download"
+            href="/api/resume/download?v=2026-07-24"
             className="group block"
           >
             <Card className="card-glow p-6 text-center bg-card/80 backdrop-blur border border-border/50 rounded-xl hover:border-primary/30 transition-all duration-300 h-full cursor-pointer">
