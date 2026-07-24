@@ -76,9 +76,9 @@ export function Experience() {
   return (
     <section
       id="experience"
-      className="section-accent px-6 py-16 md:py-24 scroll-mt-32"
+      className="reveal-section section-accent px-6 py-16 md:py-24 scroll-mt-32"
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10 md:mb-12">
           <div>
             <div className="flex items-center gap-3 mb-4">
@@ -86,7 +86,7 @@ export function Experience() {
                 <Briefcase className="w-5 h-5 text-primary" aria-hidden="true" />
               </div>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-                Experience
+                <span className="text-gradient">Experience</span>
               </h2>
             </div>
             <p className="text-lg text-muted-foreground max-w-xl">

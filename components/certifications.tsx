@@ -1,57 +1,64 @@
 "use client"
 
+import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
-import { Award, BadgeCheck, ExternalLink } from "lucide-react"
+import { Award, ExternalLink } from "lucide-react"
 
 interface Certification {
   title: string
   issuer: string
-  platform: "Credly" | "Microsoft Learn"
+  skills: string[]
   focus: string
   href: string
   accent: "claude" | "github" | "gemini"
+  logo: string
 }
 
 const certifications: Certification[] = [
   {
     title: "Claude Certified Architect",
     issuer: "Anthropic",
-    platform: "Credly",
+    skills: ["Agent Architecture", "Prompt Engineering"],
     focus: "Foundations",
     href: "https://www.credly.com/badges/6a66934b-a962-431f-a7fd-c64ca9256179",
     accent: "claude",
+    logo: "/logos/brands/claude.svg",
   },
   {
     title: "Claude Certified Developer",
     issuer: "Anthropic",
-    platform: "Credly",
+    skills: ["Claude API", "AI-Assisted Coding"],
     focus: "Foundations",
     href: "https://www.credly.com/badges/74ab7907-b315-4a91-8759-f47c4f068569",
     accent: "claude",
+    logo: "/logos/brands/claude.svg",
   },
   {
     title: "GitHub Copilot",
     issuer: "GitHub / Microsoft",
-    platform: "Microsoft Learn",
+    skills: ["AI Pair Programming", "Code Generation"],
     focus: "AI-assisted development",
     href: "https://learn.microsoft.com/en-us/users/sivasankaramalan/credentials/9f2b9433ce3c091c",
     accent: "github",
+    logo: "/logos/brands/githubcopilot.svg",
   },
   {
     title: "Gemini Enterprise Agent Development",
     issuer: "Google",
-    platform: "Credly",
+    skills: ["Agent Development", "Enterprise AI"],
     focus: "Partner Specialist",
     href: "https://www.credly.com/badges/af9bcd35-3f2e-4475-b704-68a522bb05d3",
     accent: "gemini",
+    logo: "/logos/brands/googlegemini.svg",
   },
   {
     title: "Gemini Enterprise Deployment",
     issuer: "Google",
-    platform: "Credly",
+    skills: ["Agent Deployment", "Enterprise AI"],
     focus: "Partner Specialist",
     href: "https://www.credly.com/badges/1e5b6b2d-c06b-44ae-8baa-b58ce5e69d42",
     accent: "gemini",
+    logo: "/logos/brands/googlegemini.svg",
   },
 ]
 
@@ -108,8 +115,15 @@ export function Certifications() {
                 `}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-background/60 border border-border/40 flex items-center justify-center shrink-0">
-                    <BadgeCheck className="w-5 h-5 text-primary" />
+                  <div className="w-11 h-11 rounded-xl bg-background/80 border border-border/40 flex items-center justify-center shrink-0 p-2.5">
+                    <Image
+                      src={cert.logo}
+                      alt=""
+                      width={24}
+                      height={24}
+                      className="w-full h-full object-contain dark:invert"
+                      aria-hidden="true"
+                    />
                   </div>
                   <ExternalLink
                     className="w-4 h-4 text-muted-foreground opacity-60 transition-opacity group-hover:opacity-100"
@@ -131,7 +145,14 @@ export function Certifications() {
                   >
                     {cert.issuer}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">{cert.platform}</span>
+                  {cert.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="text-xs text-muted-foreground px-2 py-0.5 rounded-full border border-border/40 bg-background/30"
+                    >
+                      {skill}
+                    </span>
+                  ))}
                 </div>
 
                 <span className="sr-only">View credential (opens in new tab)</span>

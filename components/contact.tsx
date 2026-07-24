@@ -6,23 +6,23 @@ import { Mail, Linkedin, Github, FileText, Heart, Send } from "lucide-react"
 
 export function Contact() {
   return (
-    <section id="contact" className="section-accent px-6 py-16 md:py-24 bg-card/50 scroll-mt-32">
-      <div className="max-w-4xl mx-auto">
+    <section id="contact" className="reveal-section section-accent px-6 py-16 md:py-24 bg-card/50 scroll-mt-32">
+      <div className="max-w-6xl mx-auto">
         {/* Main content */}
-        <div className="text-center space-y-6 mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+        <div className="space-y-6 mb-12">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
               <Send className="w-5 h-5 text-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               Let&apos;s <span className="text-gradient">Connect</span>
             </h2>
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-muted-foreground leading-relaxed">
             I&apos;m always interested in hearing about new opportunities, challenging projects, or just connecting with
             fellow engineers. Feel free to reach out!
           </p>
-          <div className="flex flex-wrap justify-center gap-4 pt-4">
+          <div className="flex flex-wrap gap-4 pt-4">
             <Button size="lg" className="gap-2 card-glow max-w-full" asChild>
               <a href="mailto:sivasankaramalan@gmail.com" className="flex items-center gap-2 max-w-full">
                 <Mail className="h-4 w-4 shrink-0" />

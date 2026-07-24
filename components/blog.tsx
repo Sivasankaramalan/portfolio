@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Clock, ExternalLink } from "lucide-react"
+import { Calendar, Clock, ExternalLink, Newspaper } from "lucide-react"
 import { articles } from "@/lib/blog"
 
 export function Blog() {
@@ -10,9 +10,21 @@ export function Blog() {
   )
 
   return (
-    <section id="blog" className="section-accent px-6 py-14 md:py-20 scroll-mt-32">
+    <section id="blog" className="reveal-section section-accent px-6 py-16 md:py-24 scroll-mt-32">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 tracking-tight">Blog & Articles</h2>
+        <div className="max-w-3xl mb-14">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Newspaper className="w-5 h-5 text-primary" aria-hidden="true" />
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+              Blog & <span className="text-gradient">Articles</span>
+            </h2>
+          </div>
+          <p className="text-lg text-muted-foreground">
+            Notes on AI-native engineering, quality practices, and building at scale.
+          </p>
+        </div>
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
           {sorted.map(article => (
             <Card

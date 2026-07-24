@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { Mail, FileText, ArrowDown, Rocket, Bot } from "lucide-react"
+import { Mail, ArrowDown, Rocket, Bot } from "lucide-react"
 import Image from "next/image"
 
 const SUBHEADLINE_FULL = "Product Engineer × AI Native × Mobile Tech Specialist"
@@ -111,12 +111,6 @@ export function Hero() {
                     Get in Touch
                   </a>
                 </Button>
-                <Button size="lg" variant="outline" className="gap-2 rounded-full px-8 bg-transparent hover:bg-primary/5 transition-all" asChild>
-                  <a href="/api/resume/view?v=2026-07-24" target="_blank" rel="noopener noreferrer">
-                    <FileText className="h-4 w-4" />
-                    View Resume
-                  </a>
-                </Button>
               </div>
             </div>
             
@@ -177,12 +171,6 @@ export function Hero() {
               <a href="#contact">
                 <Mail className="h-4 w-4" />
                 Get in Touch
-              </a>
-            </Button>
-            <Button size="lg" variant="outline" className="gap-2 rounded-full px-8 bg-transparent hover:bg-primary/5 transition-all" asChild>
-              <a href="/api/resume/view?v=2026-07-24" target="_blank" rel="noopener noreferrer">
-                <FileText className="h-4 w-4" />
-                View Resume
               </a>
             </Button>
           </div>

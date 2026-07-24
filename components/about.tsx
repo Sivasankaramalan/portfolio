@@ -1,6 +1,6 @@
 "use client"
 
-import { Cpu, Layers, Users, Sparkles } from "lucide-react"
+import { Cpu, Layers, Users, Sparkles, UserRound } from "lucide-react"
 
 const highlights = [
   {
@@ -33,19 +33,21 @@ export function About() {
   return (
     <section
       id="about"
-      className="section-accent px-6 py-10 md:min-h-[calc(100vh-72px)] md:flex md:flex-col md:justify-center scroll-mt-32"
+      className="reveal-section section-accent px-6 py-10 md:min-h-[calc(100vh-72px)] md:flex md:flex-col md:justify-center scroll-mt-32"
     >
       <div className="max-w-6xl mx-auto w-full">
-        <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 tracking-tight">
-            Building Products{" "}
-            <span className="text-gradient">at Scale</span>
-          </h2>
+        <div className="mb-8 md:mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <UserRound className="w-5 h-5 text-primary" aria-hidden="true" />
+            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+              Building Products{" "}
+              <span className="text-gradient">at Scale</span>
+            </h2>
+          </div>
           <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-            Over a decade specializing in mobile engineering across iOS, Android, and cross-platform stacks, architecting automation frameworks that scale with products and teams.
-          </p>
-          <p className="text-base md:text-lg leading-relaxed text-muted-foreground mt-4">
-            AI is now central to how I work: Cursor, Claude, Copilot, and custom MCP agents built into the engineering workflow, not bolted on. At EPAM Systems I lead mobile quality strategy across global teams, keeping reliability high without slowing release velocity.
+            Over a decade specializing in mobile engineering across iOS, Android, and cross-platform stacks, architecting automation frameworks that scale with products and teams. AI is now central to how I work: Cursor, Claude, Copilot, and custom MCP agents built into the engineering workflow, not bolted on. At EPAM Systems I lead mobile quality strategy across global teams, keeping reliability high without slowing release velocity.
           </p>
         </div>
 

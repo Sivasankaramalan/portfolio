@@ -67,7 +67,7 @@ export function Projects() {
   const otherProjects = projects.filter(p => !p.featured)
 
   return (
-    <section id="projects" className="section-accent px-6 py-16 md:py-24 bg-card/30 scroll-mt-32">
+    <section id="projects" className="reveal-section section-accent px-6 py-16 md:py-24 bg-card/50 scroll-mt-32">
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
         <div className="max-w-3xl mb-14">
