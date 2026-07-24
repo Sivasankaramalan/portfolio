@@ -1,10 +1,9 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { ChevronDown, ChevronRight, ArrowUp, ArrowLeft } from 'lucide-react'
+import { ChevronDown, ChevronRight, ArrowUp } from 'lucide-react'
 import CodeBlock from '../../../components/code-block'
 
-export default function MobilePlaybookPage() {
+export default function WebPlaybookPage() {
   const [raw, setRaw] = useState<string>('')
   // State for managing collapsed sections - must be declared before any conditional returns
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set())
@@ -29,7 +28,7 @@ export default function MobilePlaybookPage() {
   
   useEffect(() => {
     // Load the markdown content
-    fetch('/playbooks/Appium.mdx')
+    fetch('/playbooks/Web.mdx')
       .then(res => res.text())
       .then(setRaw)
       .catch(console.error)
@@ -228,10 +227,10 @@ export default function MobilePlaybookPage() {
     <main id="playbook" className="px-3 pt-24 md:pt-28 pb-12 max-w-7xl mx-auto">
       <header className="text-center py-4 mb-6 max-w-4xl mx-auto">
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-2 leading-[1.1] bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-top duration-1000">
-          Mobile Automation Playbook
+          Web Automation Playbook
         </h1>
         <p className="text-sm md:text-base text-muted-foreground max-w-4xl mx-auto leading-relaxed font-light animate-in fade-in slide-in-from-bottom duration-1000 delay-200">
-          Comprehensive implementation guidance and strategic patterns for mobile test automation across iOS and Android platforms.
+          Comprehensive implementation guidance and strategic patterns for web application test automation using Selenium and Playwright.
         </p>
         {mainTitle && (
           <h2 className="text-xs md:text-sm font-medium bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent mt-3 leading-relaxed animate-in fade-in slide-in-from-bottom duration-1000 delay-400">

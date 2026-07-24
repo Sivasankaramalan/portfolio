@@ -274,8 +274,8 @@ export function SiteHeader() {
                   </ul>
                   </div>
                   
-                  {/* Back button for playbook mobile */}
-                  {pathname === '/playbook/mobile' && (
+                  {/* Back button for playbook detail pages */}
+                  {['/playbook/mobile', '/playbook/web', '/playbook/api'].includes(pathname) && (
                     <>
                       <div className="flex items-center gap-3 my-4 px-4">
                         <div className="flex-1 h-px bg-border" />

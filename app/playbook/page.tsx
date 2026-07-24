@@ -5,7 +5,7 @@ import { Smartphone, Monitor, ArrowRight, BookOpen, Zap } from 'lucide-react'
 
 export default function PlaybookPage() {
   return (
-    <main id="playbook" className="px-3 pt-12 pb-12 max-w-7xl mx-auto">
+    <main id="playbook" className="px-3 pt-24 md:pt-28 pb-12 max-w-7xl mx-auto">
       <header className="text-center py-8 mb-12 max-w-4xl mx-auto">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 leading-[1.1] bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-top duration-1000">
           Automation Playbooks
@@ -71,19 +71,19 @@ export default function PlaybookPage() {
         </Link>
 
         {/* Web Automation Playbook */}
-        <div className="group relative">
-          <div className="relative h-full p-8 rounded-2xl bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900/30 dark:to-gray-800/30 border border-slate-200/50 dark:border-slate-700/30 transition-all duration-300 overflow-hidden opacity-60">
+        <Link href="/playbook/web" className="group">
+          <div className="relative h-full p-8 rounded-2xl bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900/30 dark:to-gray-800/30 border border-slate-200/50 dark:border-slate-700/30 transition-all duration-300 hover:shadow-xl hover:shadow-slate-500/10 hover:-translate-y-1 overflow-hidden">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-slate-400/20 to-gray-500/20 rounded-full blur-2xl -translate-y-16 translate-x-16"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-slate-400/20 to-gray-500/20 rounded-full blur-2xl -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-500"></div>
             
             <div className="relative z-10">
               {/* Icon */}
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-500 to-gray-600 flex items-center justify-center mb-6 shadow-lg">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-500 to-gray-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <Monitor className="w-8 h-8 text-white" />
               </div>
 
               {/* Content */}
-              <h2 className="text-2xl font-bold text-foreground mb-4">
+              <h2 className="text-2xl font-bold text-foreground mb-4 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors duration-300">
                 Web Automation
               </h2>
               
@@ -111,29 +111,29 @@ export default function PlaybookPage() {
                 </li>
               </ul>
 
-              {/* Coming Soon Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700/50 text-amber-700 dark:text-amber-300 text-sm font-medium">
-                <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                <span>Coming Soon</span>
+              {/* CTA */}
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-medium group-hover:gap-3 transition-all duration-300">
+                <span>Explore Web Guide</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
               </div>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* API Automation Playbook */}
-        <div className="group relative">
-          <div className="relative h-full p-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-950/30 dark:to-teal-900/30 border border-emerald-200/50 dark:border-emerald-800/30 transition-all duration-300 overflow-hidden opacity-60">
+        <Link href="/playbook/api" className="group">
+          <div className="relative h-full p-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-950/30 dark:to-teal-900/30 border border-emerald-200/50 dark:border-emerald-800/30 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1 overflow-hidden">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 rounded-full blur-2xl -translate-y-16 translate-x-16"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 rounded-full blur-2xl -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-500"></div>
             
             <div className="relative z-10">
               {/* Icon */}
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mb-6 shadow-lg">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <Zap className="w-8 h-8 text-white" />
               </div>
 
               {/* Content */}
-              <h2 className="text-2xl font-bold text-foreground mb-4">
+              <h2 className="text-2xl font-bold text-foreground mb-4 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300">
                 API Automation
               </h2>
               
@@ -161,21 +161,21 @@ export default function PlaybookPage() {
                 </li>
               </ul>
 
-              {/* Coming Soon Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700/50 text-amber-700 dark:text-amber-300 text-sm font-medium">
-                <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                <span>Coming Soon</span>
+              {/* CTA */}
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium group-hover:gap-3 transition-all duration-300">
+                <span>Explore API Guide</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
               </div>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Bottom section */}
       <div className="mt-16 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 border border-border/30 text-sm text-muted-foreground">
           <BookOpen className="w-4 h-4" />
-          <span>More playbooks coming soon</span>
+          <span>More playbooks in the works</span>
         </div>
       </div>
     </main>

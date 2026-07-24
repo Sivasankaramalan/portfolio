@@ -70,6 +70,29 @@ export default function CodeBlock({
             highlighted = highlighted.replace(/:\s*(true|false|null)/g, ': <boolean>$1</boolean>')
             // Numbers
             highlighted = highlighted.replace(/:\s*(\d+\.?\d*)/g, ': <number>$1</number>')
+        } else if (language === 'javascript' || language === 'typescript' || language === 'jsx' || language === 'tsx') {
+            highlighted = highlighted.replace(
+                /\b(const|let|var|function|async|await|return|if|else|for|while|try|catch|finally|new|this|import|export|from|default|class|extends|implements|interface|type|typeof|instanceof|null|undefined|true|false|of|in|switch|case|break|continue|throw|yield|static|public|private|readonly)\b/g,
+                '<keyword>$1</keyword>'
+            )
+            highlighted = highlighted.replace(/(['"`])((?:(?!\1).)*)\1/g, '<string>$1$2$1</string>')
+            highlighted = highlighted.replace(/\/\/(.*)$/, '<comment>//$1</comment>')
+            highlighted = highlighted.replace(/\b(\d+\.?\d*)\b/g, '<number>$1</number>')
+        } else if (language === 'python') {
+            highlighted = highlighted.replace(
+                /\b(def|class|import|from|as|return|if|elif|else|for|while|try|except|finally|with|async|await|lambda|None|True|False|and|or|not|in|is|yield|raise|pass|break|continue|self)\b/g,
+                '<keyword>$1</keyword>'
+            )
+            highlighted = highlighted.replace(/(['"])((?:(?!\1).)*)\1/g, '<string>$1$2$1</string>')
+            highlighted = highlighted.replace(/#(.*)$/, '<comment>#$1</comment>')
+            highlighted = highlighted.replace(/\b(\d+\.?\d*)\b/g, '<number>$1</number>')
+        } else if (language === 'yaml' || language === 'yml') {
+            highlighted = highlighted.replace(/^(\s*[\w.-]+):/g, '<key>$1</key>:')
+            highlighted = highlighted.replace(/#(.*)$/, '<comment>#$1</comment>')
+            highlighted = highlighted.replace(/:\s*"([^"]*)"/g, ': <string>"$1"</string>')
+        } else if (language === 'xml' || language === 'groovy' || language === 'sh') {
+            highlighted = highlighted.replace(/"([^"]*)"/g, '<string>"$1"</string>')
+            highlighted = highlighted.replace(/\/\/(.*)$|#(.*)$/, (m) => `<comment>${m}</comment>`)
         }
 
         return highlighted

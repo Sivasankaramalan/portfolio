@@ -1,0 +1,805 @@
+# Complete Web Automation (Selenium & Playwright) – Enhanced Playbook
+
+## Table of Contents
+- [1. Environment Setup](#1-environment-setup)
+- [2. Architecture & Core Concepts](#2-architecture--core-concepts)
+- [3. Installation & Configuration](#3-installation--configuration)
+- [4. Browser & Session Capabilities](#4-browser--session-capabilities)
+- [5. Session & Context Management](#5-session--context-management)
+- [6. Element Location Strategies](#6-element-location-strategies)
+- [7. Actions & Interactions](#7-actions--interactions)
+- [8. Waits & Synchronization](#8-waits--synchronization)
+- [9. Frames, Windows & Tabs](#9-frames-windows--tabs)
+- [10. Navigation & Page Lifecycle](#10-navigation--page-lifecycle)
+- [11. File Upload & Download Operations](#11-file-upload--download-operations)
+- [12. Network Interception & Mocking](#12-network-interception--mocking)
+- [13. Browser Features & Emulation](#13-browser-features--emulation)
+- [14. Authentication & Storage State](#14-authentication--storage-state)
+- [15. Advanced Testing Patterns](#15-advanced-testing-patterns)
+- [16. Parallel Execution & Cloud Testing](#16-parallel-execution--cloud-testing)
+- [17. CI/CD Integration](#17-cicd-integration)
+- [18. Debugging & Troubleshooting](#18-debugging--troubleshooting)
+- [19. Performance & Visual Testing](#19-performance--visual-testing)
+- [20. Best Practices & Guidelines](#20-best-practices--guidelines)
+
+## 1. Environment Setup
+
+### Prerequisites
+- Node.js: v18+ LTS (required for Playwright 1.61.x and modern tooling)
+- Java: JDK 17+ (required baseline for Selenium 4.4x bindings)
+- Browsers: Chrome, Firefox, WebKit/Safari (Playwright ships its own patched builds; Selenium drives system-installed browsers)
+- Git & a package manager: npm/pnpm for JS stacks, Maven/Gradle for Java stacks
+
+### System Requirements
+```bash
+# macOS
+brew install node
+brew install openjdk@17
+brew install --cask google-chrome firefox
+
+# Windows
+choco install nodejs-lts
+choco install temurin17
+choco install googlechrome firefox
+
+# Linux (Debian/Ubuntu)
+sudo apt update && sudo apt install -y nodejs npm openjdk-17-jdk
+sudo apt install -y chromium-browser firefox
+```
+
+### Choosing a Stack
+- Playwright: single API across Chromium, Firefox and WebKit, auto-waiting, network interception and tracing built in — the default choice for new suites in 2026
+- Selenium 4.x: broadest real-browser and Grid ecosystem, W3C WebDriver standard, best when you need vendor-neutral driving of real installed browsers or legacy browser support
+- Many enterprise suites run both: Playwright for fast local/CI feedback, Selenium Grid for cross-browser device-lab coverage
+
+## 2. Architecture & Core Concepts
+
+### Selenium WebDriver Architecture
+```text
+┌─────────────┐   W3C WebDriver   ┌───────────────┐   Native/CDP    ┌────────────────┐
+│ Test Client │ ─────HTTP/JSON──→ │ Browser Driver│ ───Automation──→ │ Browser Process│
+│ (Java/JS/   │                   │ (chromedriver,│    Protocol      │ (Chrome/FF/    │
+│  Python/C#) │ ←────Response──── │  geckodriver) │ ←──────────────  │  Edge/Safari)  │
+└─────────────┘                   └───────────────┘                  └────────────────┘
+```
+- WebDriver protocol is the W3C standard (JSON Wire Protocol is legacy/deprecated)
+- Each browser vendor ships/maintains its own driver binary (chromedriver, geckodriver, msedgedriver, safaridriver)
+- Selenium Manager (bundled since 4.6, GA in 4.11+) auto-discovers, downloads and caches the correct driver/browser pairing — no more manual `PATH` wrangling
+
+### Playwright Architecture
+```text
+┌─────────────┐   WebSocket/Pipe   ┌────────────────┐   CDP/BiDi/    ┌────────────────┐
+│ Test Runner │ ──────────────────→ │ Playwright     │ ─Custom Proto─→ │ Browser Engine │
+│ (@playwright│                     │ Driver process │                 │ (Chromium/     │
+│  /test)     │ ←──────────────────  │ (Node binary)  │ ←──────────────  │  Firefox/WebKit)│
+└─────────────┘                     └────────────────┘                  └────────────────┘
+```
+- Playwright talks to each engine over its own low-level protocol (CDP for Chromium, custom patched protocols for Firefox/WebKit) instead of the WebDriver wire protocol
+- Every test gets an isolated `BrowserContext` (equivalent to an incognito profile) — near-zero overhead for full isolation
+- Ships browser binaries itself, so version drift between "the browser on my machine" and "the browser in CI" disappears
+
+### WebDriver BiDi (the convergence point)
+- The [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) spec adds a bidirectional, event-driven channel to classic WebDriver
+- Selenium 4.4x exposes BiDi classes (currently beta) for console/log events, network interception and script pinning, closing the capability gap with Playwright/CDP
+- Enable it per session with the `webSocketUrl: true` capability
+
+## 3. Installation & Configuration
+
+### Playwright (TypeScript)
+```bash
+npm init playwright@latest
+# Installs @playwright/test, config, example tests, and GitHub Actions workflow
+
+npx playwright install --with-deps chromium firefox webkit
+npx playwright --version
+```
+
+### Selenium (Java + Maven)
+```xml
+<dependencies>
+  <dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <version>4.46.0</version>
+  </dependency>
+  <dependency>
+    <groupId>org.testng</groupId>
+    <artifactId>testng</artifactId>
+    <version>7.10.2</version>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
+```
+
+### playwright.config.ts
+```typescript
+import { defineConfig, devices } from '@playwright/test'
+
+export default defineConfig({
+  testDir: './tests',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 4 : undefined,
+  reporter: [['html', { open: 'never' }], ['github']],
+  use: {
+    baseURL: process.env.BASE_URL ?? 'https://staging.example.com',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    actionTimeout: 10_000,
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'mobile-chrome', use: { ...devices['Pixel 7'] } },
+  ],
+})
+```
+
+### Selenium Manager – zero-config driver resolution
+```bash
+# No manual driver download needed — Selenium Manager resolves it automatically
+# Force a specific browser/version via env vars when required
+export SE_BROWSER=chrome
+export SE_BROWSER_VERSION=stable
+export SE_CACHE_PATH=~/.cache/selenium
+```
+
+## 4. Browser & Session Capabilities
+
+### Selenium ChromeOptions (Enhanced)
+```java
+ChromeOptions options = new ChromeOptions();
+options.addArguments("--start-maximized");
+options.addArguments("--disable-notifications");
+options.addArguments("--disable-popup-blocking");
+options.addArguments("--remote-allow-origins=*");
+options.setAcceptInsecureCerts(true);
+options.setPageLoadStrategy(PageLoadStrategy.EAGER);
+options.setCapability("goog:loggingPrefs", Map.of("browser", "ALL", "performance", "ALL"));
+// Headless (new engine, matches headed rendering closely)
+if (System.getenv("CI") != null) {
+    options.addArguments("--headless=new");
+    options.addArguments("--disable-gpu", "--no-sandbox", "--disable-dev-shm-usage");
+}
+WebDriver driver = new ChromeDriver(options);
+```
+
+### Selenium FirefoxOptions
+```java
+FirefoxOptions options = new FirefoxOptions();
+options.addPreference("dom.webnotifications.enabled", false);
+options.addPreference("media.navigator.permission.disabled", true);
+options.setAcceptInsecureCerts(true);
+if (System.getenv("CI") != null) {
+    options.addArguments("-headless");
+}
+WebDriver driver = new FirefoxDriver(options);
+```
+
+### Playwright launch & context options
+```typescript
+import { chromium } from '@playwright/test'
+
+const browser = await chromium.launch({
+  headless: !!process.env.CI,
+  args: ['--disable-blink-features=AutomationControlled'],
+})
+
+const context = await browser.newContext({
+  viewport: { width: 1440, height: 900 },
+  locale: 'en-US',
+  timezoneId: 'America/New_York',
+  permissions: ['geolocation'],
+  geolocation: { latitude: 40.7128, longitude: -74.0060 },
+  ignoreHTTPSErrors: true,
+  recordVideo: { dir: 'test-results/videos' },
+})
+```
+
+### Remote Grid capabilities (W3C standard payload)
+```json
+{
+  "capabilities": {
+    "alwaysMatch": {
+      "browserName": "chrome",
+      "browserVersion": "stable",
+      "platformName": "linux",
+      "goog:chromeOptions": { "args": ["--headless=new"] },
+      "se:recordVideo": true,
+      "se:name": "checkout-smoke-suite"
+    }
+  }
+}
+```
+
+## 5. Session & Context Management
+
+### Selenium – RemoteWebDriver session
+```java
+public class DriverFactory {
+    private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
+
+    public static WebDriver create(String browser, URL gridUrl) throws Exception {
+        MutableCapabilities caps = switch (browser) {
+            case "firefox" -> new FirefoxOptions();
+            case "edge" -> new EdgeOptions();
+            default -> new ChromeOptions();
+        };
+        WebDriver driver = gridUrl != null
+            ? new RemoteWebDriver(gridUrl, caps)
+            : new ChromeDriver((ChromeOptions) caps);
+        DRIVER.set(driver);
+        return driver;
+    }
+
+    public static WebDriver get() { return DRIVER.get(); }
+
+    public static void quit() {
+        if (DRIVER.get() != null) {
+            DRIVER.get().quit();
+            DRIVER.remove();
+        }
+    }
+}
+```
+
+### Playwright – isolated contexts per test (built-in)
+```typescript
+import { test as base } from '@playwright/test'
+
+export const test = base.extend<{ authedPage: import('@playwright/test').Page }>({
+  authedPage: async ({ browser }, use) => {
+    const context = await browser.newContext({ storageState: 'auth/admin.json' })
+    const page = await context.newPage()
+    await use(page)
+    await context.close()
+  },
+})
+```
+- Playwright never reuses cookies/localStorage/cache between tests unless you explicitly load a `storageState` — this is what makes tests parallel-safe by default
+- Selenium sessions are heavier: prefer one driver instance per test method/thread, never share a `WebDriver` across parallel threads
+
+## 6. Element Location Strategies
+
+### Comprehensive Locator Guide (Selenium `By`)
+- `By.id("submit-btn")` — fastest, use whenever the app provides stable IDs
+- `By.cssSelector("[data-testid='checkout-cta']")` — prefer test-id attributes over classes
+- `By.xpath("//button[contains(., 'Add to cart')]")` — needed for text-based or axis-based lookups
+- `By.linkText("Sign out")` / `By.partialLinkText("Sign")`
+- `By.name("email")`, `By.tagName("input")`, `By.className("price-tag")`
+
+### Selenium 4 Relative Locators
+```java
+import static org.openqa.selenium.support.locators.RelativeLocator.with;
+
+WebElement emailLabel = driver.findElement(By.xpath("//label[text()='Email']"));
+WebElement emailInput = driver.findElement(
+    with(By.tagName("input")).below(emailLabel)
+);
+WebElement submit = driver.findElement(
+    with(By.tagName("button")).toRightOf(By.cssSelector(".cancel-btn"))
+);
+```
+- Relative locators (`above`, `below`, `toLeftOf`, `toRightOf`, `near`) resolve on the browser's live bounding-box geometry — invaluable for icon buttons and unlabeled inputs with no stable attributes
+
+### Playwright Locators (auto-retrying, preferred over raw selectors)
+```typescript
+// Role and accessible-name based — resilient to markup changes, mirrors how users perceive the page
+await page.getByRole('button', { name: 'Add to cart' }).click()
+await page.getByLabel('Email address').fill('qa@example.com')
+await page.getByPlaceholder('Search products').fill('wireless mouse')
+await page.getByText('Order confirmed', { exact: false }).waitFor()
+await page.getByTestId('checkout-summary').isVisible()
+
+// Chaining and filtering
+await page.getByRole('listitem')
+  .filter({ hasText: 'In stock' })
+  .getByRole('button', { name: 'Buy now' })
+  .click()
+```
+
+### Shadow DOM & Web Components
+```typescript
+// Playwright pierces open shadow roots automatically with normal locators
+await page.locator('custom-datepicker').getByRole('button', { name: 'Next month' }).click()
+```
+```java
+// Selenium 4 exposes the shadow root explicitly
+SearchContext shadowRoot = driver.findElement(By.cssSelector("custom-datepicker")).getShadowRoot();
+WebElement nextBtn = shadowRoot.findElement(By.cssSelector("button.next"));
+```
+
+## 7. Actions & Interactions
+
+### Selenium Actions API (mouse/keyboard/wheel)
+```java
+Actions actions = new Actions(driver);
+actions.moveToElement(menuItem)
+    .pause(Duration.ofMillis(200))
+    .click(subMenuItem)
+    .keyDown(Keys.SHIFT)
+    .click(secondItem)
+    .keyUp(Keys.SHIFT)
+    .perform();
+
+// Drag and drop
+actions.dragAndDrop(sourceCard, targetColumn).perform();
+
+// Scroll wheel
+actions.scrollByAmount(0, 800).perform();
+```
+
+### Playwright interactions (auto-waiting, actionability checks built in)
+```typescript
+await page.getByRole('textbox', { name: 'Card number' }).fill('4242424242424242')
+await page.getByRole('combobox', { name: 'Country' }).selectOption('US')
+await page.getByRole('checkbox', { name: 'Save card' }).check()
+await page.mouse.wheel(0, 1200)
+await page.getByTestId('kanban-card-12').dragTo(page.getByTestId('column-done'))
+
+// Keyboard sequences
+await page.keyboard.press('Control+A')
+await page.keyboard.type('Replacing selected text', { delay: 30 })
+```
+- Before any action, Playwright verifies the element is attached, visible, stable (not animating), receives events (not obscured) and enabled — eliminating most flaky `ElementClickInterceptedException`-style failures without extra wait code
+
+## 8. Waits & Synchronization
+
+### Selenium – explicit and fluent waits
+```java
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+wait.until(ExpectedConditions.elementToBeClickable(By.id("checkout-btn"))).click();
+
+Wait<WebDriver> fluentWait = new FluentWait<>(driver)
+    .withTimeout(Duration.ofSeconds(20))
+    .pollingEvery(Duration.ofMillis(250))
+    .ignoring(NoSuchElementException.class)
+    .ignoring(StaleElementReferenceException.class);
+
+fluentWait.until(d -> d.findElement(By.cssSelector(".toast-success")).isDisplayed());
+```
+
+### Never use `Thread.sleep` / fixed waits
+```java
+// ❌ Brittle — either too slow (wastes CI minutes) or too fast (flaky)
+Thread.sleep(3000);
+
+// ✅ Wait for a real, observable condition
+wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".spinner")));
+```
+
+### Playwright web-first assertions (auto-retry until timeout)
+```typescript
+import { expect } from '@playwright/test'
+
+await expect(page.getByTestId('cart-count')).toHaveText('3')
+await expect(page.getByRole('alert')).toBeVisible()
+await expect(page).toHaveURL(/\/order\/\d+\/confirmation/)
+await expect.poll(async () => (await api.get('/orders/latest')).status).toBe(200)
+```
+- `expect()` assertions retry internally (default 5s, configurable) — no manual polling loops needed for 95% of cases
+- Use `expect.soft.poll(...)` (1.61+) to poll a custom condition without failing the test immediately, collecting soft-assertion failures at the end of the test
+
+## 9. Frames, Windows & Tabs
+
+### Selenium – iframe and window handling
+```java
+driver.switchTo().frame("payment-iframe");
+driver.findElement(By.id("card-number")).sendKeys("4242424242424242");
+driver.switchTo().defaultContent();
+
+String mainWindow = driver.getWindowHandle();
+driver.findElement(By.linkText("Open in new tab")).click();
+for (String handle : driver.getWindowHandles()) {
+    if (!handle.equals(mainWindow)) {
+        driver.switchTo().window(handle);
+        break;
+    }
+}
+```
+
+### Playwright – frames and popups (event-driven, no manual handle tracking)
+```typescript
+const frame = page.frameLocator('#payment-iframe')
+await frame.getByLabel('Card number').fill('4242424242424242')
+
+const [popup] = await Promise.all([
+  page.waitForEvent('popup'),
+  page.getByRole('link', { name: 'Open in new tab' }).click(),
+])
+await popup.waitForLoadState()
+await expect(popup).toHaveTitle(/Order Summary/)
+```
+
+## 10. Navigation & Page Lifecycle
+
+### Selenium navigation & cookies
+```java
+driver.get("https://staging.example.com/login");
+driver.navigate().refresh();
+driver.navigate().back();
+driver.manage().addCookie(new Cookie("session_id", token));
+driver.manage().deleteAllCookies();
+((JavascriptExecutor) driver).executeScript(
+    "window.localStorage.setItem('feature_flag_v2', 'true');"
+);
+```
+
+### Playwright navigation & lifecycle events
+```typescript
+await page.goto('/checkout', { waitUntil: 'networkidle' })
+await page.waitForLoadState('domcontentloaded')
+await page.context().addCookies([
+  { name: 'session_id', value: token, domain: 'staging.example.com', path: '/' },
+])
+await page.evaluate((flag) => localStorage.setItem('feature_flag_v2', flag), 'true')
+```
+
+## 11. File Upload & Download Operations
+
+### Selenium file upload (native `<input type="file">`)
+```java
+WebElement fileInput = driver.findElement(By.cssSelector("input[type='file']"));
+fileInput.sendKeys("/absolute/path/to/invoice.pdf");
+```
+
+### Selenium file download verification
+```java
+ChromeOptions options = new ChromeOptions();
+Map<String, Object> prefs = new HashMap<>();
+prefs.put("download.default_directory", downloadDir.toAbsolutePath().toString());
+prefs.put("download.prompt_for_download", false);
+options.setExperimentalOption("prefs", prefs);
+// Poll the download directory until the file lands and is no longer a .crdownload
+```
+
+### Playwright uploads & downloads (first-class APIs)
+```typescript
+await page.getByLabel('Upload receipt').setInputFiles('fixtures/receipt.pdf')
+
+// Multiple files + in-memory buffer upload
+await page.getByLabel('Attach images').setInputFiles([
+  'fixtures/photo1.jpg',
+  { name: 'generated.txt', mimeType: 'text/plain', buffer: Buffer.from('hello') },
+])
+
+const [download] = await Promise.all([
+  page.waitForEvent('download'),
+  page.getByRole('button', { name: 'Export CSV' }).click(),
+])
+await download.saveAs(`test-results/${download.suggestedFilename()}`)
+expect(await download.path()).not.toBeNull()
+```
+
+## 12. Network Interception & Mocking
+
+### Playwright request/response interception
+```typescript
+await page.route('**/api/products**', async (route) => {
+  await route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ items: [{ id: 1, name: 'Mock Widget', price: 9.99 }] }),
+  })
+})
+
+// Assert real network traffic without mocking
+const [response] = await Promise.all([
+  page.waitForResponse((res) => res.url().includes('/api/checkout') && res.status() === 200),
+  page.getByRole('button', { name: 'Place order' }).click(),
+])
+expect(await response.json()).toMatchObject({ status: 'confirmed' })
+
+// Simulate offline / slow 3G
+await page.context().setOffline(true)
+const client = await page.context().newCDPSession(page)
+await client.send('Network.emulateNetworkConditions', {
+  offline: false, latency: 400, downloadThroughput: 400 * 1024 / 8, uploadThroughput: 400 * 1024 / 8,
+})
+```
+
+### Selenium 4 BiDi network interception (beta)
+```java
+try (Network network = new Network(driver)) {
+    network.addRequestHandler(RequestHandler.matches(new Filter("**/api/products**")), request -> {
+        // interceptors are wired through BiDi CDP events
+    });
+}
+// Classic alternative: proxy through BrowserMob Proxy / mitmproxy in front of the Grid node
+```
+
+## 13. Browser Features & Emulation
+
+### Selenium – geolocation & permissions via CDP
+```java
+Map<String, Object> coordinates = Map.of("latitude", 40.7128, "longitude", -74.0060, "accuracy", 1);
+((ChromeDriver) driver).executeCdpCommand("Emulation.setGeolocationOverride", coordinates);
+((ChromeDriver) driver).executeCdpCommand("Browser.grantPermissions", Map.of(
+    "origin", "https://staging.example.com",
+    "permissions", List.of("geolocation", "notifications")
+));
+```
+
+### Playwright device & feature emulation
+```typescript
+import { devices } from '@playwright/test'
+
+const iPhone = await browser.newContext({ ...devices['iPhone 15'] })
+const page = await iPhone.newPage()
+
+await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' })
+await page.context().grantPermissions(['geolocation', 'clipboard-read'])
+await page.context().setGeolocation({ latitude: 51.5074, longitude: -0.1278 })
+```
+
+## 14. Authentication & Storage State
+
+### Playwright – authenticate once, reuse everywhere
+```typescript
+// global-setup.ts
+import { chromium, type FullConfig } from '@playwright/test'
+
+export default async function globalSetup(config: FullConfig) {
+  const browser = await chromium.launch()
+  const page = await browser.newPage()
+  await page.goto(`${config.projects[0].use.baseURL}/login`)
+  await page.getByLabel('Username').fill(process.env.QA_USER!)
+  await page.getByLabel('Password').fill(process.env.QA_PASSWORD!)
+  await page.getByRole('button', { name: 'Sign in' }).click()
+  await page.waitForURL('**/dashboard')
+  await page.context().storageState({ path: 'auth/admin.json' })
+  await browser.close()
+}
+```
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  globalSetup: require.resolve('./global-setup'),
+  use: { storageState: 'auth/admin.json' },
+})
+```
+
+### Selenium – token injection to skip UI login
+```java
+driver.get(baseUrl); // must load the origin first before setting storage
+((JavascriptExecutor) driver).executeScript(
+    "window.localStorage.setItem('access_token', arguments[0]);", jwtToken
+);
+driver.navigate().refresh();
+```
+
+## 15. Advanced Testing Patterns
+
+### Page Object Model (Playwright, TypeScript)
+```typescript
+export class CheckoutPage {
+  constructor(private page: import('@playwright/test').Page) {}
+
+  private cardNumber = () => this.page.getByLabel('Card number')
+  private placeOrderBtn = () => this.page.getByRole('button', { name: 'Place order' })
+
+  async payWithCard(number: string, expiry: string, cvc: string) {
+    await this.cardNumber().fill(number)
+    await this.page.getByLabel('Expiry').fill(expiry)
+    await this.page.getByLabel('CVC').fill(cvc)
+    await this.placeOrderBtn().click()
+  }
+
+  async expectOrderConfirmed() {
+    await expect(this.page.getByRole('heading', { name: /order confirmed/i })).toBeVisible()
+  }
+}
+```
+
+### Component Object Model + Fixtures (composition over inheritance)
+```typescript
+type Fixtures = { checkoutPage: CheckoutPage; catalogPage: CatalogPage }
+
+export const test = base.extend<Fixtures>({
+  checkoutPage: async ({ page }, use) => use(new CheckoutPage(page)),
+  catalogPage: async ({ page }, use) => use(new CatalogPage(page)),
+})
+
+test('guest can complete checkout', async ({ catalogPage, checkoutPage }) => {
+  await catalogPage.addToCart('Wireless Mouse')
+  await catalogPage.goToCheckout()
+  await checkoutPage.payWithCard('4242424242424242', '12/29', '123')
+  await checkoutPage.expectOrderConfirmed()
+})
+```
+
+### Selenium Page Factory (Java)
+```java
+public class LoginPage {
+    private final WebDriver driver;
+
+    @FindBy(id = "username") private WebElement username;
+    @FindBy(id = "password") private WebElement password;
+    @FindBy(css = "button[type='submit']") private WebElement submitBtn;
+
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
+    }
+
+    public DashboardPage loginAs(String user, String pass) {
+        username.sendKeys(user);
+        password.sendKeys(pass);
+        submitBtn.click();
+        return new DashboardPage(driver);
+    }
+}
+```
+
+## 16. Parallel Execution & Cloud Testing
+
+### Playwright sharding (splits suite across CI machines)
+```bash
+npx playwright test --shard=1/4
+npx playwright test --shard=2/4
+npx playwright test --shard=3/4
+npx playwright test --shard=4/4
+```
+
+### TestNG parallel execution (Selenium)
+```xml
+<suite name="RegressionSuite" parallel="methods" thread-count="8">
+  <test name="ChromeTests">
+    <parameter name="browser" value="chrome"/>
+    <classes>
+      <class name="tests.CheckoutTests"/>
+    </classes>
+  </test>
+</suite>
+```
+
+### Selenium Grid 4 (Docker Compose)
+```yaml
+services:
+  selenium-hub:
+    image: selenium/hub:4.46.0
+    ports: ["4442:4442", "4443:4443", "4444:4444"]
+  chrome-node:
+    image: selenium/node-chrome:4.46.0
+    depends_on: [selenium-hub]
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_NODE_MAX_SESSIONS=4
+    shm_size: 2gb
+  firefox-node:
+    image: selenium/node-firefox:4.46.0
+    depends_on: [selenium-hub]
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+```
+
+### Cloud grids (BrowserStack / Sauce Labs / LambdaTest)
+```java
+DesiredCapabilities caps = new DesiredCapabilities();
+caps.setCapability("browserName", "chrome");
+Map<String, Object> bstackOptions = new HashMap<>();
+bstackOptions.put("os", "Windows");
+bstackOptions.put("osVersion", "11");
+bstackOptions.put("projectName", "Checkout Regression");
+bstackOptions.put("buildName", System.getenv("BUILD_NUMBER"));
+caps.setCapability("bstack:options", bstackOptions);
+WebDriver driver = new RemoteWebDriver(
+    new URL("https://" + user + ":" + key + "@hub-cloud.browserstack.com/wd/hub"), caps
+);
+```
+
+## 17. CI/CD Integration
+
+### GitHub Actions – Playwright
+```yaml
+name: e2e
+on: [pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [1/4, 2/4, 3/4, 4/4]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npx playwright test --shard=${{ matrix.shard }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: playwright-report-${{ strategy.job-index }}, path: playwright-report/ }
+```
+
+### Jenkins pipeline – Selenium Grid
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage('Start Grid') {
+            steps { sh 'docker compose -f grid.yml up -d' }
+        }
+        stage('Run Tests') {
+            steps { sh 'mvn -B test -Dgrid.url=http://localhost:4444 -Dsuite=regression.xml' }
+        }
+    }
+    post {
+        always {
+            junit 'target/surefire-reports/*.xml'
+            sh 'docker compose -f grid.yml down -v'
+        }
+    }
+}
+```
+
+## 18. Debugging & Troubleshooting
+
+### Playwright Trace Viewer & Inspector
+```bash
+PWDEBUG=1 npx playwright test tests/checkout.spec.ts   # step-through inspector
+npx playwright test --trace on                          # force trace capture
+npx playwright show-trace test-results/.../trace.zip     # open recorded trace UI
+npx playwright codegen https://staging.example.com       # record actions into a script
+```
+
+### Selenium logging & diagnostics
+```java
+LogEntries logs = driver.manage().logs().get(LogType.BROWSER);
+for (LogEntry entry : logs) {
+    System.out.println(entry.getLevel() + " " + entry.getMessage());
+}
+// Full-page screenshot on failure (TestNG @AfterMethod)
+File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+Files.copy(src.toPath(), Paths.get("failures/" + testName + ".png"));
+```
+
+### Common flaky-test root causes
+- Element found but not yet interactable (animation/transition in flight) — use actionability waits, not `presenceOfElementLocated`
+- Stale element references after a SPA re-render — re-locate rather than caching `WebElement`/`Locator` results across navigations
+- Race between test assertion and async API call the UI is waiting on — assert on the UI state, not on a fixed delay
+- Shared test data across parallel workers — isolate fixtures per worker/test (unique emails, DB schemas, or API-seeded state)
+
+## 19. Performance & Visual Testing
+
+### Playwright visual regression
+```typescript
+await expect(page).toHaveScreenshot('checkout-page.png', {
+  maxDiffPixelRatio: 0.02,
+  mask: [page.getByTestId('live-price-ticker')],
+})
+```
+
+### Lighthouse / Core Web Vitals in CI
+```typescript
+import { playAudit } from 'playwright-lighthouse'
+
+await playAudit({
+  page,
+  thresholds: { performance: 85, accessibility: 95, 'best-practices': 90, seo: 90 },
+  port: 9222,
+})
+```
+
+### Accessibility scanning (axe-core)
+```typescript
+import AxeBuilder from '@axe-core/playwright'
+
+const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
+expect(results.violations).toEqual([])
+```
+
+## 20. Best Practices & Guidelines
+
+### Code Organization & Maintainability
+- Prefer role/label-based locators (`getByRole`, `getByLabel`) over brittle CSS/XPath chains — they double as accessibility checks
+- One assertion focus per test; compose reusable fixtures/page objects instead of copy-pasting setup steps
+- Keep test data self-sufficient: seed via API calls in `beforeEach`, never depend on execution order or shared UI state
+- Tag suites (`@smoke`, `@regression`, `@critical-path`) and wire tag-based CI stages so PR feedback stays fast while nightly runs stay thorough
+- Fail builds on new flaky tests (`testConfig.failOnFlakyTests` / `--fail-on-flaky-tests`) instead of silently retrying forever
+- Version-pin browser/driver images in CI (`selenium/node-chrome:4.46.0`, Playwright's bundled browsers) to avoid "works on my machine" drift
+- Store secrets (`QA_USER`, API keys) in the CI secret manager, never in the repo or Selenium capabilities payloads
+- Treat `trace: 'retain-on-failure'` and video-on-failure as mandatory in CI — they cut triage time from hours to minutes

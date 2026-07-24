@@ -1,0 +1,747 @@
+# Complete API Automation (REST & GraphQL) – Enhanced Playbook
+
+## Table of Contents
+- [1. Environment Setup](#1-environment-setup)
+- [2. Architecture & Core Concepts](#2-architecture--core-concepts)
+- [3. Installation & Configuration](#3-installation--configuration)
+- [4. Authentication & Authorization Strategies](#4-authentication--authorization-strategies)
+- [5. Request & Session Management](#5-request--session-management)
+- [6. Response Validation Strategies](#6-response-validation-strategies)
+- [7. GraphQL Testing](#7-graphql-testing)
+- [8. Data-Driven & Parameterized Testing](#8-data-driven--parameterized-testing)
+- [9. Waits, Retries & Async Consistency](#9-waits-retries--async-consistency)
+- [10. Mocking & Service Virtualization](#10-mocking--service-virtualization)
+- [11. Contract Testing](#11-contract-testing)
+- [12. File Upload, Download & Multipart](#12-file-upload-download--multipart)
+- [13. Database & Backend Validation](#13-database--backend-validation)
+- [14. Security Testing](#14-security-testing)
+- [15. Advanced Testing Patterns](#15-advanced-testing-patterns)
+- [16. Parallel Execution & Cloud Testing](#16-parallel-execution--cloud-testing)
+- [17. CI/CD Integration](#17-cicd-integration)
+- [18. Debugging & Troubleshooting](#18-debugging--troubleshooting)
+- [19. Performance & Load Testing](#19-performance--load-testing)
+- [20. Best Practices & Guidelines](#20-best-practices--guidelines)
+
+## 1. Environment Setup
+
+### Prerequisites
+- Java: JDK 17+ (REST Assured 6.x baseline; use 5.5.x if pinned to Java 8-11)
+- Node.js: v18+ LTS (Newman, Supertest, k6 browser module tooling)
+- Postman Desktop or Postman CLI for collection authoring
+- Docker (for WireMock, Pact Broker, and local database fixtures)
+
+### System Requirements
+```bash
+# macOS
+brew install openjdk@17 node
+npm install -g newman newman-reporter-htmlextra
+brew install --cask postman
+
+# Linux (CI runners)
+sudo apt update && sudo apt install -y openjdk-17-jdk nodejs npm
+npm install -g newman
+```
+
+### Choosing a Stack
+- REST Assured (Java): the standard for teams already on JUnit/TestNG, fluent Given/When/Then DSL, integrates directly with Maven/Gradle build pipelines
+- Postman + Newman: fastest path from exploratory testing to a CI-runnable collection, best for cross-team/non-engineer collaboration
+- Supertest / Playwright `APIRequestContext` (JS/TS): best when API tests live in the same repo/language as the frontend E2E suite
+- pytest + `requests`/`httpx` (Python): common in data platform and ML-adjacent teams
+
+## 2. Architecture & Core Concepts
+
+### REST Fundamentals
+- Resources are nouns (`/orders/{id}`), verbs are HTTP methods (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`)
+- Statelessness: every request carries all context needed (auth token, correlation ID) — no server-side session reliance
+- HATEOAS (rarely fully implemented, but worth checking for): responses may include `_links` to guide client navigation
+- Idempotency: `GET`, `PUT`, `DELETE` must be safely retryable; `POST` typically is not unless an `Idempotency-Key` header is honored
+
+### HTTP Status Code Contract
+```text
+2xx Success        200 OK · 201 Created · 202 Accepted · 204 No Content
+3xx Redirection    301 Moved Permanently · 304 Not Modified
+4xx Client Error   400 Bad Request · 401 Unauthorized · 403 Forbidden
+                   404 Not Found · 409 Conflict · 422 Unprocessable Entity · 429 Too Many Requests
+5xx Server Error   500 Internal Server Error · 502 Bad Gateway · 503 Service Unavailable
+```
+
+### REST vs GraphQL vs gRPC
+- REST: resource-oriented, cacheable via HTTP semantics, many endpoints, over/under-fetching is common
+- GraphQL: single endpoint, client specifies exact shape of the response, strongly typed schema (SDL), introspectable
+- gRPC: binary Protobuf over HTTP/2, contract-first `.proto` files, best for internal service-to-service calls needing low latency
+
+## 3. Installation & Configuration
+
+### REST Assured (Java + Maven)
+```xml
+<dependencies>
+  <dependency>
+    <groupId>io.rest-assured</groupId>
+    <artifactId>rest-assured</artifactId>
+    <version>5.5.7</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.rest-assured</groupId>
+    <artifactId>json-schema-validator</artifactId>
+    <version>5.5.7</version>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
+```
+
+### Base configuration
+```java
+@BeforeAll
+static void setup() {
+    RestAssured.baseURI = System.getProperty("api.baseUrl", "https://staging-api.example.com");
+    RestAssured.basePath = "/v2";
+    RestAssured.requestSpecification = new RequestSpecBuilder()
+        .setContentType(ContentType.JSON)
+        .addHeader("X-Client", "automation-suite")
+        .build();
+    RestAssured.filters(new AllureRestAssured(), new RequestLoggingFilter(), new ResponseLoggingFilter());
+}
+```
+
+### Newman (CLI collection runner)
+```bash
+newman run checkout-api.postman_collection.json \
+  --environment staging.postman_environment.json \
+  --reporters cli,htmlextra,junit \
+  --reporter-junit-export results/newman-report.xml \
+  --bail --insecure
+```
+
+### Supertest (Node.js/TypeScript)
+```typescript
+import request from 'supertest'
+
+const api = request('https://staging-api.example.com')
+
+test('creates an order', async () => {
+  const res = await api.post('/v2/orders')
+    .set('Authorization', `Bearer ${token}`)
+    .send({ sku: 'WM-1001', quantity: 2 })
+  expect(res.status).toBe(201)
+  expect(res.body).toMatchObject({ status: 'PENDING' })
+})
+```
+
+## 4. Authentication & Authorization Strategies
+
+### API Key & Basic Auth
+```java
+given()
+    .header("X-API-Key", apiKey)
+.when()
+    .get("/v2/inventory")
+.then()
+    .statusCode(200);
+
+given().auth().preemptive().basic(username, password)
+    .when().get("/v2/admin/reports")
+    .then().statusCode(200);
+```
+
+### OAuth2 Client Credentials Flow
+```java
+String token = given()
+    .contentType(ContentType.URLENC)
+    .formParam("grant_type", "client_credentials")
+    .formParam("client_id", clientId)
+    .formParam("client_secret", clientSecret)
+.when()
+    .post("https://auth.example.com/oauth/token")
+.then()
+    .statusCode(200)
+    .extract().path("access_token");
+
+given().auth().oauth2(token)
+    .when().get("/v2/orders")
+    .then().statusCode(200);
+```
+
+### JWT construction & validation for test fixtures
+```java
+String jwt = Jwts.builder()
+    .setSubject("qa-service-account")
+    .claim("roles", List.of("ORDERS_READ", "ORDERS_WRITE"))
+    .setExpiration(Date.from(Instant.now().plusSeconds(3600)))
+    .signWith(Keys.hmacShaKeyFor(testSigningKey.getBytes()), SignatureAlgorithm.HS256)
+    .compact();
+```
+
+### Refresh-token rotation test
+```java
+Response refreshed = given()
+    .cookie("refresh_token", initialRefreshToken)
+.when()
+    .post("/v2/auth/refresh")
+.then()
+    .statusCode(200)
+    .extract().response();
+
+assertThat(refreshed.jsonPath().getString("access_token")).isNotEqualTo(initialAccessToken);
+```
+
+## 5. Request & Session Management
+
+### Request Specification Reuse
+```java
+RequestSpecification adminSpec = new RequestSpecBuilder()
+    .setBaseUri(baseUrl)
+    .addHeader("Authorization", "Bearer " + adminToken)
+    .setContentType(ContentType.JSON)
+    .build();
+
+given().spec(adminSpec)
+    .queryParam("status", "PENDING")
+    .queryParam("page", 0)
+    .queryParam("size", 25)
+.when()
+    .get("/v2/orders")
+.then()
+    .statusCode(200);
+```
+
+### Connection pooling & timeouts
+```java
+RestAssuredConfig config = RestAssuredConfig.config()
+    .httpClient(HttpClientConfig.httpClientConfig()
+        .setParam("http.connection.timeout", 5000)
+        .setParam("http.socket.timeout", 10000))
+    .connectionConfig(ConnectionConfig.connectionConfig().closeIdleConnectionsAfterEachResponse());
+```
+
+### Correlation IDs & distributed tracing headers
+```java
+given()
+    .header("X-Correlation-Id", UUID.randomUUID().toString())
+    .header("traceparent", "00-" + traceId + "-" + spanId + "-01")
+.when()
+    .post("/v2/orders")
+.then()
+    .statusCode(201)
+    .header("X-Correlation-Id", notNullValue());
+```
+
+## 6. Response Validation Strategies
+
+### Status, headers, body assertions (Given/When/Then DSL)
+```java
+given()
+    .pathParam("orderId", orderId)
+.when()
+    .get("/v2/orders/{orderId}")
+.then()
+    .statusCode(200)
+    .contentType(ContentType.JSON)
+    .header("Cache-Control", containsString("no-store"))
+    .body("id", equalTo(orderId))
+    .body("items", hasSize(greaterThan(0)))
+    .body("total", closeTo(49.98, 0.01))
+    .time(lessThan(800L));
+```
+
+### JSON Schema validation (contract shape, not just field values)
+```java
+.then()
+    .assertThat().body(matchesJsonSchemaInClasspath("schemas/order-response.schema.json"));
+```
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["id", "status", "items", "total"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "status": { "enum": ["PENDING", "CONFIRMED", "SHIPPED", "CANCELLED"] },
+    "items": { "type": "array", "minItems": 1 },
+    "total": { "type": "number", "minimum": 0 }
+  }
+}
+```
+
+### JsonPath / GPath extraction for chained requests
+```java
+String orderId = given().body(newOrderPayload)
+    .when().post("/v2/orders")
+    .then().statusCode(201).extract().path("id");
+
+given().pathParam("orderId", orderId)
+    .when().post("/v2/orders/{orderId}/pay")
+    .then().statusCode(200).body("status", equalTo("CONFIRMED"));
+```
+
+## 7. GraphQL Testing
+
+### Query & mutation execution
+```java
+String query = """
+    query GetOrder($id: ID!) {
+      order(id: $id) { id status total items { sku quantity } }
+    }
+""";
+
+given()
+    .contentType(ContentType.JSON)
+    .body(Map.of("query", query, "variables", Map.of("id", orderId)))
+.when()
+    .post("/graphql")
+.then()
+    .statusCode(200)
+    .body("errors", nullValue())
+    .body("data.order.status", equalTo("CONFIRMED"));
+```
+
+### Asserting partial errors (GraphQL returns 200 even on field errors)
+```java
+.then()
+    .statusCode(200)
+    .body("errors[0].message", containsString("Order not found"))
+    .body("errors[0].extensions.code", equalTo("NOT_FOUND"))
+    .body("data.order", nullValue());
+```
+
+### Schema introspection for contract drift detection
+```bash
+npx get-graphql-schema https://staging-api.example.com/graphql > schema.graphql
+git diff --exit-code schema.graphql   # fail CI if schema changed without review
+```
+
+### Depth & complexity limiting tests (protecting against abusive queries)
+```typescript
+const deeplyNestedQuery = `query { order(id: "1") { items { order { items { order { id } } } } } }`
+const res = await api.post('/graphql', { query: deeplyNestedQuery })
+expect(res.status).toBe(400)
+expect(res.body.errors[0].message).toMatch(/exceeds maximum depth/)
+```
+
+## 8. Data-Driven & Parameterized Testing
+
+### TestNG DataProvider
+```java
+@DataProvider(name = "invalidOrderPayloads")
+public Object[][] invalidPayloads() {
+    return new Object[][]{
+        { Map.of("sku", "", "quantity", 1), "sku must not be blank" },
+        { Map.of("sku", "WM-1001", "quantity", 0), "quantity must be greater than 0" },
+        { Map.of("sku", "WM-1001", "quantity", -5), "quantity must be greater than 0" },
+    };
+}
+
+@Test(dataProvider = "invalidOrderPayloads")
+void rejectsInvalidOrder(Map<String, Object> payload, String expectedMessage) {
+    given().body(payload)
+        .when().post("/v2/orders")
+        .then().statusCode(422).body("message", containsString(expectedMessage));
+}
+```
+
+### CSV/JSON fixture-driven Postman + Newman runs
+```bash
+newman run orders-crud.postman_collection.json \
+  --iteration-data fixtures/order-scenarios.csv \
+  --environment staging.postman_environment.json
+```
+
+### Property-based / fuzz testing for input validation
+```typescript
+import fc from 'fast-check'
+
+test('quantity is always validated', () =>
+  fc.assert(
+    fc.asyncProperty(fc.integer({ min: -1000, max: 0 }), async (qty) => {
+      const res = await api.post('/v2/orders').send({ sku: 'WM-1001', quantity: qty })
+      expect(res.status).toBe(422)
+    })
+  ))
+```
+
+## 9. Waits, Retries & Async Consistency
+
+### Polling for eventual consistency (async processing pipelines)
+```java
+Awaitility.await()
+    .atMost(Duration.ofSeconds(15))
+    .pollInterval(Duration.ofMillis(500))
+    .untilAsserted(() ->
+        given().pathParam("orderId", orderId)
+            .when().get("/v2/orders/{orderId}")
+            .then().body("status", equalTo("SHIPPED"))
+    );
+```
+
+### Retry with exponential backoff for flaky/rate-limited dependencies
+```typescript
+async function withRetry<T>(fn: () => Promise<T>, attempts = 5): Promise<T> {
+  for (let i = 0; i < attempts; i++) {
+    try { return await fn() }
+    catch (err) {
+      if (i === attempts - 1) throw err
+      await new Promise((r) => setTimeout(r, 2 ** i * 200))
+    }
+  }
+  throw new Error('unreachable')
+}
+```
+
+### Handling `429 Too Many Requests` correctly in tests
+```java
+.then()
+    .statusCode(anyOf(is(200), is(429)))
+    .extract().response();
+// If 429, assert Retry-After header is present and respect it before the next call
+```
+
+## 10. Mocking & Service Virtualization
+
+### WireMock stub for a downstream dependency
+```json
+{
+  "request": { "method": "GET", "urlPath": "/inventory/WM-1001" },
+  "response": {
+    "status": 200,
+    "jsonBody": { "sku": "WM-1001", "available": 42 },
+    "headers": { "Content-Type": "application/json" }
+  }
+}
+```
+```java
+WireMockServer wireMock = new WireMockServer(WireMockConfiguration.options().port(8089));
+wireMock.start();
+wireMock.stubFor(get(urlPathEqualTo("/inventory/WM-1001"))
+    .willReturn(aResponse().withStatus(200).withBody("{\"available\":42}")));
+```
+
+### Fault injection (timeouts, resets, malformed responses)
+```java
+wireMock.stubFor(get(urlPathEqualTo("/inventory/WM-1001"))
+    .willReturn(aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
+
+wireMock.stubFor(get(urlPathEqualTo("/payments/charge"))
+    .willReturn(aResponse().withFixedDelay(6000).withStatus(504)));
+```
+
+### MockServer / Mountebank alternatives
+- MockServer: strong Java-native matching + verification API, good fit alongside REST Assured suites
+- Mountebank: language-agnostic, multi-protocol (HTTP, TCP, SMTP) imposters, useful for polyglot service landscapes
+
+## 11. Contract Testing
+
+### Consumer-driven contract with Pact (JS consumer)
+```typescript
+import { PactV3, MatchersV3 } from '@pact-foundation/pact'
+const { like, integer } = MatchersV3
+
+const provider = new PactV3({ consumer: 'web-app', provider: 'orders-service' })
+
+test('gets an order by id', () =>
+  provider
+    .given('order 123 exists')
+    .uponReceiving('a request for order 123')
+    .withRequest({ method: 'GET', path: '/v2/orders/123' })
+    .willRespondWith({
+      status: 200,
+      body: { id: '123', status: like('CONFIRMED'), total: integer(4998) },
+    })
+    .executeTest(async (mockServer) => {
+      const res = await fetch(`${mockServer.url}/v2/orders/123`)
+      expect(res.status).toBe(200)
+    }))
+```
+
+### Provider verification (Java)
+```java
+@Provider("orders-service")
+@PactBroker(url = "https://pact-broker.internal.example.com")
+class OrdersProviderContractTest {
+    @State("order 123 exists")
+    void orderExists() { ordersFixture.seed(new Order("123", "CONFIRMED", 4998)); }
+
+    @TestTemplate
+    @ExtendWith(PactVerificationInvocationContextProvider.class)
+    void verify(PactVerificationContext context) { context.verifyInteraction(); }
+}
+```
+
+### Deployment gating with `can-i-deploy`
+```bash
+pact-broker can-i-deploy \
+  --pacticipant orders-service --version $GIT_SHA \
+  --to-environment production
+```
+- Use the git commit SHA as the application version — reused/ambiguous versions corrupt the compatibility matrix
+- Only assert fields you actually consume; let matchers (`like`, `regex`, `eachLike`) handle types instead of hardcoding literals
+- Roll new consumer expectations out as pending/WIP pacts first so they give feedback without instantly blocking the provider's pipeline
+
+## 12. File Upload, Download & Multipart
+
+### Multipart upload
+```java
+given()
+    .multiPart("file", new File("fixtures/invoice.pdf"), "application/pdf")
+    .multiPart("metadata", "{\"orderId\":\"123\"}", "application/json")
+.when()
+    .post("/v2/orders/123/attachments")
+.then()
+    .statusCode(201)
+    .body("fileName", equalTo("invoice.pdf"));
+```
+
+### Binary/stream download validation
+```java
+byte[] pdfBytes = given()
+    .when().get("/v2/orders/123/invoice.pdf")
+    .then().statusCode(200).contentType("application/pdf")
+    .extract().asByteArray();
+
+assertThat(pdfBytes.length).isGreaterThan(1000);
+assertThat(new String(pdfBytes, 0, 4)).isEqualTo("%PDF");
+```
+
+## 13. Database & Backend Validation
+
+### Verifying side effects beyond the HTTP response
+```java
+given().body(newOrderPayload)
+    .when().post("/v2/orders")
+    .then().statusCode(201);
+
+try (Connection conn = dataSource.getConnection()) {
+    ResultSet rs = conn.prepareStatement(
+        "SELECT status FROM orders WHERE id = ?"
+    ).executeQuery();
+    // Assert the write actually landed with the expected state, not just the API's echo
+}
+```
+
+### Message queue / event assertions (Kafka)
+```java
+KafkaConsumer<String, String> consumer = testKafka.createConsumer("order-events");
+consumer.subscribe(List.of("orders.confirmed"));
+ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(5));
+assertThat(records).anyMatch(r -> r.value().contains("\"orderId\":\"" + orderId + "\""));
+```
+
+## 14. Security Testing
+
+### OWASP API Security Top 10 – automatable checks
+- **Broken Object Level Authorization (BOLA)**: request another tenant's resource ID with your token and assert `403`/`404`, never `200`
+- **Broken Authentication**: assert expired/tampered/`alg:none` JWTs are rejected with `401`
+- **Excessive Data Exposure**: assert responses never leak internal fields (`passwordHash`, `internalNotes`) regardless of role
+- **Rate Limiting**: burst requests past the documented limit and assert `429` + `Retry-After`
+- **Mass Assignment**: submit unexpected fields (`role: "ADMIN"`) in a create/update payload and assert they're ignored, not applied
+
+### BOLA regression test
+```java
+String userAToken = tokens.forUser("user-a");
+String userBOrderId = fixtures.orderOwnedBy("user-b");
+
+given().auth().oauth2(userAToken)
+    .when().get("/v2/orders/" + userBOrderId)
+    .then().statusCode(anyOf(is(403), is(404)));
+```
+
+### Injection & header fuzzing
+```java
+given().queryParam("status", "PENDING' OR '1'='1")
+    .when().get("/v2/orders")
+    .then().statusCode(anyOf(is(200), is(400))) // never 500 — no unhandled exception leakage
+    .body("items", is(empty()));
+```
+
+### TLS & security header checks
+```java
+.then()
+    .header("Strict-Transport-Security", containsString("max-age"))
+    .header("X-Content-Type-Options", equalTo("nosniff"))
+    .header("Content-Security-Policy", notNullValue());
+```
+
+## 15. Advanced Testing Patterns
+
+### Fluent request builder (domain-specific API client)
+```java
+public class OrdersApiClient {
+    private final RequestSpecification spec;
+    public OrdersApiClient(RequestSpecification spec) { this.spec = spec; }
+
+    public Response create(OrderPayload payload) {
+        return given().spec(spec).body(payload).post("/v2/orders");
+    }
+    public Response pay(String orderId) {
+        return given().spec(spec).post("/v2/orders/{id}/pay", orderId);
+    }
+    public OrderResponse getConfirmed(String orderId) {
+        return given().spec(spec).get("/v2/orders/{id}", orderId)
+            .then().statusCode(200).extract().as(OrderResponse.class);
+    }
+}
+```
+
+### Builder pattern for complex payloads
+```java
+OrderPayload payload = OrderPayload.builder()
+    .sku("WM-1001")
+    .quantity(2)
+    .shippingAddress(Address.builder().city("Austin").zip("78701").build())
+    .build();
+```
+
+### Chained end-to-end business flow test
+```java
+@Test
+void fullOrderLifecycle() {
+    String orderId = ordersApi.create(validPayload).then().statusCode(201).extract().path("id");
+    ordersApi.pay(orderId).then().statusCode(200).body("status", equalTo("CONFIRMED"));
+    Awaitility.await().atMost(Duration.ofSeconds(20))
+        .untilAsserted(() -> assertThat(ordersApi.getConfirmed(orderId).status()).isEqualTo("SHIPPED"));
+}
+```
+
+## 16. Parallel Execution & Cloud Testing
+
+### JUnit 5 parallel execution config
+```properties
+junit.jupiter.execution.parallel.enabled=true
+junit.jupiter.execution.parallel.mode.default=concurrent
+junit.jupiter.execution.parallel.config.strategy=dynamic
+```
+
+### Newman parallel shards in CI
+```bash
+newman run orders-suite.json --folder "Smoke" &
+newman run orders-suite.json --folder "Regression-A" &
+newman run orders-suite.json --folder "Regression-B" &
+wait
+```
+
+### Cloud/managed test execution (Postman Cloud, BlazeMeter)
+- Postman Monitors: schedule collection runs against staging/prod every N minutes with alerting on failure
+- BlazeMeter / Postman Cloud runners: offload large data-driven suites from local/CI compute, aggregate historical trend dashboards
+
+## 17. CI/CD Integration
+
+### GitHub Actions – REST Assured (Maven)
+```yaml
+name: api-tests
+on: [pull_request]
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - run: mvn -B test -Dapi.baseUrl=${{ secrets.STAGING_API_URL }}
+      - uses: dorny/test-reporter@v1
+        if: always()
+        with: { name: API Tests, path: target/surefire-reports/*.xml, reporter: java-junit }
+```
+
+### GitLab CI – Newman
+```yaml
+api-tests:
+  image: postman/newman:6-alpine
+  script:
+    - newman run collections/orders-api.json
+        -e environments/staging.json
+        --reporters cli,junit
+        --reporter-junit-export report.xml
+  artifacts:
+    reports: { junit: report.xml }
+```
+
+### Contract verification gate (Pact) in the pipeline
+```yaml
+- run: mvn test -Dtest=OrdersProviderContractTest
+- run: pact-broker can-i-deploy --pacticipant orders-service --version $CI_COMMIT_SHA --to-environment production
+```
+
+## 18. Debugging & Troubleshooting
+
+### REST Assured request/response logging
+```java
+given().filter(new RequestLoggingFilter()).filter(new ResponseLoggingFilter())
+    .log().ifValidationFails()
+    .when().get("/v2/orders/{id}", orderId)
+    .then().log().ifError().statusCode(200);
+```
+
+### Proxying traffic for inspection (Charles / Proxyman / mitmproxy)
+```bash
+mitmproxy -p 8888
+# Point the HTTP client at the proxy for the duration of the debugging session
+export HTTPS_PROXY=http://localhost:8888
+```
+
+### Common root causes of flaky API tests
+- Shared mutable fixtures across parallel test classes (two tests racing to update the same order ID)
+- Asserting on wall-clock timestamps without tolerance for clock skew between test runner and server
+- Not accounting for cache headers (`ETag`, `Cache-Control`) causing stale reads immediately after a write
+- Test environment data drift — reseed or use ephemeral per-run data instead of assuming fixed seed IDs persist
+
+## 19. Performance & Load Testing
+
+### k6 load test script (JavaScript, current default for API load testing)
+```javascript
+import http from 'k6/http'
+import { check, sleep } from 'k6'
+
+export const options = {
+  scenarios: {
+    ramping: {
+      executor: 'ramping-vus',
+      startVUs: 0,
+      stages: [
+        { duration: '30s', target: 50 },
+        { duration: '2m', target: 50 },
+        { duration: '30s', target: 0 },
+      ],
+    },
+  },
+  thresholds: {
+    http_req_duration: ['p(95)<400'],
+    http_req_failed: ['rate<0.01'],
+  },
+}
+
+export default function () {
+  const res = http.get('https://staging-api.example.com/v2/products')
+  check(res, { 'status is 200': (r) => r.status === 200 })
+  sleep(1)
+}
+```
+```bash
+k6 run --out json=results.json load/orders-read.js
+```
+
+### Gatling scenario (JVM teams, code-as-tests DSL)
+```java
+ScenarioBuilder scn = scenario("Order Creation")
+    .exec(http("create-order").post("/v2/orders")
+        .body(StringBody("{\"sku\":\"WM-1001\",\"quantity\":1}"))
+        .check(status().is(201)));
+
+setUp(scn.injectOpen(rampUsers(100).during(Duration.ofSeconds(30))))
+    .assertions(global().responseTime().percentile(95).lt(500));
+```
+
+### Choosing between k6, Gatling and JMeter
+- k6: JavaScript/TypeScript scripting, single static Go binary, native CI threshold gating with non-zero exit codes, tightest Grafana/Prometheus integration — default choice for API/microservice load testing in 2026
+- Gatling: JVM-native, async engine, best-in-class automatic HTML reports, ideal when the team already ships Java/Scala/Kotlin
+- JMeter: broadest legacy protocol coverage (JDBC, JMS, LDAP, SOAP), GUI-first authoring, still the right call when non-developers own performance testing or protocol breadth is non-negotiable
+
+## 20. Best Practices & Guidelines
+
+### Code Organization & Maintainability
+- Centralize base URLs, auth, and headers in a shared request specification/API client — never duplicate boilerplate per test class
+- Validate contract shape (JSON Schema) separately from business-value assertions (specific field values) so schema drift and logic bugs surface as distinct failures
+- Treat GraphQL error arrays as first-class assertions — a `200` with a populated `errors[]` is still a failure your suite must catch
+- Keep performance thresholds (`p95`, error rate) in version control next to the load scripts so regressions show up as a diff, not tribal knowledge
+- Gate deployments on contract verification (`can-i-deploy`) in addition to functional test suites — passing tests do not guarantee compatibility with what's actually deployed
+- Run security-classed checks (BOLA, mass assignment, rate limiting) as a standing regression suite, not a one-off pentest exercise
+- Prefer ephemeral, API-seeded test data over long-lived fixtures — deterministic setup/teardown is what makes parallel execution safe
+- Log full request/response only on failure (`log().ifValidationFails()`, Newman `--reporter-cli-no-summary` off) to keep CI output signal-heavy, not noisy
