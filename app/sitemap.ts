@@ -6,37 +6,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
-      lastModified: new Date(),
+      lastModified: new Date("2026-07-28"),
       changeFrequency: "monthly",
       priority: 1.0,
     },
     {
       url: `${SITE_URL}/resume`,
-      lastModified: new Date(),
+      lastModified: new Date("2026-07-24"),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
       url: `${SITE_URL}/playbook`,
-      lastModified: new Date(),
+      lastModified: new Date("2026-07-28"),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/playbook/mobile`,
-      lastModified: new Date(),
+      lastModified: new Date("2026-07-28"),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/playbook/web`,
-      lastModified: new Date(),
+      lastModified: new Date("2026-07-28"),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/playbook/api`,
-      lastModified: new Date(),
+      lastModified: new Date("2026-07-28"),
       changeFrequency: "weekly",
       priority: 0.9,
     },

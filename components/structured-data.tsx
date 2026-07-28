@@ -1,5 +1,3 @@
-'use client'
-
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from '@/lib/site'
 
 interface StructuredDataProps {

@@ -117,6 +117,8 @@ export function Experience() {
         {/* Horizontal timeline */}
         <div
           ref={scrollerRef}
+          role="region"
+          aria-label="Career timeline — scroll horizontally to view all roles"
           className="overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)]"
         >
           <div className="relative min-w-max px-1 pt-2">

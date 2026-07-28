@@ -113,7 +113,7 @@ export function SiteHeader() {
       
       <div className="relative flex items-center justify-center max-w-7xl mx-auto px-4 md:px-6 min-h-10 md:min-h-0">
         <a
-          href="#main-content"
+          href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-primary text-primary-foreground rounded px-3 py-1"
         >
           Skip to content

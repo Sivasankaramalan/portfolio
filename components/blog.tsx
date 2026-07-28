@@ -1,6 +1,7 @@
+import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Clock, ExternalLink, Newspaper } from "lucide-react"
+import { Calendar, Clock, ArrowRight, Newspaper } from "lucide-react"
 import { articles } from "@/lib/blog"
 
 export function Blog() {
@@ -34,7 +35,7 @@ export function Blog() {
               <div className="flex flex-col gap-4 flex-1">
                 <div className="space-y-1.5">
                   <h3 className="text-lg md:text-xl font-semibold leading-snug line-clamp-2 hover:text-primary transition-colors">
-                    <a href={`/blog/${article.slug}`}>{article.title}</a>
+                    <Link href={`/blog/${article.slug}`}>{article.title}</Link>
                   </h3>
                   <div className="flex items-center gap-3 text-xs text-muted-foreground font-medium">
                     <span className="flex items-center gap-1">
@@ -58,12 +59,12 @@ export function Blog() {
                       </Badge>
                     ))}
                   </div>
-                  <a
+                  <Link
                     href={`/blog/${article.slug}`}
                     className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
                   >
-                    Read <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
+                    Read <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </Link>
                 </div>
               </div>
             </Card>

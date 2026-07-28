@@ -34,16 +34,17 @@ export function Contact() {
 
         {/* Social links */}
         <div className="grid md:grid-cols-3 gap-4 mb-16">
-          <a 
-            href="https://github.com/Sivasankaramalan" 
-            target="_blank" 
+          <a
+            href="https://github.com/Sivasankaramalan"
+            target="_blank"
             rel="noopener noreferrer"
+            aria-label="GitHub profile (opens in new tab)"
             className="group block"
           >
             <Card className="card-glow p-6 text-center bg-card/80 backdrop-blur border border-border/50 rounded-xl hover:border-primary/30 transition-all duration-300 h-full cursor-pointer">
               <div className="flex flex-col items-center gap-3">
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Github className="h-6 w-6 text-primary" />
+                  <Github className="h-6 w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div>
                   <h3 className="font-semibold group-hover:text-primary transition-colors">GitHub</h3>
@@ -52,16 +53,17 @@ export function Contact() {
               </div>
             </Card>
           </a>
-          <a 
-            href="https://www.linkedin.com/in/sivasankaramalan/" 
-            target="_blank" 
+          <a
+            href="https://www.linkedin.com/in/sivasankaramalan/"
+            target="_blank"
             rel="noopener noreferrer"
+            aria-label="LinkedIn profile (opens in new tab)"
             className="group block"
           >
             <Card className="card-glow p-6 text-center bg-card/80 backdrop-blur border border-border/50 rounded-xl hover:border-primary/30 transition-all duration-300 h-full cursor-pointer">
               <div className="flex flex-col items-center gap-3">
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Linkedin className="h-6 w-6 text-primary" />
+                  <Linkedin className="h-6 w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div>
                   <h3 className="font-semibold group-hover:text-primary transition-colors">LinkedIn</h3>
@@ -70,14 +72,15 @@ export function Contact() {
               </div>
             </Card>
           </a>
-          <a 
+          <a
             href="/api/resume/download?v=2026-07-24"
+            aria-label="Download resume as PDF"
             className="group block"
           >
             <Card className="card-glow p-6 text-center bg-card/80 backdrop-blur border border-border/50 rounded-xl hover:border-primary/30 transition-all duration-300 h-full cursor-pointer">
               <div className="flex flex-col items-center gap-3">
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <FileText className="h-6 w-6 text-primary" />
+                  <FileText className="h-6 w-6 text-primary" aria-hidden="true" />
                 </div>
                 <div>
                   <h3 className="font-semibold group-hover:text-primary transition-colors">Resume</h3>

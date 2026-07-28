@@ -1,5 +1,3 @@
-"use client"
-
 import { Cpu, Layers, Users, Sparkles, UserRound } from "lucide-react"
 
 const highlights = [
