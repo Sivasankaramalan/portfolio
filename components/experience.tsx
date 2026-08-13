@@ -13,10 +13,18 @@ interface ExperienceItem {
 }
 
 const experiences: ExperienceItem[] = [
+   {
+    title: "Technology Specialist, Lead | Mobile Apps",
+    company: "Nestlé Nespresso",
+    period: "Aug 2026 -  Present",
+    logo: "/logos/nespresso.png",
+    description:
+      "Allowing Nespresso to deliver a seamless digital experience across mobile apps, web, and in-store devices by leading the mobile engineering team and driving quality engineering practices.",
+  },
   {
     title: "Lead SDET | Native AI Engineering",
     company: "EPAM Systems",
-    period: "Oct 2023 – Present",
+    period: "Oct 2023 – July 2026",
     logo: "/logos/epam.png",
     description:
       "Leading unified automation strategy across mobile, web, and API layers while scaling global quality engineering practices and reliability tooling.",
