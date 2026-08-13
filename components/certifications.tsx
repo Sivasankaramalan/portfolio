@@ -14,9 +14,18 @@ interface Certification {
 
 const certifications: Certification[] = [
   {
+    title: "Claude Certified Architect Professional",
+    issuer: "Anthropic",
+    skills: ["Agent Architecture", "Claude", "AI Governance", "Enterprise Architecture","Evaluation & optimization"],
+    focus: "Professional Certification",
+    href: "https://www.credly.com/badges/0b5dc643-6487-4ca7-a9fc-420e7a150d30/public_url",
+    accent: "claude",
+    logo: "/logos/brands/claude.svg",
+  },
+  {
     title: "Claude Certified Architect",
     issuer: "Anthropic",
-    skills: ["Agent Architecture", "Prompt Engineering"],
+    skills: ["AI Architecture", "Prompt Engineering"],
     focus: "Foundations",
     href: "https://www.credly.com/badges/6a66934b-a962-431f-a7fd-c64ca9256179",
     accent: "claude",
@@ -28,6 +37,15 @@ const certifications: Certification[] = [
     skills: ["Claude API", "AI-Assisted Coding"],
     focus: "Foundations",
     href: "https://www.credly.com/badges/74ab7907-b315-4a91-8759-f47c4f068569",
+    accent: "claude",
+    logo: "/logos/brands/claude.svg",
+  },
+  {
+    title: "Claude Certified Associate",
+    issuer: "Anthropic",
+    skills: ["Agent Architecture", "Claude"],
+    focus: "Professional Certification",
+    href: "https://www.credly.com/earner/earned/badge/ce967fa0-59c1-4470-b482-02869ea0f7d9",
     accent: "claude",
     logo: "/logos/brands/claude.svg",
   },
@@ -69,7 +87,71 @@ const accentStyles: Record<Certification["accent"], string> = {
     "from-[oklch(0.62_0.16_250)]/20 to-[oklch(0.65_0.14_200)]/10 border-[oklch(0.62_0.16_250)]/25",
 }
 
+function CertificationCard({ cert, featured = false }: { cert: Certification; featured?: boolean }) {
+  return (
+    <a
+      href={cert.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`
+        group relative flex h-full flex-col gap-4 rounded-2xl border
+        bg-gradient-to-br backdrop-blur transition-all duration-300
+        hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/10
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+        focus-visible:ring-offset-2 focus-visible:ring-offset-background
+        ${featured ? "items-center p-8 text-center md:p-10" : "p-6"}
+        ${accentStyles[cert.accent]}
+      `}
+    >
+      <div className={`flex items-start gap-3 ${featured ? "w-full justify-center" : "justify-between"}`}>
+        <div className={`${featured ? "h-16 w-16 p-4" : "h-11 w-11 p-2.5"} rounded-xl bg-background/80 border border-border/40 flex items-center justify-center shrink-0`}>
+          <Image
+            src={cert.logo}
+            alt=""
+            width={featured ? 36 : 24}
+            height={featured ? 36 : 24}
+            className="w-full h-full object-contain dark:invert"
+            aria-hidden="true"
+          />
+        </div>
+        <ExternalLink
+          className={`${featured ? "absolute right-6 top-6" : ""} w-4 h-4 text-muted-foreground opacity-60 transition-opacity group-hover:opacity-100`}
+          aria-hidden="true"
+        />
+      </div>
+
+      <div className="space-y-2 flex-1">
+        <h3 className={`${featured ? "text-2xl md:text-3xl" : "text-lg"} font-semibold leading-snug tracking-tight group-hover:text-primary transition-colors`}>
+          {cert.title}
+        </h3>
+        <p className="text-sm text-muted-foreground">{cert.focus}</p>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+        <Badge
+          variant="secondary"
+          className="text-xs font-medium bg-background/50 border border-border/40"
+        >
+          {cert.issuer}
+        </Badge>
+        {cert.skills.map((skill) => (
+          <span
+            key={skill}
+            className="text-xs text-muted-foreground px-2 py-0.5 rounded-full border border-border/40 bg-background/30"
+          >
+            {skill}
+          </span>
+        ))}
+      </div>
+
+      <span className="sr-only">View credential (opens in new tab)</span>
+    </a>
+  )
+}
+
 export function Certifications() {
+  const [featuredCertification, ...otherCertifications] = certifications
+
   return (
     <section
       id="certifications"
@@ -96,65 +178,16 @@ export function Certifications() {
           </div>
         </div>
 
+        <ul className="list-none p-0 m-0 mb-5">
+          <li className="mx-auto max-w-3xl">
+            <CertificationCard cert={featuredCertification} featured />
+          </li>
+        </ul>
+
         <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 list-none p-0 m-0">
-          {certifications.map((cert) => (
+          {otherCertifications.map((cert) => (
             <li key={cert.href}>
-              <a
-                href={cert.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`
-                  group relative flex h-full flex-col gap-4 rounded-2xl border p-6
-                  bg-gradient-to-br backdrop-blur transition-all duration-300
-                  hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/10
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
-                  focus-visible:ring-offset-2 focus-visible:ring-offset-background
-                  ${accentStyles[cert.accent]}
-                `}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-background/80 border border-border/40 flex items-center justify-center shrink-0 p-2.5">
-                    <Image
-                      src={cert.logo}
-                      alt=""
-                      width={24}
-                      height={24}
-                      className="w-full h-full object-contain dark:invert"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <ExternalLink
-                    className="w-4 h-4 text-muted-foreground opacity-60 transition-opacity group-hover:opacity-100"
-                    aria-hidden="true"
-                  />
-                </div>
-
-                <div className="space-y-2 flex-1">
-                  <h3 className="text-lg font-semibold leading-snug tracking-tight group-hover:text-primary transition-colors">
-                    {cert.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{cert.focus}</p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <Badge
-                    variant="secondary"
-                    className="text-xs font-medium bg-background/50 border border-border/40"
-                  >
-                    {cert.issuer}
-                  </Badge>
-                  {cert.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="text-xs text-muted-foreground px-2 py-0.5 rounded-full border border-border/40 bg-background/30"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-
-                <span className="sr-only">View credential (opens in new tab)</span>
-              </a>
+              <CertificationCard cert={cert} />
             </li>
           ))}
         </ul>
