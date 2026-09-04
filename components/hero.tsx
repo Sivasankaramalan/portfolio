@@ -146,8 +146,8 @@ export function Hero() {
                       <Rocket className="h-5 w-5 text-primary" />
                     </div>
                     <div className="text-left">
-                      <div className="text-xs text-muted-foreground">Product Engineer at</div>
-                      <div className="text-sm font-semibold">EPAM Systems</div>
+                      <div className="text-xs text-muted-foreground">Technology Specialist at</div>
+                      <div className="text-sm font-semibold">Nestlé Nespresso SA</div>
                     </div>
                   </div>
                 </div>

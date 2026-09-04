@@ -45,7 +45,7 @@ export function SiteHeader() {
   useEffect(() => {
     const stored = localStorage.getItem('last-section')
     if (stored) setActive(stored)
-    const sectionIds = NAV_LINKS.map(l => l.fragment)
+    const sectionIds = NAV_LINKS.map(link => link.fragment)
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -204,7 +204,7 @@ export function SiteHeader() {
                                 <span>{link.label}</span>
                               </a>
                             ) : (
-                              <Link
+                              <a
                                 href={href}
                                 className={cn(
                                   "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all",
@@ -213,11 +213,10 @@ export function SiteHeader() {
                                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                                 )}
                                 style={isActive ? { background: 'linear-gradient(to right, color-mix(in oklch, var(--primary) 18%, transparent), color-mix(in oklch, var(--accent) 12%, transparent))' } : undefined}
-                                scroll={true}
                               >
                                 {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
                                 <span>{link.label}</span>
-                              </Link>
+                              </a>
                             )}
                           </SheetClose>
                         </li>
@@ -363,7 +362,7 @@ export function SiteHeader() {
                         )}
                       </a>
                     ) : (
-                      <Link
+                      <a
                         href={href}
                         className={cn(
                           "relative px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-300",
@@ -371,7 +370,6 @@ export function SiteHeader() {
                             ? "text-primary"
                             : "text-muted-foreground hover:text-foreground"
                         )}
-                        scroll={true}
                       >
                         {isActive && (
                           <div className="absolute inset-0 bg-gradient-to-r from-primary/15 via-primary/10 to-accent/15 rounded-xl border border-primary/20" />
@@ -381,7 +379,7 @@ export function SiteHeader() {
                         {isActive && (
                           <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary shadow-lg shadow-primary/50" />
                         )}
-                      </Link>
+                      </a>
                     )}
                   </div>
                 )
@@ -418,9 +416,6 @@ export function SiteHeader() {
                         <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary shadow-lg shadow-primary/50" />
                       )}
                     </Link>
-                    <span className="absolute -top-2 -right-1 text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-gradient-to-r from-accent to-primary text-white shadow-md animate-pulse">
-                      NEW
-                    </span>
                   </div>
                 )
               })}

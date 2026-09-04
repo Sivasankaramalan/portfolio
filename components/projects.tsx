@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { TrendingUp, Star, Rocket } from "lucide-react"
+import { ExternalLink, TrendingUp, Star, Rocket } from "lucide-react"
 
 interface Project {
   title: string
@@ -11,9 +11,48 @@ interface Project {
   highlights: string[]
   technologies: string[]
   featured?: boolean
+  href?: string
 }
 
 const projects: Project[] = [
+  {
+    title: "EngXLabs",
+    org: "AI-native developer productivity",
+    description: "Developer tools and AI-powered engineering solutions that help teams improve productivity, automate workflows, and adopt modern AI capabilities.",
+    highlights: [
+      "Practical AI engineering tools for enterprise teams and early-stage startups",
+      "Makes AI-driven engineering practices accessible at no cost",
+      "Focused on real workflow automation and developer productivity",
+    ],
+    technologies: ["AI Engineering", "Developer Tools", "Workflow Automation"],
+    featured: true,
+    href: "https://www.engxlabs.com/",
+  },
+  {
+    title: "GoLocally",
+    org: "AI-verified community answers",
+    description: "A real-time local intelligence platform where travelers get current, AI-verified answers about schedules, crowds, opening hours, and venues.",
+    highlights: [
+      "Community signals cross-referenced with AI for reliable local updates",
+      "Offline-first platform with district-level precision across 100+ Indian districts",
+      "Live travel intelligence prevents surprises such as closed venues and unexpected crowds",
+    ],
+    technologies: ["AI Verification", "Offline First", "Geospatial Data"],
+    featured: true,
+    href: "https://golocally.in/",
+  },
+  {
+    title: "Local.Ally",
+    org: "Community-powered travel intelligence",
+    description: "An AI-powered travel intelligence platform combining hyperlocal knowledge, structured travel data, and AI-powered verification for better travel decisions.",
+    highlights: [
+      "Connects travelers with communities for current, practical local intelligence",
+      "Organizes trusted information on stays, food, transport, routes, timings, and crowds",
+      "Moving beyond static reviews toward a real-time travel intelligence network",
+    ],
+    technologies: ["AI Verification", "Community Data", "Travel Intelligence"],
+    featured: true,
+  },
   {
     title: "Test Orchestration Agent for Unified Automation",
     org: "EPAM Systems",
@@ -24,7 +63,6 @@ const projects: Project[] = [
       "Reduced execution flakiness by 30% via stability heuristics",
     ],
     technologies: ["Jenkins", "Appium", "REST", "Docker", "Allure", "GraphQL"],
-    featured: true,
   },
   {
     title: "Device Farm for Test Automation",
@@ -36,7 +74,6 @@ const projects: Project[] = [
       "Containerized provisioning for rapid lab spin-up",
     ],
     technologies: ["Appium Grid", "OpenSTF", "Docker", "K8s", "NGINX"],
-    featured: true,
   },
   {
     title: "Negative Experience / Resilience Testing",
@@ -76,16 +113,20 @@ export function Projects() {
               <Rocket className="w-5 h-5 text-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-              Featured <span className="text-gradient">Initiatives</span>
+              Projects
             </h2>
           </div>
           <p className="text-lg text-muted-foreground">
-            Key projects that showcase my approach to building quality at scale.
+            Products and engineering initiatives built around practical AI, community intelligence, and quality at scale.
           </p>
         </div>
 
+        <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">
+          Featured <span className="text-gradient">Initiatives</span>
+        </h3>
+
         {/* Featured projects - larger cards */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 mb-14">
           {featuredProjects.map((project) => (
             <Card
               key={project.title}
@@ -99,9 +140,16 @@ export function Projects() {
 
               <div className="space-y-4 flex-1">
                 <div>
-                  <h3 className="text-xl md:text-2xl font-semibold mb-2 leading-tight">
-                    {project.title}
-                  </h3>
+                  {project.href ? (
+                    <a href={project.href} target="_blank" rel="noopener noreferrer" className="group/link inline-flex items-center gap-2 text-xl md:text-2xl font-semibold mb-2 leading-tight hover:text-primary transition-colors">
+                      {project.title}
+                      <ExternalLink className="w-4 h-4 shrink-0" aria-label="Opens in a new tab" />
+                    </a>
+                  ) : (
+                    <h4 className="text-xl md:text-2xl font-semibold mb-2 leading-tight">
+                      {project.title}
+                    </h4>
+                  )}
                   <p className="text-sm font-medium text-primary">{project.org}</p>
                 </div>
 
@@ -135,6 +183,10 @@ export function Projects() {
             </Card>
           ))}
         </div>
+
+        <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">
+          Engineering <span className="text-gradient">Initiatives</span>
+        </h3>
 
         {/* Other projects - standard cards */}
         <div className="grid md:grid-cols-2 gap-6">

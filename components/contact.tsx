@@ -1,8 +1,7 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Mail, Linkedin, Github, FileText, Heart, Send } from "lucide-react"
+import { Mail, Linkedin, Github, Heart, Send } from "lucide-react"
 
 export function Contact() {
   return (
@@ -22,18 +21,27 @@ export function Contact() {
             I&apos;m always interested in hearing about new opportunities, challenging projects, or just connecting with
             fellow engineers. Feel free to reach out!
           </p>
-          <div className="flex flex-wrap gap-4 pt-4">
-            <Button size="lg" className="gap-2 card-glow max-w-full" asChild>
-              <a href="mailto:sivasankaramalan@gmail.com" className="flex items-center gap-2 max-w-full">
-                <Mail className="h-4 w-4 shrink-0" />
-                <span className="break-all text-sm sm:text-base">sivasankaramalan@gmail.com</span>
-              </a>
-            </Button>
-          </div>
         </div>
 
-        {/* Social links */}
+        {/* Contact links */}
         <div className="grid md:grid-cols-3 gap-4 mb-16">
+          <a
+            href="mailto:sivasankaramalan@gmail.com"
+            aria-label="Email sivasankaramalan@gmail.com"
+            className="group block"
+          >
+            <Card className="card-glow p-6 text-center bg-card/80 backdrop-blur border border-border/50 rounded-xl hover:border-primary/30 transition-all duration-300 h-full cursor-pointer">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Mail className="h-6 w-6 text-primary" aria-hidden="true" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold group-hover:text-primary transition-colors">Email</h3>
+                  <p className="text-sm text-muted-foreground break-all">sivasankaramalan@gmail.com</p>
+                </div>
+              </div>
+            </Card>
+          </a>
           <a
             href="https://github.com/Sivasankaramalan"
             target="_blank"
@@ -68,23 +76,6 @@ export function Contact() {
                 <div>
                   <h3 className="font-semibold group-hover:text-primary transition-colors">LinkedIn</h3>
                   <p className="text-sm text-muted-foreground">@sivasankaramalan</p>
-                </div>
-              </div>
-            </Card>
-          </a>
-          <a
-            href="/api/resume/download?v=2026-07-24"
-            aria-label="Download resume as PDF"
-            className="group block"
-          >
-            <Card className="card-glow p-6 text-center bg-card/80 backdrop-blur border border-border/50 rounded-xl hover:border-primary/30 transition-all duration-300 h-full cursor-pointer">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <FileText className="h-6 w-6 text-primary" aria-hidden="true" />
-                </div>
-                <div>
-                  <h3 className="font-semibold group-hover:text-primary transition-colors">Resume</h3>
-                  <p className="text-sm text-muted-foreground">Download PDF</p>
                 </div>
               </div>
             </Card>

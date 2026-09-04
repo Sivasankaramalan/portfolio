@@ -2,8 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { Moon, Sun, Laptop } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Moon, Sun } from "lucide-react"
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
@@ -13,52 +12,29 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="flex gap-0.5 p-1 rounded-xl bg-muted/50 border border-border/50">
-        <button disabled className="p-2 rounded-lg text-muted-foreground/50">
-          <Sun className="h-4 w-4" />
-        </button>
-        <button disabled className="p-2 rounded-lg text-muted-foreground/50">
+      <div>
+        <button disabled aria-label="Loading theme controls" className="flex h-9 w-9 items-center justify-center rounded-lg border border-border/50 bg-muted/50 text-muted-foreground/50">
           <Moon className="h-4 w-4" />
-        </button>
-        <button disabled className="p-2 rounded-lg text-muted-foreground/50">
-          <Laptop className="h-4 w-4" />
         </button>
       </div>
     )
   }
 
-  const themeOptions = [
-    { value: 'light', icon: Sun, label: 'Light mode' },
-    { value: 'dark', icon: Moon, label: 'Dark mode' },
-    { value: 'system', icon: Laptop, label: 'System mode' }
-  ] as const
+  const nextTheme = theme === "dark" ? "light" : "dark"
+  const ToggleIcon = theme === "dark" ? Sun : Moon
+  const toggleLabel = theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
 
   return (
-    <div 
-      className="flex gap-0.5 p-1 rounded-xl bg-muted/50 border border-border/50" 
-      role="radiogroup" 
-      aria-label="Theme selection"
-    >
-      {themeOptions.map(({ value, icon: Icon, label }) => {
-        const isActive = theme === value
-        return (
-          <button
-            key={value}
-            role="radio"
-            aria-checked={isActive}
-            aria-label={label}
-            onClick={() => setTheme(value)}
-            className={cn(
-              "p-2 rounded-lg transition-all duration-200 outline-none",
-              isActive
-                ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/50"
-            )}
-          >
-            <Icon className="h-4 w-4" />
-          </button>
-        )
-      })}
+    <div>
+      <button
+        type="button"
+        onClick={() => setTheme(nextTheme)}
+        aria-label={toggleLabel}
+        title={toggleLabel}
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-border/50 bg-muted/40 text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+      >
+        <ToggleIcon className="h-4 w-4" aria-hidden="true" />
+      </button>
     </div>
   )
 }
